@@ -1,0 +1,254 @@
+/* ==========================================================
+   Blossoms Fest — Authentic Comic Universe Design System
+   Tailwind v4 @theme layer with rich Comic Anthology tokens
+   ========================================================== */
+
+@import "tailwindcss";
+
+@theme {
+  /* ── Colour palette (UI/UX Schema 2.1) ───────────────────── */
+  --color-paper:          #FFF8E8;   /* warm vintage comic paper background */
+  --color-paper-light:    #FFFFFF;   /* card / panel surface */
+  --color-paper-secondary:#F5EBD4;   /* secondary comic gutter / surface */
+  --color-ink:            #151515;   /* deep rich comic ink */
+  --color-line-ink:       #1C1C1C;   /* panel border lines */
+  --color-muted-ink:      #5B5B5B;   /* secondary narrative copy */
+  --color-comic-red:      #F04438;   /* high-energy primary action */
+  --color-comic-yellow:   #FFD43B;   /* action bursts & caption boxes */
+  --color-comic-blue:     #3478F6;   /* schedule highlights & links */
+  --color-comic-teal:     #26A69A;   /* confirmed & verified status */
+  --color-comic-pink:     #FF6584;   /* category pop accent */
+  --color-comic-purple:   #7952DE;   /* creative accent */
+
+  /* Legacy aliases for backward-compatibility */
+  --color-blossoms-red:   #F04438;
+  --color-blossoms-yellow:#FFD43B;
+  --color-blossoms-blue:  #3478F6;
+  --color-blossoms-green: #26A69A;
+  --color-blossoms-pink:  #FF6584;
+  --color-gutter:         #F5EBD4;
+  --color-panel-bg:       #FFFFFF;
+
+  /* ── Typography ────────────────────────────────────────── */
+  --font-display:  "Bangers", "Impact", system-ui, sans-serif;
+  --font-body:     "Inter", "Segoe UI", system-ui, sans-serif;
+
+  /* Type scale */
+  --text-xs:   0.75rem;   /* 12px */
+  --text-sm:   0.875rem;  /* 14px */
+  --text-base: 1rem;      /* 16px */
+  --text-lg:   1.125rem;  /* 18px */
+  --text-xl:   1.25rem;   /* 20px */
+  --text-2xl:  1.5rem;    /* 24px */
+  --text-3xl:  1.875rem;  /* 30px */
+  --text-4xl:  2.25rem;   /* 36px */
+  --text-5xl:  3rem;      /* 48px */
+  --text-6xl:  3.75rem;   /* 60px */
+
+  /* ── Shadows & Ink Offsets ──────────────────────────────── */
+  --shadow-comic-sm:   2px 2px 0px 0px #151515;
+  --shadow-comic-md:   3px 3px 0px 0px #151515;
+  --shadow-comic-lg:   5px 5px 0px 0px #151515;
+  --shadow-comic-red:  3px 3px 0px 0px #F04438;
+  --shadow-comic-yellow: 3px 3px 0px 0px #FFD43B;
+
+  /* ── Radius ────────────────────────────────────────────── */
+  --radius-sm:     6px;
+  --radius-md:     10px;
+  --radius-lg:     14px;
+  --radius-xl:     18px;
+  --radius-full:   9999px;
+}
+
+/* ── Base reset & typography ──────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* Subtle vintage print paper texture */
+  background-image: 
+    radial-gradient(circle, rgba(21, 21, 21, 0.04) 1px, transparent 1px),
+    linear-gradient(to right, rgba(21, 21, 21, 0.015) 1px, transparent 1px);
+  background-size: 16px 16px, 32px 32px;
+}
+
+/* ── Authentic Comic Title with 3D Pop ────────────────────── */
+.comic-title-pop {
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+  text-shadow: 
+    -2px -2px 0 #151515,
+     2px -2px 0 #151515,
+    -2px  2px 0 #151515,
+     2px  2px 0 #151515,
+     3px  3px 0 #151515,
+     4px  4px 0 #151515;
+}
+
+.comic-title-yellow {
+  color: var(--color-comic-yellow);
+  text-shadow: 
+    -2px -2px 0 #151515,
+     2px -2px 0 #151515,
+    -2px  2px 0 #151515,
+     2px  2px 0 #151515,
+     4px  4px 0 #F04438,
+     5px  5px 0 #151515;
+}
+
+/* ── Ben-Day Halftone Dot Screens ─────────────────────────── */
+.bended-dots {
+  background-image: radial-gradient(rgba(21, 21, 21, 0.08) 20%, transparent 20%);
+  background-size: 8px 8px;
+}
+
+.bended-dots-yellow {
+  background-image: radial-gradient(#FFD43B 35%, transparent 35%);
+  background-size: 8px 8px;
+}
+
+.bended-dots-blue {
+  background-image: radial-gradient(rgba(52, 120, 246, 0.18) 25%, transparent 25%);
+  background-size: 7px 7px;
+}
+
+.bended-dots-red {
+  background-image: radial-gradient(rgba(240, 68, 56, 0.18) 25%, transparent 25%);
+  background-size: 7px 7px;
+}
+
+/* ── Comic Panel & Card ───────────────────────────────────── */
+.comic-panel {
+  border: 2.5px solid var(--color-ink);
+  border-radius: var(--radius-xl);
+  box-shadow: 4px 4px 0px 0px var(--color-ink);
+  background: var(--color-paper-light);
+  position: relative;
+}
+
+.comic-card {
+  border: 2px solid var(--color-ink);
+  border-radius: var(--radius-lg);
+  box-shadow: 3px 3px 0px 0px var(--color-ink);
+  background: var(--color-paper-light);
+  position: relative;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.comic-card:hover {
+  transform: translate(-1.5px, -1.5px);
+  box-shadow: 5px 5px 0px 0px var(--color-ink);
+}
+
+/* ── Classic Comic Caption Narration Box ─────────────────── */
+.comic-caption-box {
+  background-color: var(--color-comic-yellow);
+  color: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  font-size: 0.85rem;
+  box-shadow: 2px 2px 0px 0px var(--color-ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.2;
+}
+
+/* ── Comic Corner Box (Classic Marvel/DC issue masthead style) */
+.comic-corner-box {
+  border: 2px solid var(--color-ink);
+  background: var(--color-comic-yellow);
+  color: var(--color-ink);
+  box-shadow: 3px 3px 0px 0px var(--color-ink);
+  font-family: var(--font-display);
+  text-align: center;
+  padding: 4px 8px;
+  line-height: 1;
+}
+
+/* ── Comic Tape Ribbon ────────────────────────────────────── */
+.comic-ribbon {
+  background: var(--color-comic-red);
+  color: white;
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-top: 2px solid var(--color-ink);
+  border-bottom: 2px solid var(--color-ink);
+}
+
+/* ── Comic Strip Ticker ───────────────────────────────────── */
+.comic-ticker {
+  background: repeating-linear-gradient(
+    45deg,
+    #FFD43B,
+    #FFD43B 14px,
+    #FCE881 14px,
+    #FCE881 28px
+  );
+  border-top: 2.5px solid var(--color-ink);
+  border-bottom: 2.5px solid var(--color-ink);
+}
+
+/* ── Focus ring ───────────────────────────────────────────── */
+:focus-visible {
+  outline: 3px solid var(--color-comic-red);
+  outline-offset: 2px;
+}
+
+/* ── Skip link ────────────────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -50px;
+  left: 10px;
+  background: var(--color-comic-red);
+  color: white;
+  border: 2px solid var(--color-ink);
+  padding: 8px 16px;
+  font-weight: 700;
+  z-index: 9999;
+  box-shadow: 3px 3px 0px 0px var(--color-ink);
+}
+.skip-link:focus {
+  top: 10px;
+}
+
+/* ── Screen reader only ───────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ── Reduced motion ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
