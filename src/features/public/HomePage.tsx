@@ -1,392 +1,325 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, CalendarDays, Zap, Sparkles } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
 import {
-  ComicPanel,
-  HalftoneAccent,
-  DisplayText,
-  ActionBurst,
-  SpeechBubble,
-  ComicCaptionBox,
-  ComicCornerBox,
-} from '@/components/comic/ComicPrimitives'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
-import { getCategories, getEvents } from '@/lib/api/events'
-import { formatSlot } from '@/lib/utils'
+  ChristCampusDomeIllustration,
+  ArtsPaletteIllustration,
+  LiteratureBooksIllustration,
+  StageMicrophoneIllustration,
+  TheatreMasksIllustration,
+  ScheduleCalendarIllustration,
+  AnnouncementsMegaphoneIllustration,
+} from '@/components/comic/ComicArtwork'
+import { DisplayText, HalftoneAccent } from '@/components/comic/ComicPrimitives'
 
 export default function HomePage() {
-  const { data: categories = [] } = useQuery({
-    queryKey: ['categories'],
-    queryFn: getCategories,
-  })
-
-  const { data: events = [] } = useQuery({
-    queryKey: ['featured-events'],
-    queryFn: () => getEvents(),
-  })
-
-  const featured = events.slice(0, 3)
-
   return (
-    <div className="overflow-hidden">
-      {/* ── HERO: AUTHENTIC COMIC COVER MASTHEAD ──────────────── */}
-      <section
-        className="relative bg-[#151515] text-[#FFF8E8] py-16 md:py-24 border-b-[3px] border-ink"
-        aria-labelledby="hero-heading"
-      >
-        <HalftoneAccent color="red" className="opacity-20" />
+    <div className="min-h-screen bg-[#F5B82E] py-4 px-3 sm:px-6 md:py-8">
+      {/* ── Main Mobile / Comic Issue Container ───────────────── */}
+      <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto space-y-3.5">
         
-        {/* Dynamic Comic Ray Burst Background */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{
-            backgroundImage:
-              'radial-gradient(circle at 75% 30%, #FFD43B 0%, transparent 60%), repeating-conic-gradient(from 0deg at 75% 30%, #F04438 0deg 15deg, transparent 15deg 30deg)',
-          }}
-        />
+        {/* ── 1. TOP ROW: HERO TITLE & CAMPUS SPLIT PANELS ───── */}
+        <section className="grid grid-cols-2 gap-2.5 sm:gap-3.5" aria-label="Blossoms 2026 Festival Masthead">
+          {/* Left Panel: Explosive Title Banner */}
+          <div className="bg-[#FFF8E8] border-[3px] border-[#151515] rounded-2xl shadow-[4px_4px_0px_#151515] p-2.5 sm:p-4 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[148px] sm:min-h-[165px]">
+            {/* Comic Cloud Burst / Starburst Background */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 opacity-25 pointer-events-none"
+              style={{
+                backgroundImage:
+                  'radial-gradient(circle, #FFD43B 20%, transparent 20%), radial-gradient(circle, #F04438 20%, transparent 20%)',
+                backgroundSize: '12px 12px',
+                backgroundPosition: '0 0, 6px 6px',
+              }}
+            />
 
-        <div className="relative z-10 mx-auto max-w-[1240px] px-4 flex flex-col lg:flex-row items-center gap-12">
-          {/* Main Hero Column */}
-          <div className="flex-1 max-w-2xl">
-            {/* Top Comic Badges */}
-            <div className="flex items-center gap-3 mb-5 flex-wrap">
-              <ComicCornerBox
-                issueNo="VOL. '25"
-                theme="DOC COMICS"
-                price="FREE ENTRY"
-              />
-              <ComicCaptionBox>
-                <span>PROLOGUE: WHERE CAMPUS VOICES BECOME LEGEND</span>
-              </ComicCaptionBox>
-            </div>
+            <div className="relative z-10 flex flex-col items-center w-full">
+              {/* Arched Vibrant Red BLOSSOMS with Comic Starburst */}
+              <div className="relative w-full max-w-[170px] sm:max-w-[200px] flex items-center justify-center -rotate-2">
+                <svg viewBox="0 0 200 65" className="w-full h-auto overflow-visible select-none drop-shadow-[2px_3px_0px_#151515]">
+                  {/* Comic Explosion Burst Cloud */}
+                  <path
+                    d="M100 2 L115 14 L138 6 L142 22 L165 20 L160 36 L182 44 L168 56 L180 70 L158 72 L150 90 L130 80 L115 95 L100 82 L85 95 L70 80 L50 90 L42 72 L20 70 L32 56 L18 44 L40 36 L35 20 L58 22 L62 6 L85 14 Z"
+                    fill="#FFE58F"
+                    stroke="#151515"
+                    strokeWidth="2.5"
+                    strokeLinejoin="round"
+                  />
+                  {/* Vibrant Red BLOSSOMS Text with Clean Black Outline */}
+                  <text
+                    x="100"
+                    y="46"
+                    textAnchor="middle"
+                    fill="#DC2626"
+                    stroke="#151515"
+                    strokeWidth="3.5"
+                    paintOrder="stroke fill"
+                    style={{
+                      fontFamily: 'Bangers, Impact, system-ui, sans-serif',
+                      fontSize: '44px',
+                      letterSpacing: '1px',
+                      fontWeight: 900,
+                    }}
+                  >
+                    BLOSSOMS
+                  </text>
+                  {/* Subtle Red Highlight Sheen */}
+                  <text
+                    x="99"
+                    y="44"
+                    textAnchor="middle"
+                    fill="#F87171"
+                    opacity="0.45"
+                    style={{
+                      fontFamily: 'Bangers, Impact, system-ui, sans-serif',
+                      fontSize: '42px',
+                      letterSpacing: '1px',
+                      fontWeight: 900,
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    BLOSSOMS
+                  </text>
+                </svg>
+              </div>
 
-            {/* Comic 3D Title */}
-            <DisplayText
-              as="h1"
-              id="hero-heading"
-              className="text-5xl sm:text-6xl md:text-7xl leading-[0.95] mb-2 text-white comic-title-pop"
-            >
-              YOUR CAMPUS.
-            </DisplayText>
-            <DisplayText
-              as="div"
-              className="text-5xl sm:text-6xl md:text-7xl leading-[0.95] mb-6 comic-title-yellow"
-            >
-              YOUR STORY.
-            </DisplayText>
-
-            {/* Speech Dialogue Box */}
-            <div className="mb-6">
-              <SpeechBubble direction="down" className="max-w-md">
-                <span className="text-[#F04438] font-black mr-1">CHRISTITES:</span>
-                Welcome to Blossoms 2025! A three-day comic anthology celebrating creativity, music, theatrics, and poetry. No department barriers.
-              </SpeechBubble>
-            </div>
-
-            {/* Primary CTAs */}
-            <div className="flex flex-wrap gap-4 items-center pt-2">
-              <Button size="lg" variant="primary" asChild className="gap-2 text-lg shadow-[4px_4px_0px_#151515]">
-                <Link to="/events">
-                  <Zap className="w-5 h-5 fill-current" />
-                  Explore The Panels <ArrowRight className="w-5 h-5" />
-                </Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="ghost"
-                className="border-2 border-white bg-transparent text-white hover:bg-white/20 text-lg shadow-[3px_3px_0px_#151515]"
-                asChild
-              >
-                <Link to="/schedule">
-                  <CalendarDays className="w-5 h-5" /> Festival Timetable
-                </Link>
-              </Button>
-            </div>
-          </div>
-
-          {/* Right Hero Graphic / Comic Starburst */}
-          <div className="flex-shrink-0 flex flex-col items-center justify-center relative">
-            <div className="absolute -top-6 -right-4 z-20">
-              <span className="comic-caption-box rotate-6 shadow-[2px_2px_0px_#151515]">
-                100% CROSS-CAMPUS
-              </span>
-            </div>
-
-            <ActionBurst color="yellow" rotate="-4deg" className="w-48 h-48 sm:w-56 sm:h-56">
-              <span className="text-xl sm:text-2xl font-black block">
-                REGISTER<br />NOW!
-              </span>
-              <span className="text-[10px] tracking-normal font-sans uppercase block text-ink/80 mt-0.5">
-                ALL DEPARTMENTS
-              </span>
-            </ActionBurst>
-
-            {/* Floating comic stamp */}
-            <div className="mt-4 bg-[#FFF8E8] text-[#151515] border-2 border-ink px-4 py-2 rounded-xl text-center shadow-[3px_3px_0px_#151515] rotate-2">
-              <p className="font-display text-sm tracking-wider uppercase text-[#F04438] font-bold">
-                ★ CENTRAL CAMPUS BANGALORE ★
-              </p>
-              <p className="text-xs text-ink/70 font-semibold">
-                November 15–17, 2025
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── QUICK FACTS: COMIC TICKER ─────────────────────────── */}
-      <section className="comic-ticker py-3" aria-label="Festival quick facts">
-        <div className="mx-auto max-w-[1240px] px-4 flex flex-wrap items-center justify-around gap-4 md:gap-8 text-ink font-display text-sm md:text-base tracking-wider uppercase">
-          <span className="flex items-center gap-1.5">
-            <span className="text-[#F04438]">★</span> 15–17 NOVEMBER 2025
-          </span>
-          <span className="hidden sm:flex items-center gap-1.5">
-            <span className="text-[#F04438]">★</span> CENTRAL CAMPUS AUDITORIUMS
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="text-[#F04438]">★</span> 30+ STAGE &amp; LITERARY BATTLES
-          </span>
-          <span className="flex items-center gap-1.5 bg-[#F04438] text-white px-3 py-0.5 rounded-md border border-ink shadow-[1px_1px_0px_#151515]">
-            <Sparkles className="w-3.5 h-3.5" /> OPEN ACROSS DEPARTMENTS
-          </span>
-        </div>
-      </section>
-
-      {/* ── PICK YOUR PANEL — CATEGORIES ──────────────────────── */}
-      <section className="py-20 px-4 mx-auto max-w-[1240px]" aria-labelledby="categories-heading">
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-10">
-          <div>
-            <ComicCaptionBox className="mb-2">
-              ACT I: CHOOSE YOUR ARENA
-            </ComicCaptionBox>
-            <DisplayText as="h2" id="categories-heading" className="text-4xl sm:text-5xl">
-              Pick Your Panel
-            </DisplayText>
-            <p className="text-ink/70 text-base mt-1">
-              Every category is a different world. Jump into music, theatrics, poetry, or visual art.
-            </p>
-          </div>
-          <Button variant="outline" size="sm" asChild className="hidden sm:inline-flex">
-            <Link to="/events">View All Events →</Link>
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
-          {categories.map((cat, index) => {
-            const panelNum = `PANEL 0${index + 1}`
-            const emoji =
-              cat.slug === 'arts'
-                ? '🎨'
-                : cat.slug === 'literature'
-                ? '📚'
-                : cat.slug === 'stage'
-                ? '🎭'
-                : cat.slug === 'theatre'
-                ? '🎬'
-                : '⭐'
-            return (
-              <Link
-                key={cat.slug}
-                to={`/events?category=${cat.slug}`}
-                className="comic-card group p-5 flex flex-col justify-between overflow-hidden bg-white hover:border-[#F04438]"
-              >
-                <HalftoneAccent color="yellow" className="opacity-0 group-hover:opacity-30 transition-opacity" />
-
-                {/* Top comic label */}
-                <div className="flex items-center justify-between border-b-2 border-ink/15 pb-2 mb-4">
-                  <span className="font-display text-xs text-[#F04438] font-bold tracking-wider">
-                    {panelNum}
-                  </span>
-                  <span className="text-xs font-mono font-bold text-ink/40">
-                    VOL. 25
-                  </span>
-                </div>
-
-                {/* Center visual */}
-                <div className="text-center my-2">
-                  <div className="text-5xl mb-3 transform group-hover:scale-110 transition-transform">
-                    {emoji}
-                  </div>
-                  <DisplayText as="h3" className="text-2xl text-ink group-hover:text-[#F04438] transition-colors">
-                    {cat.name}
-                  </DisplayText>
-                  <p className="text-xs text-ink/60 mt-1.5 line-clamp-2">
-                    {cat.description || 'Showcase and competition events.'}
-                  </p>
-                </div>
-
-                {/* Bottom link */}
-                <div className="mt-4 pt-3 border-t-2 border-ink/15 text-center">
-                  <span className="font-display text-xs tracking-wider uppercase text-ink group-hover:text-[#F04438] flex items-center justify-center gap-1 font-bold">
-                    Enter Panel →
-                  </span>
-                </div>
-              </Link>
-            )
-          })}
-        </div>
-      </section>
-
-      {/* ── FEATURED STRIP: COMIC STRIP SHOWCASE ──────────────── */}
-      <section className="py-20 px-4 bg-[#F5EBD4] border-y-[3px] border-ink relative" aria-labelledby="featured-heading">
-        <HalftoneAccent color="black" className="opacity-10" />
-
-        <div className="relative z-10 mx-auto max-w-[1240px]">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-10">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <ComicCaptionBox>
-                  ACT II: SPOTLIGHT SPOT
-                </ComicCaptionBox>
-                <span className="comic-caption-box bg-[#F04438] text-white">
-                  HIGH ENERGY
+              {/* 2026 Comic Ribbon */}
+              <div className="bg-white border-[2.5px] border-[#151515] px-3.5 py-0.5 rounded-lg shadow-[2px_2px_0px_#151515] -mt-1 rotate-1 z-10">
+                <span className="font-display text-lg sm:text-xl text-[#151515] tracking-widest font-black leading-none block">
+                  2026
                 </span>
               </div>
-              <DisplayText as="h2" id="featured-heading" className="text-4xl sm:text-5xl">
-                Featured Comic Strips
+
+              {/* Narrative Sticker Box */}
+              <div className="mt-2 bg-[#FFD43B] text-[#151515] border-2 border-[#151515] px-2.5 py-0.5 rounded-md shadow-[2px_2px_0px_#151515] -rotate-1 z-10">
+                <span className="font-display text-[9px] sm:text-[10.5px] tracking-wider uppercase font-black block leading-tight">
+                  SAME STAGE. DIFFERENT HEROES!
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Panel: Christ University Campus Dome */}
+          <div className="bg-[#28A8EA] border-[3px] border-[#151515] rounded-2xl shadow-[4px_4px_0px_#151515] relative overflow-hidden min-h-[148px] sm:min-h-[165px] flex items-center justify-center">
+            {/* Campus Dome Vector Illustration */}
+            <ChristCampusDomeIllustration className="w-full h-full object-cover scale-105" />
+
+            {/* Pinned Comic Dialogue Sticker */}
+            <div className="absolute top-2 left-2 z-10 bg-white text-[#151515] border-2 border-[#151515] px-2 py-1 rounded-lg shadow-[2.5px_2.5px_0px_#151515] rotate-1 max-w-[130px] sm:max-w-[155px]">
+              <span className="font-display text-[8.5px] sm:text-[9.5px] tracking-wide uppercase font-black block leading-tight text-center">
+                CULTURE. CREATIVITY. COMMUNITY.
+              </span>
+            </div>
+          </div>
+        </section>
+
+        {/* ── 2. MAIN 2x2 COMIC CATEGORY GRID ──────────────────── */}
+        <section className="grid grid-cols-2 gap-2.5 sm:gap-3.5" aria-label="Event Categories">
+          
+          {/* 🎨 ARTS PANEL */}
+          <Link
+            to="/events?category=arts"
+            className="group bg-[#E0245E] border-[3px] border-[#151515] rounded-2xl shadow-[4px_4px_0px_#151515] p-3 sm:p-4 relative overflow-hidden flex flex-col justify-between min-h-[175px] sm:min-h-[200px] hover:translate-y-[-2px] transition-transform block"
+          >
+            <HalftoneAccent color="yellow" className="opacity-15 group-hover:opacity-25 transition-opacity" />
+
+            {/* Header / Titles */}
+            <div className="relative z-10">
+              <DisplayText as="h2" className="text-3xl sm:text-4xl text-white tracking-wide comic-title-pop">
+                ARTS
               </DisplayText>
-              <p className="text-ink/70 text-base mt-1">
-                The flagship battles of this edition. Spots fill up fast!
-              </p>
+              <div className="inline-block mt-1 bg-[#FFD43B] text-[#151515] border-2 border-[#151515] px-2 py-0.5 rounded shadow-[1.5px_1.5px_0px_#151515] -rotate-1">
+                <span className="font-display text-[9px] sm:text-[10px] tracking-wider uppercase font-black block">
+                  PAINT. DESIGN. CREATE!
+                </span>
+              </div>
             </div>
-            <Button size="md" variant="outline" asChild>
-              <Link to="/events">Browse All Panels →</Link>
-            </Button>
-          </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featured.map((event, i) => {
-              const firstSlot = event.schedule_slots?.[0]
-              return (
-                <ComicPanel
-                  key={event.id}
-                  panelNumber={`SCENE ${i + 1}`}
-                  caption={event.category?.name?.toUpperCase() || 'STAGE'}
-                  className="flex flex-col justify-between"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <Badge variant={event.event_format === 'team' ? 'blue' : 'pink'}>
-                        {event.event_format === 'team' ? 'Crew Battle' : 'Solo Entry'}
-                      </Badge>
-                      <Badge variant="open">Registration Open</Badge>
-                    </div>
+            {/* Illustration */}
+            <div className="absolute right-[-2px] bottom-0 pointer-events-none group-hover:scale-105 transition-transform">
+              <ArtsPaletteIllustration className="w-24 h-24 sm:w-28 sm:h-28" />
+            </div>
 
-                    <DisplayText as="h3" className="text-3xl text-ink leading-tight pt-1">
-                      {event.title}
-                    </DisplayText>
+            {/* Circular Arrow Action Button */}
+            <div className="self-end mt-auto relative z-10">
+              <div className="w-8 h-8 rounded-full bg-white border-2 border-[#151515] shadow-[2px_2px_0px_#151515] flex items-center justify-center text-[#151515] font-black text-sm group-hover:bg-[#FFD43B] group-hover:translate-x-0.5 transition-all">
+                →
+              </div>
+            </div>
+          </Link>
 
-                    <p className="text-sm text-ink/70 line-clamp-2">
-                      {event.description}
-                    </p>
+          {/* 📚 LITERATURE PANEL */}
+          <Link
+            to="/events?category=literature"
+            className="group bg-[#00A8FF] border-[3px] border-[#151515] rounded-2xl shadow-[4px_4px_0px_#151515] p-3 sm:p-4 relative overflow-hidden flex flex-col justify-between min-h-[175px] sm:min-h-[200px] hover:translate-y-[-2px] transition-transform block"
+          >
+            <HalftoneAccent color="yellow" className="opacity-15 group-hover:opacity-25 transition-opacity" />
 
-                    <div className="bg-[#FFF8E8] border border-ink/20 p-3 rounded-xl text-xs space-y-1 font-medium">
-                      <p className="text-ink flex items-center gap-1.5">
-                        <span>📅</span>
-                        <span>{firstSlot ? formatSlot(firstSlot.starts_at, firstSlot.ends_at) : 'Slot TBA'}</span>
-                      </p>
-                      <p className="text-ink/70 flex items-center gap-1.5">
-                        <span>📍</span>
-                        <span>{firstSlot?.venue?.name || 'Central Campus Grounds'}</span>
-                      </p>
-                    </div>
-                  </div>
+            {/* Header / Titles */}
+            <div className="relative z-10">
+              <DisplayText as="h2" className="text-3xl sm:text-4xl text-white tracking-wide comic-title-pop">
+                LITERATURE
+              </DisplayText>
+              <div className="inline-block mt-1 bg-[#FFD43B] text-[#151515] border-2 border-[#151515] px-2 py-0.5 rounded shadow-[1.5px_1.5px_0px_#151515] rotate-1">
+                <span className="font-display text-[9px] sm:text-[10px] tracking-wider uppercase font-black block">
+                  READ. WRITE. SPEAK!
+                </span>
+              </div>
+            </div>
 
-                  <div className="mt-5 pt-3 border-t-2 border-ink/15">
-                    <Button size="sm" variant="primary" className="w-full text-base font-display tracking-wider uppercase" asChild>
-                      <Link to={`/events/${event.slug}`}>
-                        Read Rules &amp; Register →
-                      </Link>
-                    </Button>
-                  </div>
-                </ComicPanel>
-              )
-            })}
-          </div>
-        </div>
-      </section>
+            {/* Illustration */}
+            <div className="absolute right-[-2px] bottom-0 pointer-events-none group-hover:scale-105 transition-transform">
+              <LiteratureBooksIllustration className="w-24 h-24 sm:w-28 sm:h-28" />
+            </div>
 
-      {/* ── HOW TO JOIN: 4-PANEL STORY ───────────────────────── */}
-      <section className="py-20 px-4 mx-auto max-w-[1240px]" aria-labelledby="howto-heading">
-        <div className="text-center max-w-xl mx-auto mb-12">
-          <ComicCaptionBox className="mb-2">
-            THE PARTICIPANT'S MANUAL
-          </ComicCaptionBox>
-          <DisplayText as="h2" id="howto-heading" className="text-4xl sm:text-5xl">
-            How To Join The Story
-          </DisplayText>
-          <p className="text-ink/70 text-base mt-2">
-            Four simple panels to go from reader to registered performer.
-          </p>
-        </div>
+            {/* Circular Arrow Action Button */}
+            <div className="self-end mt-auto relative z-10">
+              <div className="w-8 h-8 rounded-full bg-white border-2 border-[#151515] shadow-[2px_2px_0px_#151515] flex items-center justify-center text-[#151515] font-black text-sm group-hover:bg-[#FFD43B] group-hover:translate-x-0.5 transition-all">
+                →
+              </div>
+            </div>
+          </Link>
 
-        <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4" role="list">
-          {[
-            {
-              panel: 'PANEL 1',
-              title: 'IDENTIFY',
-              desc: 'Sign in with your verified CHRIST institutional credentials.',
-              tag: 'SECURE SSO',
-            },
-            {
-              panel: 'PANEL 2',
-              title: 'EXPLORE',
-              desc: 'Browse events across all 5 panels. Department is never a barrier.',
-              tag: 'OPEN TO ALL',
-            },
-            {
-              panel: 'PANEL 3',
-              title: 'REGISTER',
-              desc: 'Register solo or assemble your crew. Check live capacity.',
-              tag: 'INSTANT CONFIRM',
-            },
-            {
-              panel: 'PANEL 4',
-              title: 'TAKE STAGE',
-              desc: 'Access your personal timetable and make campus history.',
-              tag: 'SHOWTIME',
-            },
-          ].map((item, idx) => (
-            <li key={item.panel} className="comic-card p-5 bg-white relative flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between border-b-2 border-ink pb-2 mb-3">
-                  <span className="comic-caption-box text-[11px] py-0 px-2 bg-[#FFD43B]">
-                    {item.panel}
-                  </span>
-                  <span className="text-[10px] font-bold tracking-wider font-mono text-ink/40">
-                    STEP 0{idx + 1}
+          {/* 🎭 STAGE PANEL */}
+          <Link
+            to="/events?category=stage"
+            className="group bg-[#FF9F1C] border-[3px] border-[#151515] rounded-2xl shadow-[4px_4px_0px_#151515] p-3 sm:p-4 relative overflow-hidden flex flex-col justify-between min-h-[175px] sm:min-h-[200px] hover:translate-y-[-2px] transition-transform block"
+          >
+            <HalftoneAccent color="red" className="opacity-15 group-hover:opacity-25 transition-opacity" />
+
+            {/* Header / Titles */}
+            <div className="relative z-10">
+              <DisplayText as="h2" className="text-3xl sm:text-4xl text-white tracking-wide comic-title-pop">
+                STAGE
+              </DisplayText>
+              <div className="inline-block mt-1 bg-[#FFF8E8] text-[#151515] border-2 border-[#151515] px-2 py-0.5 rounded shadow-[1.5px_1.5px_0px_#151515] -rotate-1">
+                <span className="font-display text-[9px] sm:text-[10px] tracking-wider uppercase font-black block">
+                  PERFORM. SHINE!
+                </span>
+              </div>
+            </div>
+
+            {/* Illustration */}
+            <div className="absolute right-[-2px] bottom-0 pointer-events-none group-hover:scale-105 transition-transform">
+              <StageMicrophoneIllustration className="w-24 h-24 sm:w-28 sm:h-28" />
+            </div>
+
+            {/* Circular Arrow Action Button */}
+            <div className="self-end mt-auto relative z-10">
+              <div className="w-8 h-8 rounded-full bg-white border-2 border-[#151515] shadow-[2px_2px_0px_#151515] flex items-center justify-center text-[#151515] font-black text-sm group-hover:bg-[#FFD43B] group-hover:translate-x-0.5 transition-all">
+                →
+              </div>
+            </div>
+          </Link>
+
+          {/* 🎬 THEATRE PANEL */}
+          <Link
+            to="/events?category=theatre"
+            className="group bg-[#7C3AED] border-[3px] border-[#151515] rounded-2xl shadow-[4px_4px_0px_#151515] p-3 sm:p-4 relative overflow-hidden flex flex-col justify-between min-h-[175px] sm:min-h-[200px] hover:translate-y-[-2px] transition-transform block"
+          >
+            <HalftoneAccent color="yellow" className="opacity-15 group-hover:opacity-25 transition-opacity" />
+
+            {/* Header / Titles */}
+            <div className="relative z-10">
+              <DisplayText as="h2" className="text-3xl sm:text-4xl text-white tracking-wide comic-title-pop">
+                THEATRE
+              </DisplayText>
+              <div className="inline-block mt-1 bg-[#FFD43B] text-[#151515] border-2 border-[#151515] px-2 py-0.5 rounded shadow-[1.5px_1.5px_0px_#151515] rotate-1">
+                <span className="font-display text-[8.5px] sm:text-[9.5px] tracking-wider uppercase font-black block">
+                  ACT. EMOTE. BRING STORIES ALIVE!
+                </span>
+              </div>
+            </div>
+
+            {/* Illustration */}
+            <div className="absolute right-[-2px] bottom-0 pointer-events-none group-hover:scale-105 transition-transform">
+              <TheatreMasksIllustration className="w-24 h-24 sm:w-28 sm:h-28" />
+            </div>
+
+            {/* Circular Arrow Action Button */}
+            <div className="self-end mt-auto relative z-10">
+              <div className="w-8 h-8 rounded-full bg-white border-2 border-[#151515] shadow-[2px_2px_0px_#151515] flex items-center justify-center text-[#151515] font-black text-sm group-hover:bg-[#FFD43B] group-hover:translate-x-0.5 transition-all">
+                →
+              </div>
+            </div>
+          </Link>
+
+        </section>
+
+        {/* ── 3. FEATURE BANNER: EVENT SCHEDULE ────────────────── */}
+        <section aria-label="Festival Timetable">
+          <Link
+            to="/schedule"
+            className="group bg-[#DC2626] border-[3px] border-[#151515] rounded-2xl shadow-[4px_4px_0px_#151515] p-3.5 sm:p-4 flex items-center justify-between gap-3 relative overflow-hidden hover:translate-y-[-2px] transition-transform block"
+          >
+            <HalftoneAccent color="yellow" className="opacity-15 group-hover:opacity-25 transition-opacity" />
+
+            <div className="flex items-center gap-3 relative z-10 min-w-0">
+              {/* 3D Calendar Illustration */}
+              <div className="flex-shrink-0 group-hover:rotate-3 transition-transform">
+                <ScheduleCalendarIllustration className="w-14 h-14 sm:w-16 sm:h-16" />
+              </div>
+
+              {/* Text Info */}
+              <div className="min-w-0">
+                <DisplayText as="h3" className="text-2xl sm:text-3xl text-white tracking-wide comic-title-pop leading-tight">
+                  EVENT SCHEDULE
+                </DisplayText>
+                <div className="mt-1 inline-block bg-white text-[#151515] border-2 border-[#151515] px-2.5 py-0.5 rounded-full shadow-[1.5px_1.5px_0px_#151515]">
+                  <span className="font-display text-[9px] sm:text-[10px] tracking-wider uppercase font-black block">
+                    DATES, TIMINGS &amp; VENUES
                   </span>
                 </div>
-                <DisplayText as="h3" className="text-2xl text-ink mb-2">
-                  {item.title}
+              </div>
+            </div>
+
+            {/* Exploding Yellow Starburst: CHECK NOW! */}
+            <div className="relative z-10 flex-shrink-0">
+              <div className="bg-[#FFD43B] text-[#151515] border-[2.5px] border-[#151515] px-3 py-2 rounded-xl shadow-[3px_3px_0px_#151515] rotate-3 group-hover:scale-105 group-hover:rotate-6 transition-transform text-center">
+                <span className="font-display text-xs sm:text-sm tracking-wider uppercase font-black block leading-none">
+                  CHECK<br />NOW!
+                </span>
+              </div>
+            </div>
+          </Link>
+        </section>
+
+        {/* ── 4. FEATURE BANNER: ANNOUNCEMENTS ─────────────────── */}
+        <section aria-label="Official Announcements">
+          <Link
+            to="/announcements"
+            className="group bg-[#059669] border-[3px] border-[#151515] rounded-2xl shadow-[4px_4px_0px_#151515] p-3.5 sm:p-4 flex items-center justify-between gap-3 relative overflow-hidden hover:translate-y-[-2px] transition-transform block"
+          >
+            <HalftoneAccent color="yellow" className="opacity-15 group-hover:opacity-25 transition-opacity" />
+
+            <div className="flex items-center gap-3 relative z-10 min-w-0">
+              {/* Golden Megaphone Illustration */}
+              <div className="flex-shrink-0 group-hover:-rotate-3 transition-transform">
+                <AnnouncementsMegaphoneIllustration className="w-14 h-14 sm:w-16 sm:h-16" />
+              </div>
+
+              {/* Text Info */}
+              <div className="min-w-0">
+                <DisplayText as="h3" className="text-2xl sm:text-3xl text-white tracking-wide comic-title-pop leading-tight">
+                  ANNOUNCEMENTS
                 </DisplayText>
-                <p className="text-sm text-ink/70 leading-relaxed">
-                  {item.desc}
-                </p>
+                <div className="mt-1 inline-block bg-white text-[#151515] border-2 border-[#151515] px-2.5 py-0.5 rounded-full shadow-[1.5px_1.5px_0px_#151515]">
+                  <span className="font-display text-[9px] sm:text-[10px] tracking-wider uppercase font-black block">
+                    STAY UPDATED
+                  </span>
+                </div>
               </div>
+            </div>
 
-              <div className="mt-6 pt-3 border-t border-ink/10 flex items-center justify-between">
-                <span className="text-[11px] font-bold text-[#F04438] font-mono">
-                  {item.tag}
-                </span>
-                <span className="font-display text-lg text-ink font-black">
-                  ★
-                </span>
+            {/* Circular Arrow Action Button */}
+            <div className="relative z-10 flex-shrink-0">
+              <div className="w-8 h-8 rounded-full bg-white border-2 border-[#151515] shadow-[2px_2px_0px_#151515] flex items-center justify-center text-[#151515] font-black text-sm group-hover:bg-[#FFD43B] group-hover:translate-x-0.5 transition-all">
+                →
               </div>
-            </li>
-          ))}
-        </ol>
+            </div>
+          </Link>
+        </section>
 
-        <div className="mt-12 text-center">
-          <Button size="lg" variant="primary" asChild className="text-lg px-8 shadow-[4px_4px_0px_#151515]">
-            <Link to="/login">
-              Sign In To Pick Your Panel →
-            </Link>
-          </Button>
-        </div>
-      </section>
+      </div>
     </div>
   )
 }

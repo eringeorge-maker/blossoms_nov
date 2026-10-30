@@ -284,7 +284,7 @@ export const EVENTS: Event[] = [
   // ═════════════════════════════════════════════════════════════
   {
     id: 'e-greeting-card',
-    title: 'Greeting Card Competition',
+    title: 'Greeting Card',
     slug: 'greeting-card',
     category_id: 'cat-arts',
     category: CATEGORIES[0],
@@ -661,7 +661,7 @@ export const EVENTS: Event[] = [
   },
   {
     id: 'e-photography',
-    title: 'Photography (Online)',
+    title: 'Photography',
     slug: 'photography',
     category_id: 'cat-arts',
     category: CATEGORIES[0],
@@ -702,11 +702,11 @@ export const EVENTS: Event[] = [
   },
 
   // ═════════════════════════════════════════════════════════════
-  // 2. LITERATURE (10 EVENTS)
+  // 2. LITERATURE (8 EVENTS)
   // ═════════════════════════════════════════════════════════════
   {
     id: 'e-jam',
-    title: 'Just A Minute (JAM)',
+    title: 'Jam',
     slug: 'jam',
     category_id: 'cat-literature',
     category: CATEGORIES[1],
@@ -788,7 +788,7 @@ export const EVENTS: Event[] = [
   },
   {
     id: 'e-air-crash',
-    title: 'Air Crash / Shipwreck',
+    title: 'Air Crash / Ship-Wreck',
     slug: 'air-crash-shipwreck',
     category_id: 'cat-literature',
     category: CATEGORIES[1],
@@ -995,17 +995,17 @@ export const EVENTS: Event[] = [
     ],
   },
   {
-    id: 'e-poem-writing',
-    title: 'Poem Writing',
-    slug: 'poem-writing',
+    id: 'e-creative-writing',
+    title: 'Creative Writing',
+    slug: 'creative-writing',
     category_id: 'cat-literature',
     category: CATEGORIES[1],
-    description: 'Compose evocative verses, rhythmic meters, and poetic imagery inspired by an impromptu visual prompt in the academic classroom.',
+    description: 'The premier literary tri-track: articulate evocative verses, narrative fiction, and persuasive essays in the academic classrooms.',
     rules_markdown: `1. Individual participation.
-2. Time limit: 2 hours.
-3. Languages: English, Hindi, or Kannada.
-4. Theme revealed at the start of the session.
-5. Maximum length: 40 lines. Plagiarism results in immediate disqualification.`,
+2. Tracks: Poetry (08 Dec), Short Story (11 Dec morning), Essay Writing (11 Dec afternoon).
+3. Prompts and themes revealed on-the-spot at the start of each session.
+4. Languages: English, Hindi, or Kannada.
+5. Plagiarism leads to immediate disqualification.`,
     poster_url: null,
     thumbnail_url: null,
     event_format: 'individual',
@@ -1013,7 +1013,7 @@ export const EVENTS: Event[] = [
     max_team_size: null,
     registration_opens_at: '2025-11-01T00:00:00+05:30',
     registration_closes_at: '2025-12-07T23:59:59+05:30',
-    capacity: 50,
+    capacity: 60,
     waitlist_enabled: true,
     cancellation_allowed: true,
     conflict_policy: 'warn',
@@ -1025,7 +1025,7 @@ export const EVENTS: Event[] = [
     schedule_slots: [
       {
         id: 'slot-poem-writing',
-        event_id: 'e-poem-writing',
+        event_id: 'e-creative-writing',
         venue_id: 'v-classroom',
         slot_title: 'Classroom Poetry Session',
         starts_at: '2025-12-08T14:00:00+05:30',
@@ -1034,39 +1034,9 @@ export const EVENTS: Event[] = [
         status: 'scheduled',
         venue: VENUES.classroom,
       },
-    ],
-  },
-  {
-    id: 'e-short-story-writing',
-    title: 'Short Story Writing',
-    slug: 'short-story-writing',
-    category_id: 'cat-literature',
-    category: CATEGORIES[1],
-    description: 'Weave an immersive narrative tale, complex characters, and dramatic twists around an on-the-spot opening sentence or plot hook.',
-    rules_markdown: `1. Individual participation.
-2. Time limit: 2 hours.
-3. Word limit: 800 - 1500 words.
-4. Prompts revealed at the start of the session.`,
-    poster_url: null,
-    thumbnail_url: null,
-    event_format: 'individual',
-    min_team_size: null,
-    max_team_size: null,
-    registration_opens_at: '2025-11-01T00:00:00+05:30',
-    registration_closes_at: '2025-12-10T23:59:59+05:30',
-    capacity: 50,
-    waitlist_enabled: true,
-    cancellation_allowed: true,
-    conflict_policy: 'warn',
-    status: 'published',
-    organiser_contact: 'lit.doc@christuniversity.in',
-    created_by: null,
-    created_at: '2025-10-20T10:00:00+05:30',
-    updated_at: '2025-10-20T10:00:00+05:30',
-    schedule_slots: [
       {
         id: 'slot-short-story',
-        event_id: 'e-short-story-writing',
+        event_id: 'e-creative-writing',
         venue_id: 'v-classroom',
         slot_title: 'Classroom Short Story Session',
         starts_at: '2025-12-11T11:00:00+05:30',
@@ -1075,39 +1045,9 @@ export const EVENTS: Event[] = [
         status: 'scheduled',
         venue: VENUES.classroom,
       },
-    ],
-  },
-  {
-    id: 'e-essay-writing',
-    title: 'Essay Writing',
-    slug: 'essay-writing',
-    category_id: 'cat-literature',
-    category: CATEGORIES[1],
-    description: 'Articulate reasoned arguments, critical depth, and lucid prose examining contemporary ethical, philosophical, and societal topics.',
-    rules_markdown: `1. Individual entry.
-2. Time limit: 2 hours.
-3. Word limit: 1000 - 1800 words.
-4. Evaluation on analytical depth, structure, vocabulary, and originality.`,
-    poster_url: null,
-    thumbnail_url: null,
-    event_format: 'individual',
-    min_team_size: null,
-    max_team_size: null,
-    registration_opens_at: '2025-11-01T00:00:00+05:30',
-    registration_closes_at: '2025-12-10T23:59:59+05:30',
-    capacity: 50,
-    waitlist_enabled: true,
-    cancellation_allowed: true,
-    conflict_policy: 'warn',
-    status: 'published',
-    organiser_contact: 'lit.doc@christuniversity.in',
-    created_by: null,
-    created_at: '2025-10-20T10:00:00+05:30',
-    updated_at: '2025-10-20T10:00:00+05:30',
-    schedule_slots: [
       {
         id: 'slot-essay-writing',
-        event_id: 'e-essay-writing',
+        event_id: 'e-creative-writing',
         venue_id: 'v-classroom',
         slot_title: 'Classroom Essay Session',
         starts_at: '2025-12-11T14:00:00+05:30',
@@ -1124,7 +1064,7 @@ export const EVENTS: Event[] = [
   // ═════════════════════════════════════════════════════════════
   {
     id: 'e-dance-duet',
-    title: 'Dance Duet',
+    title: 'Duet Dance',
     slug: 'duet-dance',
     category_id: 'cat-stage',
     category: CATEGORIES[2],
@@ -1206,7 +1146,7 @@ export const EVENTS: Event[] = [
   },
   {
     id: 'e-western-singing-solo',
-    title: 'Western Singing Solo',
+    title: 'Western Singing (Solo)',
     slug: 'western-singing-solo',
     category_id: 'cat-stage',
     category: CATEGORIES[2],
@@ -1247,7 +1187,7 @@ export const EVENTS: Event[] = [
   },
   {
     id: 'e-indian-singing-solo',
-    title: 'Indian Folk & Film Singing (solo)',
+    title: 'Indian Folk and Film Singing (Solo)',
     slug: 'indian-folk-film-singing-solo',
     category_id: 'cat-stage',
     category: CATEGORIES[2],
@@ -1288,7 +1228,7 @@ export const EVENTS: Event[] = [
   },
   {
     id: 'e-non-theme-dance',
-    title: 'Indian Non theme group dance',
+    title: 'Non Theme',
     slug: 'non-theme',
     category_id: 'cat-stage',
     category: CATEGORIES[2],
@@ -1329,7 +1269,7 @@ export const EVENTS: Event[] = [
   },
   {
     id: 'e-bob-w',
-    title: 'Battle of Bands (Western)',
+    title: 'BOB (W)',
     slug: 'bob-w',
     category_id: 'cat-stage',
     category: CATEGORIES[2],
@@ -1370,20 +1310,20 @@ export const EVENTS: Event[] = [
   },
   {
     id: 'e-acoustic-music',
-    title: 'Acoustic Music Group',
-    slug: 'acoustic-music-group',
+    title: 'Western Acapella',
+    slug: 'western-acapella',
     category_id: 'cat-stage',
     category: CATEGORIES[2],
-    description: 'Unplugged musical ensemble performance emphasizing acoustic instrumentation, vocal harmonies, unplugged guitars, cajon, and raw acoustic intimacy.',
-    rules_markdown: `1. Teams of 3 to 7 musicians.
-2. Performance duration: 8 to 10 minutes.
-3. Acoustic instruments only (acoustic guitar, violin, cajon, flute, keyboard on piano setting).
-4. No electric distortion pedals or synthesizers allowed.`,
+    description: 'Pure human vocal harmony and beatboxing. Complex multipart harmonies, beat cadence, and expressive group vocals without musical instruments.',
+    rules_markdown: `1. Teams of 4 to 12 vocalists.
+2. Performance duration: 5 to 7 minutes.
+3. No musical instruments or backing tracks allowed.
+4. Judged on arrangement, pitch accuracy, dynamic balance, and blend.`,
     poster_url: null,
     thumbnail_url: null,
     event_format: 'team',
-    min_team_size: 3,
-    max_team_size: 7,
+    min_team_size: 4,
+    max_team_size: 12,
     registration_opens_at: '2025-11-01T00:00:00+05:30',
     registration_closes_at: '2025-12-10T23:59:59+05:30',
     capacity: 25,
@@ -1411,7 +1351,7 @@ export const EVENTS: Event[] = [
   },
   {
     id: 'e-bob-i',
-    title: 'Battle of Bands (Indian)',
+    title: 'BOB (I)',
     slug: 'bob-i',
     category_id: 'cat-stage',
     category: CATEGORIES[2],

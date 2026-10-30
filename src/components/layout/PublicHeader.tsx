@@ -37,14 +37,24 @@ export function PublicHeader() {
     setAdmin(false)
   }
 
+  const isHome = location.pathname === '/'
+
   return (
-    <header className="sticky top-0 z-50 bg-[#FFF8E8] border-b-[2.5px] border-ink shadow-[0_4px_0_0_rgba(21,21,21,0.06)]">
+    <header className={cn(
+      "sticky top-0 z-50 transition-colors",
+      isHome 
+        ? "bg-[#F5B82E] md:bg-[#FFF8E8] md:border-b-[2.5px] md:border-ink md:shadow-[0_4px_0_0_rgba(21,21,21,0.06)]"
+        : "bg-[#FFF8E8] border-b-[2.5px] border-ink shadow-[0_4px_0_0_rgba(21,21,21,0.06)]"
+    )}>
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
 
-      {/* Top Comic Masthead Ticker */}
-      <div className="bg-[#FFD43B] border-b-2 border-ink py-1 px-4 text-center overflow-hidden">
+      {/* Top Comic Masthead Ticker (desktop always, mobile non-home only) */}
+      <div className={cn(
+        "bg-[#FFD43B] border-b-2 border-ink py-1 px-4 text-center overflow-hidden",
+        isHome ? "hidden md:block" : "block"
+      )}>
         <p className="font-display text-[11px] md:text-xs tracking-widest uppercase text-ink flex items-center justify-center gap-2">
           <span className="text-[#F04438]">★</span>
           <span>CHRIST (Deemed to be University) · Central Campus · Dept. of Cultures Presents</span>
@@ -55,21 +65,24 @@ export function PublicHeader() {
         </p>
       </div>
 
-      <div className="mx-auto max-w-[1240px] px-4 flex items-center justify-between h-16">
+      <div className={cn(
+        "mx-auto max-w-[1240px] px-3 sm:px-4 flex items-center justify-between",
+        isHome ? "h-12 md:h-16" : "h-16"
+      )}>
         {/* Comic Wordmark */}
         <Link
           to="/"
-          className="group flex items-center gap-2.5 focus:outline-none"
+          className="group flex items-center gap-2 sm:gap-2.5 focus:outline-none"
           aria-label="Blossoms — go to homepage"
         >
-          <div className="w-10 h-10 rounded-xl bg-[#F04438] border-2 border-ink flex items-center justify-center text-white font-display text-2xl shadow-[2px_2px_0px_#151515] group-hover:rotate-6 transition-transform">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-[#DC2626] border-2 border-ink flex items-center justify-center text-white font-display text-xl md:text-2xl shadow-[2px_2px_0px_#151515] group-hover:rotate-6 transition-transform">
             B
           </div>
           <div className="flex flex-col">
-            <span className="font-display text-3xl text-[#151515] tracking-wide uppercase leading-none group-hover:text-[#F04438] transition-colors">
+            <span className="font-display text-2xl md:text-3xl text-[#151515] tracking-wide uppercase leading-none group-hover:text-[#DC2626] transition-colors">
               Blossoms
             </span>
-            <span className="font-display text-[10px] tracking-widest text-[#F04438] uppercase leading-tight">
+            <span className="font-display text-[9px] md:text-[10px] tracking-widest text-[#DC2626] uppercase leading-tight font-black">
               The Campus Universe
             </span>
           </div>
