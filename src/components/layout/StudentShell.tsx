@@ -1,18 +1,41 @@
-import { Link, Outlet, useLocation } from 'react-router-dom'
-import { Home, Compass, CalendarDays, BookMarked, User } from 'lucide-react'
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Home, Compass, CalendarDays, BookMarked, User, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { getActiveStudent, logoutStudent, type StudentProfile } from '@/lib/auth/authStore'
 
 const STUDENT_NAV = [
-  { label: 'Home',      href: '/app',            icon: Home },
-  { label: 'Explore',   href: '/app/events',     icon: Compass },
-  { label: 'My Events', href: '/app/my-events',  icon: BookMarked },
-  { label: 'Schedule',  href: '/app/schedule',   icon: CalendarDays },
-  { label: 'Profile',   href: '/app/profile',    icon: User },
+  { label: 'Portal Home', href: '/app',            icon: Home },
+  { label: 'Register',    href: '/app/events',     icon: Compass },
+  { label: 'My Entries',  href: '/app/my-events',  icon: BookMarked },
+  { label: 'My Schedule', href: '/app/schedule',   icon: CalendarDays },
+  { label: 'Student Bio', href: '/app/profile',    icon: User },
 ]
 
-/** Shell for authenticated student pages with authentic comic bottom nav */
+/** Shell for student registration portal with authentic comic bottom nav */
 export function StudentShell() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const [student, setStudent] = useState<StudentProfile | null>(getActiveStudent())
+
+  useEffect(() => {
+    function syncAuth() {
+      const active = getActiveStudent()
+      setStudent(active)
+      if (!active) {
+        // Redirect to simple roll-number login
+        navigate('/login?role=student', { replace: true })
+      }
+    }
+    syncAuth()
+    window.addEventListener('blossoms-auth-changed', syncAuth)
+    return () => window.removeEventListener('blossoms-auth-changed', syncAuth)
+  }, [navigate])
+
+  function handleLogout() {
+    logoutStudent()
+    navigate('/login?role=student', { replace: true })
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FFF8E8]">
@@ -26,22 +49,40 @@ export function StudentShell() {
             <div className="w-8 h-8 rounded-lg bg-[#F04438] border-2 border-ink flex items-center justify-center text-white font-display text-lg shadow-[1.5px_1.5px_0px_#151515]">
               B
             </div>
-            <span className="font-display text-2xl text-ink uppercase tracking-wide group-hover:text-[#F04438] transition-colors">
-              Blossoms Student
-            </span>
+            <div className="flex flex-col">
+              <span className="font-display text-xl text-ink uppercase tracking-wide leading-none group-hover:text-[#F04438] transition-colors">
+                Registration Portal
+              </span>
+              <span className="text-[10px] font-mono text-ink/60 font-bold leading-tight">
+                CHRIST CENTRAL CAMPUS
+              </span>
+            </div>
           </Link>
 
-          <div className="flex items-center gap-3">
-            <span className="comic-caption-box text-[10px] py-0 px-2 bg-[#FFD43B] hidden sm:inline-block">
-              ROSTER VERIFIED ★
-            </span>
+          <div className="flex items-center gap-2.5">
+            {student && (
+              <div className="comic-caption-box text-[11px] py-1 px-3 bg-[#FFD43B] text-ink font-mono font-bold flex items-center gap-1.5 shadow-[2px_2px_0px_#151515]">
+                <span>ROLL #{student.rollNumber}</span>
+              </div>
+            )}
+
             <Link
               to="/app/profile"
-              className="flex items-center justify-center w-9 h-9 rounded-full border-2 border-ink bg-white shadow-[2px_2px_0px_#151515] hover:bg-[#FFD43B] transition-colors"
+              className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-ink bg-white shadow-[1.5px_1.5px_0px_#151515] hover:bg-[#FFD43B] transition-colors"
               aria-label="My profile"
+              title="View Student Profile"
             >
               <User className="w-4 h-4 text-ink" />
             </Link>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              title="Logout roll number"
+              className="flex items-center justify-center w-8 h-8 rounded-xl border-2 border-ink bg-white hover:bg-red-50 text-ink hover:text-[#F04438] shadow-[1.5px_1.5px_0px_#151515] transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </header>

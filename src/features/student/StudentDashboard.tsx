@@ -7,14 +7,15 @@ import { Button } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { getStudentRegistrations } from '@/lib/api/registration'
 import { formatSlot } from '@/lib/utils'
-
-const MOCK_STUDENT = {
-  full_name: 'Priya Sharma',
-  register_number: '2212001',
-  department: 'Computer Science',
-}
+import { getActiveStudent } from '@/lib/auth/authStore'
 
 export default function StudentDashboard() {
+  const student = getActiveStudent() || {
+    rollNumber: '241201',
+    name: 'Student 241201',
+    className: '3 BBA A',
+    department: 'Management',
+  }
   const { data: registrations = [], isLoading } = useQuery({
     queryKey: ['my-registrations'],
     queryFn: getStudentRegistrations,
@@ -40,14 +41,14 @@ export default function StudentDashboard() {
       <div className="bg-white p-5 rounded-2xl border-2 border-ink shadow-[3px_3px_0px_#151515] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <DisplayText as="h1" className="text-4xl text-ink">
-            Hey, {MOCK_STUDENT.full_name.split(' ')[0]}! 👋
+            Hey, {student.name.split(' ')[0]}! 👋
           </DisplayText>
           <p className="text-ink/70 mt-1 font-medium text-sm">
-            {MOCK_STUDENT.department} · Reg #{MOCK_STUDENT.register_number}
+            {student.className ? `${student.className} · ` : ''}Roll #{student.rollNumber}
           </p>
         </div>
         <div className="comic-caption-box bg-[#FFD43B] text-ink text-xs">
-          ★ VERIFIED REGISTRANT
+          ★ VERIFIED ROLL NUMBER
         </div>
       </div>
 

@@ -1,8 +1,9 @@
 import { Link, useLocation } from 'react-router-dom'
-import { useState } from 'react'
-import { Menu, X, Sparkles } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Menu, X, Sparkles, LogOut, User, ShieldAlert } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/Button'
+import { getActiveStudent, logoutStudent, isDeveloperAdmin, logoutDeveloperAdmin, type StudentProfile } from '@/lib/auth/authStore'
 
 const NAV_LINKS = [
   { label: 'Events',         href: '/events' },
@@ -15,7 +16,26 @@ const NAV_LINKS = [
 
 export function PublicHeader() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [student, setStudent] = useState<StudentProfile | null>(getActiveStudent())
+  const [admin, setAdmin] = useState<boolean>(isDeveloperAdmin())
   const location = useLocation()
+
+  useEffect(() => {
+    function syncAuth() {
+      setStudent(getActiveStudent())
+      setAdmin(isDeveloperAdmin())
+    }
+    syncAuth()
+    window.addEventListener('blossoms-auth-changed', syncAuth)
+    return () => window.removeEventListener('blossoms-auth-changed', syncAuth)
+  }, [])
+
+  function handleLogout() {
+    logoutStudent()
+    logoutDeveloperAdmin()
+    setStudent(null)
+    setAdmin(false)
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-[#FFF8E8] border-b-[2.5px] border-ink shadow-[0_4px_0_0_rgba(21,21,21,0.06)]">
@@ -80,12 +100,52 @@ export function PublicHeader() {
               </Link>
             )
           })}
-          <Button size="sm" variant="primary" asChild className="gap-1.5 shadow-[3px_3px_0px_#151515]">
-            <Link to="/login">
-              <Sparkles className="w-3.5 h-3.5 text-white" />
-              Sign in
-            </Link>
-          </Button>
+
+          {/* Auth State Actions */}
+          {student ? (
+            <div className="flex items-center gap-2.5">
+              <Link
+                to="/app"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-ink bg-[#FFD43B] text-ink font-display text-sm tracking-wider uppercase font-bold shadow-[2px_2px_0px_#151515] hover:-translate-y-0.5 transition-transform"
+              >
+                <User className="w-4 h-4 text-[#F04438]" />
+                <span>Roll #{student.rollNumber}</span>
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                title="Log out"
+                className="p-2 rounded-xl border-2 border-ink bg-white text-ink hover:bg-red-50 hover:text-[#F04438] transition-colors shadow-[2px_2px_0px_#151515]"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          ) : admin ? (
+            <div className="flex items-center gap-2.5">
+              <Link
+                to="/admin"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-ink bg-[#151515] text-[#FFD43B] font-display text-sm tracking-wider uppercase font-bold shadow-[2px_2px_0px_#151515] hover:-translate-y-0.5 transition-transform"
+              >
+                <ShieldAlert className="w-4 h-4 text-[#FFD43B]" />
+                <span>Dev Console</span>
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                title="Log out"
+                className="p-2 rounded-xl border-2 border-ink bg-white text-ink hover:bg-red-50 hover:text-[#F04438] transition-colors shadow-[2px_2px_0px_#151515]"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <Button size="sm" variant="primary" asChild className="gap-1.5 shadow-[3px_3px_0px_#151515]">
+              <Link to="/login">
+                <Sparkles className="w-3.5 h-3.5 text-white" />
+                Login
+              </Link>
+            </Button>
+          )}
         </nav>
 
         {/* Mobile menu toggle */}
@@ -131,12 +191,44 @@ export function PublicHeader() {
                 </Link>
               )
             })}
+
             <div className="pt-4 border-t-2 border-ink mt-4">
-              <Button size="lg" className="w-full" asChild>
-                <Link to="/login" onClick={() => setMenuOpen(false)}>
-                  Sign in to Portal
-                </Link>
-              </Button>
+              {student ? (
+                <div className="space-y-2">
+                  <Button size="lg" className="w-full bg-[#FFD43B] text-ink hover:bg-[#FFD43B]/90 border-2 border-ink" asChild>
+                    <Link to="/app" onClick={() => setMenuOpen(false)}>
+                      Open Registration Portal (Roll #{student.rollNumber})
+                    </Link>
+                  </Button>
+                  <Button size="sm" variant="outline" className="w-full" onClick={() => { handleLogout(); setMenuOpen(false) }}>
+                    Logout Roll #{student.rollNumber}
+                  </Button>
+                </div>
+              ) : admin ? (
+                <div className="space-y-2">
+                  <Button size="lg" className="w-full bg-[#151515] text-white" asChild>
+                    <Link to="/admin" onClick={() => setMenuOpen(false)}>
+                      Developer Admin Console
+                    </Link>
+                  </Button>
+                  <Button size="sm" variant="outline" className="w-full" onClick={() => { handleLogout(); setMenuOpen(false) }}>
+                    Logout Admin
+                  </Button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  <Button size="lg" variant="primary" asChild>
+                    <Link to="/login?role=student" onClick={() => setMenuOpen(false)}>
+                      Student Login
+                    </Link>
+                  </Button>
+                  <Button size="lg" variant="outline" className="bg-[#151515] text-[#FFD43B]" asChild>
+                    <Link to="/login?role=admin" onClick={() => setMenuOpen(false)}>
+                      Admin Login
+                    </Link>
+                  </Button>
+                </div>
+              )}
             </div>
           </nav>
         </div>
