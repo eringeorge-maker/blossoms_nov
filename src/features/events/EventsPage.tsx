@@ -289,7 +289,7 @@ export default function EventsPage() {
 
                     {/* 3-Column Pill Buttons Grid (Exact match to design screenshot) */}
                     <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3.5">
-                      {catEvents.map((ev) => {
+                      {catEvents.map((ev, index) => {
                         const isSelected = selectedEventId === ev.id
                         // In Stage screenshot: "Indian Dance Classical (Group)" highlighted
                         // In Theatre screenshot: "Short Film Making" highlighted
@@ -299,13 +299,16 @@ export default function EventsPage() {
                             (catKey === 'theatre' && ev.title.includes('Short Film')))
 
                         const isHighlighted = isSelected || isDefaultFeatured
+                        const isOdd = index % 2 === 1
 
                         return (
                           <button
                             key={ev.id}
                             onClick={() => setSelectedEventId(ev.id)}
+                            style={{ animationDelay: `${index * 35}ms` }}
                             className={cn(
                               'w-full py-3 sm:py-3.5 px-4 rounded-xl text-center font-medium text-xs sm:text-sm tracking-wide transition-all shadow-md active:scale-[0.98] flex items-center justify-center min-h-[48px] sm:min-h-[52px]',
+                              isOdd ? 'animate-panel-settle-odd' : 'animate-panel-settle-even',
                               isHighlighted
                                 ? 'bg-[#2a241b] text-[#F5B82E] border-2 border-[#F5B82E] shadow-[0_0_15px_rgba(245,184,46,0.3)] font-bold'
                                 : 'bg-[#1e1f26]/90 hover:bg-[#282a34] text-white/90 border border-white/10 hover:border-white/25'

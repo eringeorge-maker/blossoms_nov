@@ -6,7 +6,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#F5B82E] py-3 sm:py-6 px-3 sm:px-6">
       {/* ── Main Container ──────────────────────────────────── */}
-      <div className="max-w-[660px] mx-auto space-y-4">
+      <div className="max-w-[880px] mx-auto space-y-4">
         
         {/* ── 1. VINTAGE COMIC ISSUE TOP MASTHEAD ─────────────── */}
         <header className="bg-white border-[3px] border-[#151515] rounded-2xl shadow-[4px_4px_0px_#151515] p-3 sm:p-4 flex items-center justify-between gap-3 relative overflow-hidden">
