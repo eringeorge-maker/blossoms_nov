@@ -156,7 +156,7 @@ export default function EventsPage() {
     <>
       {/* ── Desktop Events Showcase Page (Faithful to Reference Image) ── */}
       <div className="hidden md:block w-full">
-        <DesktopEventsShowcase />
+        <DesktopEventsShowcase hideHeader={true} />
       </div>
 
       {/* ── Mobile Events Catalogue View ── */}

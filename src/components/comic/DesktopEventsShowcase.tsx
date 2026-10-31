@@ -1,6 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom'
 import { useState, useCallback } from 'react'
-import { User } from 'lucide-react'
+import { PublicHeader } from '@/components/layout/PublicHeader'
 
 interface PanelMeta {
   id: string
@@ -40,22 +39,12 @@ const PANELS: PanelMeta[] = [
   },
 ]
 
-const NAV_LINKS = [
-  { label: 'Home',         href: '/' },
-  { label: 'Events',       href: '/events', isActive: true },
-  { label: 'Schedule',     href: '/schedule' },
-  { label: 'Results',      href: '/winners' },
-  { label: 'Gallery',      href: '/gallery' },
-  { label: 'Notice Board', href: '/announcements' },
-  { label: 'About',        href: '/about' },
-]
-
 interface DesktopEventsShowcaseProps {
   onSelectCategory?: (category: string) => void
+  hideHeader?: boolean
 }
 
-export default function DesktopEventsShowcase({ onSelectCategory }: DesktopEventsShowcaseProps) {
-  const navigate = useNavigate()
+export default function DesktopEventsShowcase({ onSelectCategory, hideHeader = false }: DesktopEventsShowcaseProps) {
   const [hoveredPanel, setHoveredPanel] = useState<string | null>(null)
 
   const handlePanelClick = useCallback((panelId: string) => {
@@ -69,74 +58,8 @@ export default function DesktopEventsShowcase({ onSelectCategory }: DesktopEvent
       className="min-h-screen w-full bg-[#F7F3E9] flex flex-col select-none overflow-x-hidden"
       style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
     >
-      {/* ── Top Navigation Bar (Strict Specification) ──────────────── */}
-      <header className="w-full h-[95px] bg-[#080808] px-[100px] flex items-center justify-between z-30 shrink-0">
-        {/* Left Section — Brand Identity */}
-        <div className="flex items-center shrink-0">
-          <Link to="/" className="flex items-center focus:outline-none" aria-label="Department of Commerce">
-            <img
-              src="/assets/doc_logo.png"
-              alt="Department of Commerce"
-              className="w-[142px] h-[52px] object-contain"
-              loading="eager"
-            />
-          </Link>
-
-          <div
-            className="w-[1px] h-[50px] bg-white/20 mx-[24px]"
-            role="separator"
-            aria-orientation="vertical"
-          />
-
-          <Link to="/" className="flex items-center focus:outline-none" aria-label="Blossoms 2026 Home">
-            <img
-              src="/assets/blossoms_2026_logo.png"
-              alt="Blossoms 2026"
-              className="w-[136px] h-[60px] object-contain"
-              loading="eager"
-            />
-          </Link>
-        </div>
-
-        {/* Center Section — Navigation Links */}
-        <nav aria-label="Primary Navigation" className="hidden lg:flex items-center gap-[42px]">
-          {NAV_LINKS.map((link) => {
-            const isEventsLink = link.isActive === true
-            return (
-              <Link
-                key={link.label}
-                to={link.href}
-                className={`relative text-[16px] font-[500] tracking-normal transition-colors py-1 focus:outline-none ${
-                  isEventsLink
-                    ? 'text-[#FFD400]'
-                    : 'text-[#F5F5F5] visited:text-[#F5F5F5] hover:text-white'
-                }`}
-              >
-                {link.label}
-                {isEventsLink && (
-                  <span
-                    className="absolute left-1/2 -translate-x-1/2 bottom-[-12px] w-[54px] h-[2px] bg-[#FFD400] rounded-full pointer-events-none"
-                    aria-hidden="true"
-                  />
-                )}
-              </Link>
-            )
-          })}
-        </nav>
-
-        {/* Right Section — Login Button */}
-        <div className="flex items-center shrink-0">
-          <button
-            type="button"
-            onClick={() => navigate('/login')}
-            className="w-[120px] h-[48px] rounded-[12px] bg-[#FFD400] hover:bg-[#fed61a] active:scale-95 text-[#111111] font-semibold text-[16px] flex items-center justify-center gap-2 cursor-pointer transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-[#FFD400] focus:ring-offset-2 focus:ring-offset-[#080808]"
-            aria-label="User Login"
-          >
-            <span>Login</span>
-            <User className="w-[18px] h-[18px] stroke-[2.4]" aria-hidden="true" />
-          </button>
-        </div>
-      </header>
+      {/* ── Single Unified Common Navigation Bar ───────────────────── */}
+      {!hideHeader && <PublicHeader />}
 
       {/* ── Main Canvas (Centered 4-Panel Comic Composition: 1120 x 704) ─── */}
       <main className="flex-1 w-full flex flex-col items-center justify-center p-4">

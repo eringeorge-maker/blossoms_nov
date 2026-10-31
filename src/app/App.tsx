@@ -78,6 +78,8 @@ export default function App() {
               <Route path="about" element={<AboutPage />} />
               <Route path="gallery" element={<GalleryPage />} />
               <Route path="winners" element={<WinnersPage />} />
+              <Route path="results" element={<Navigate to="/winners" replace />} />
+              <Route path="notice-board" element={<Navigate to="/announcements" replace />} />
               <Route path="login" element={<LoginPage />} />
               <Route path="design-system" element={<DesignSystemPage />} />
             </Route>

@@ -1,17 +1,16 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { Menu, X, Sparkles, LogOut, User, ShieldAlert } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/Button'
+import { Menu, X, User, LogOut, ShieldAlert } from 'lucide-react'
 import { getActiveStudent, logoutStudent, isDeveloperAdmin, logoutDeveloperAdmin, type StudentProfile } from '@/lib/auth/authStore'
 
 const NAV_LINKS = [
-  { label: 'Events',         href: '/events' },
-  { label: 'Schedule',       href: '/schedule' },
-  { label: 'Announcements',  href: '/announcements' },
-  { label: 'About',          href: '/about' },
-  { label: 'Gallery',        href: '/gallery' },
-  { label: 'Winners',        href: '/winners' },
+  { label: 'Home',         href: '/' },
+  { label: 'Events',       href: '/events' },
+  { label: 'Schedule',     href: '/schedule' },
+  { label: 'Results',      href: '/winners' },
+  { label: 'Gallery',      href: '/gallery' },
+  { label: 'Notice Board', href: '/announcements' },
+  { label: 'About',        href: '/about' },
 ]
 
 export function PublicHeader() {
@@ -19,6 +18,7 @@ export function PublicHeader() {
   const [student, setStudent] = useState<StudentProfile | null>(getActiveStudent())
   const [admin, setAdmin] = useState<boolean>(isDeveloperAdmin())
   const location = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     function syncAuth() {
@@ -37,215 +37,240 @@ export function PublicHeader() {
     setAdmin(false)
   }
 
-  const isHome = location.pathname === '/'
+  function isLinkActive(href: string): boolean {
+    if (href === '/') {
+      return location.pathname === '/'
+    }
+    if (href === '/events') {
+      return location.pathname.startsWith('/events')
+    }
+    if (href === '/winners') {
+      return location.pathname.startsWith('/winners') || location.pathname.startsWith('/results')
+    }
+    if (href === '/announcements') {
+      return location.pathname.startsWith('/announcements') || location.pathname.startsWith('/notice-board')
+    }
+    return location.pathname.startsWith(href)
+  }
 
   return (
-    <header className={cn(
-      "sticky top-0 z-50 transition-colors",
-      isHome 
-        ? "bg-[#F5B82E] md:bg-[#FFF8E8] md:border-b-[2.5px] md:border-ink md:shadow-[0_4px_0_0_rgba(21,21,21,0.06)]"
-        : "bg-[#FFF8E8] border-b-[2.5px] border-ink shadow-[0_4px_0_0_rgba(21,21,21,0.06)]"
-    )}>
-      <a href="#main-content" className="skip-link">
+    <header
+      className="sticky top-0 z-50 w-full h-[72px] md:h-[95px] bg-[#080808] px-4 sm:px-8 md:px-[6.1vw] lg:px-[100px] flex items-center justify-between select-none shadow-md transition-colors"
+      style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
+    >
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#FFD400] focus:text-[#111111] focus:rounded-lg focus:font-semibold">
         Skip to main content
       </a>
 
-      {/* Top Comic Masthead Ticker (desktop always, mobile non-home only) */}
-      <div className={cn(
-        "bg-[#FFD43B] border-b-2 border-ink py-1 px-4 text-center overflow-hidden",
-        isHome ? "hidden md:block" : "block"
-      )}>
-        <p className="font-display text-[11px] md:text-xs tracking-widest uppercase text-ink flex items-center justify-center gap-2">
-          <span className="text-[#F04438]">★</span>
-          <span>CHRIST (Deemed to be University) · Central Campus · Dept. of Cultures Presents</span>
-          <span className="hidden sm:inline bg-[#F04438] text-white px-2 py-0.2 rounded-sm text-[10px] font-bold">
-            BLOSSOMS '25
-          </span>
-          <span className="text-[#F04438]">★</span>
-        </p>
-      </div>
-
-      <div className={cn(
-        "mx-auto max-w-[1240px] px-3 sm:px-4 flex items-center justify-between",
-        isHome ? "h-12 md:h-16" : "h-16"
-      )}>
-        {/* Comic Wordmark */}
-        <Link
-          to="/"
-          className="group flex items-center gap-2 sm:gap-2.5 focus:outline-none"
-          aria-label="Blossoms — go to homepage"
-        >
-          <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-[#DC2626] border-2 border-ink flex items-center justify-center text-white font-display text-xl md:text-2xl shadow-[2px_2px_0px_#151515] group-hover:rotate-6 transition-transform">
-            B
-          </div>
-          <div className="flex flex-col">
-            <span className="font-display text-2xl md:text-3xl text-[#151515] tracking-wide uppercase leading-none group-hover:text-[#DC2626] transition-colors">
-              Blossoms
-            </span>
-            <span className="font-display text-[9px] md:text-[10px] tracking-widest text-[#DC2626] uppercase leading-tight font-black">
-              The Campus Universe
-            </span>
-          </div>
+      {/* ── Left Section: Brand Identity ─────────────────────────────── */}
+      <div className="flex items-center shrink-0">
+        <Link to="/" className="flex items-center focus:outline-none" aria-label="Department of Commerce">
+          <img
+            src="/assets/doc_logo.png"
+            alt="Department of Commerce"
+            className="w-[100px] h-[36px] md:w-[142px] md:h-[52px] object-contain"
+            loading="eager"
+          />
         </Link>
 
-        {/* Desktop nav */}
-        <nav aria-label="Main navigation" className="hidden md:flex items-center gap-6">
-          {NAV_LINKS.map((link) => {
-            const isActive = location.pathname === link.href
-            return (
-              <Link
-                key={link.href}
-                to={link.href}
-                className={cn(
-                  'font-display text-lg tracking-wide uppercase transition-all relative py-1',
-                  isActive
-                    ? 'text-[#F04438] font-bold'
-                    : 'text-ink hover:text-[#F04438]'
-                )}
-              >
-                {link.label}
-                {isActive && (
-                  <span
-                    aria-hidden="true"
-                    className="absolute -bottom-1 left-0 right-0 h-1 bg-[#F04438] rounded-full"
-                  />
-                )}
-              </Link>
-            )
-          })}
+        <div
+          className="w-[1px] h-[34px] md:h-[50px] bg-white/20 mx-[14px] md:mx-[24px]"
+          role="separator"
+          aria-orientation="vertical"
+        />
 
-          {/* Auth State Actions */}
-          {student ? (
-            <div className="flex items-center gap-2.5">
-              <Link
-                to="/app"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-ink bg-[#FFD43B] text-ink font-display text-sm tracking-wider uppercase font-bold shadow-[2px_2px_0px_#151515] hover:-translate-y-0.5 transition-transform"
-              >
-                <User className="w-4 h-4 text-[#F04438]" />
-                <span>Roll #{student.rollNumber}</span>
-              </Link>
-              <button
-                type="button"
-                onClick={handleLogout}
-                title="Log out"
-                className="p-2 rounded-xl border-2 border-ink bg-white text-ink hover:bg-red-50 hover:text-[#F04438] transition-colors shadow-[2px_2px_0px_#151515]"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            </div>
-          ) : admin ? (
-            <div className="flex items-center gap-2.5">
-              <Link
-                to="/admin"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-ink bg-[#151515] text-[#FFD43B] font-display text-sm tracking-wider uppercase font-bold shadow-[2px_2px_0px_#151515] hover:-translate-y-0.5 transition-transform"
-              >
-                <ShieldAlert className="w-4 h-4 text-[#FFD43B]" />
-                <span>Dev Console</span>
-              </Link>
-              <button
-                type="button"
-                onClick={handleLogout}
-                title="Log out"
-                className="p-2 rounded-xl border-2 border-ink bg-white text-ink hover:bg-red-50 hover:text-[#F04438] transition-colors shadow-[2px_2px_0px_#151515]"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            </div>
-          ) : (
-            <Button size="sm" variant="primary" asChild className="gap-1.5 shadow-[3px_3px_0px_#151515]">
-              <Link to="/login">
-                <Sparkles className="w-3.5 h-3.5 text-white" />
-                Login
-              </Link>
-            </Button>
-          )}
-        </nav>
+        <Link to="/" className="flex items-center focus:outline-none" aria-label="Blossoms 2026 Home">
+          <img
+            src="/assets/blossoms_2026_logo.png"
+            alt="Blossoms 2026"
+            className="w-[96px] h-[42px] md:w-[136px] md:h-[60px] object-contain"
+            loading="eager"
+          />
+        </Link>
+      </div>
 
-        {/* Mobile menu toggle */}
+      {/* ── Center Section: Navigation Links (Desktop) ────────────────── */}
+      <nav aria-label="Primary Navigation" className="hidden lg:flex items-center gap-[36px] xl:gap-[42px]">
+        {NAV_LINKS.map((link) => {
+          const active = isLinkActive(link.href)
+          return (
+            <Link
+              key={link.label}
+              to={link.href}
+              className={`relative text-[16px] font-[500] tracking-normal transition-colors py-1 focus:outline-none ${
+                active
+                  ? 'text-[#FFD400]'
+                  : 'text-[#F5F5F5] visited:text-[#F5F5F5] hover:text-white'
+              }`}
+            >
+              {link.label}
+              {active && (
+                <span
+                  className="absolute left-1/2 -translate-x-1/2 bottom-[-12px] w-[54px] h-[2px] bg-[#FFD400] rounded-full pointer-events-none"
+                  aria-hidden="true"
+                />
+              )}
+            </Link>
+          )
+        })}
+      </nav>
+
+      {/* ── Right Section: Login / Profile Actions ───────────────────── */}
+      <div className="hidden lg:flex items-center shrink-0">
+        {student ? (
+          <div className="flex items-center gap-2.5">
+            <Link
+              to="/app"
+              className="h-[48px] px-4 rounded-[12px] bg-[#FFD400] hover:bg-[#fed61a] active:scale-95 text-[#111111] font-semibold text-[15px] flex items-center gap-2 cursor-pointer transition-all duration-150 focus:outline-none"
+            >
+              <User className="w-[18px] h-[18px] stroke-[2.4]" />
+              <span>Roll #{student.rollNumber}</span>
+            </Link>
+            <button
+              type="button"
+              onClick={handleLogout}
+              title="Log out"
+              className="h-[48px] w-[48px] rounded-[12px] bg-[#1a1a1a] hover:bg-[#262626] text-[#F5F5F5] hover:text-red-400 flex items-center justify-center transition-colors cursor-pointer focus:outline-none"
+              aria-label="Log out"
+            >
+              <LogOut className="w-[18px] h-[18px]" />
+            </button>
+          </div>
+        ) : admin ? (
+          <div className="flex items-center gap-2.5">
+            <Link
+              to="/admin"
+              className="h-[48px] px-4 rounded-[12px] bg-[#FFD400] hover:bg-[#fed61a] active:scale-95 text-[#111111] font-semibold text-[15px] flex items-center gap-2 cursor-pointer transition-all duration-150 focus:outline-none"
+            >
+              <ShieldAlert className="w-[18px] h-[18px] stroke-[2.4]" />
+              <span>Dev Console</span>
+            </Link>
+            <button
+              type="button"
+              onClick={handleLogout}
+              title="Log out"
+              className="h-[48px] w-[48px] rounded-[12px] bg-[#1a1a1a] hover:bg-[#262626] text-[#F5F5F5] hover:text-red-400 flex items-center justify-center transition-colors cursor-pointer focus:outline-none"
+              aria-label="Log out"
+            >
+              <LogOut className="w-[18px] h-[18px]" />
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => navigate('/login')}
+            className="w-[120px] h-[48px] rounded-[12px] bg-[#FFD400] hover:bg-[#fed61a] active:scale-95 text-[#111111] font-semibold text-[16px] flex items-center justify-center gap-2 cursor-pointer transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-[#FFD400] focus:ring-offset-2 focus:ring-offset-[#080808]"
+            aria-label="User Login"
+          >
+            <span>Login</span>
+            <User className="w-[18px] h-[18px] stroke-[2.4]" aria-hidden="true" />
+          </button>
+        )}
+      </div>
+
+      {/* ── Mobile Hamburger Toggle ──────────────────────────────────── */}
+      <div className="flex lg:hidden items-center gap-2">
+        {!student && !admin && (
+          <button
+            type="button"
+            onClick={() => navigate('/login')}
+            className="h-[38px] px-3 rounded-[10px] bg-[#FFD400] text-[#111111] font-semibold text-[13px] flex items-center gap-1.5 cursor-pointer"
+          >
+            <span>Login</span>
+            <User className="w-3.5 h-3.5" />
+          </button>
+        )}
         <button
-          className="md:hidden flex items-center justify-center w-11 h-11 rounded-xl border-2 border-ink bg-white shadow-[2px_2px_0px_#151515]"
+          className="flex items-center justify-center w-10 h-10 rounded-[10px] bg-[#1a1a1a] text-[#F5F5F5] hover:text-[#FFD400] transition-colors focus:outline-none"
           onClick={() => setMenuOpen((o) => !o)}
           aria-expanded={menuOpen}
-          aria-controls="mobile-menu"
+          aria-controls="mobile-nav-drawer"
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
         >
-          {menuOpen ? <X className="w-5 h-5 text-ink" /> : <Menu className="w-5 h-5 text-ink" />}
+          {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
-      {/* Mobile drawer */}
+      {/* ── Mobile Navigation Drawer ─────────────────────────────────── */}
       {menuOpen && (
         <div
-          id="mobile-menu"
-          className="md:hidden fixed inset-0 top-[90px] z-40 bg-[#FFF8E8] border-t-2 border-ink overflow-y-auto"
+          id="mobile-nav-drawer"
+          className="lg:hidden fixed inset-0 top-[72px] z-50 bg-[#080808]/98 border-t border-white/10 flex flex-col p-6 animate-fadeIn overflow-y-auto"
         >
-          <div className="p-4 bg-[#FFD43B] border-b-2 border-ink text-center">
-            <span className="font-display text-xs uppercase tracking-wider text-ink font-bold">
-              ★ Explore The Line-up &amp; Register Your Panel ★
-            </span>
-          </div>
-          <nav aria-label="Mobile navigation" className="flex flex-col p-6 gap-2">
+          <nav aria-label="Mobile Navigation" className="flex flex-col gap-2">
             {NAV_LINKS.map((link) => {
-              const isActive = location.pathname === link.href
+              const active = isLinkActive(link.href)
               return (
                 <Link
-                  key={link.href}
+                  key={link.label}
                   to={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className={cn(
-                    'font-display text-2xl tracking-wide uppercase px-4 py-3 rounded-xl border-2 transition-all flex items-center justify-between',
-                    isActive
-                      ? 'bg-[#F04438] text-white border-ink shadow-[3px_3px_0px_#151515]'
-                      : 'bg-white text-ink border-ink/30 hover:border-ink hover:bg-[#F5EBD4]'
-                  )}
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl text-[18px] font-[500] transition-colors ${
+                    active
+                      ? 'bg-[#FFD400] text-[#111111] font-semibold'
+                      : 'text-[#F5F5F5] hover:bg-white/5'
+                  }`}
                 >
                   <span>{link.label}</span>
                   <span className="text-sm opacity-60">→</span>
                 </Link>
               )
             })}
-
-            <div className="pt-4 border-t-2 border-ink mt-4">
-              {student ? (
-                <div className="space-y-2">
-                  <Button size="lg" className="w-full bg-[#FFD43B] text-ink hover:bg-[#FFD43B]/90 border-2 border-ink" asChild>
-                    <Link to="/app" onClick={() => setMenuOpen(false)}>
-                      Open Registration Portal (Roll #{student.rollNumber})
-                    </Link>
-                  </Button>
-                  <Button size="sm" variant="outline" className="w-full" onClick={() => { handleLogout(); setMenuOpen(false) }}>
-                    Logout Roll #{student.rollNumber}
-                  </Button>
-                </div>
-              ) : admin ? (
-                <div className="space-y-2">
-                  <Button size="lg" className="w-full bg-[#151515] text-white" asChild>
-                    <Link to="/admin" onClick={() => setMenuOpen(false)}>
-                      Developer Admin Console
-                    </Link>
-                  </Button>
-                  <Button size="sm" variant="outline" className="w-full" onClick={() => { handleLogout(); setMenuOpen(false) }}>
-                    Logout Admin
-                  </Button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  <Button size="lg" variant="primary" asChild>
-                    <Link to="/login?role=student" onClick={() => setMenuOpen(false)}>
-                      Student Login
-                    </Link>
-                  </Button>
-                  <Button size="lg" variant="outline" className="bg-[#151515] text-[#FFD43B]" asChild>
-                    <Link to="/login?role=admin" onClick={() => setMenuOpen(false)}>
-                      Admin Login
-                    </Link>
-                  </Button>
-                </div>
-              )}
-            </div>
           </nav>
+
+          <div className="mt-8 pt-6 border-t border-white/10 space-y-3">
+            {student ? (
+              <div className="space-y-2">
+                <Link
+                  to="/app"
+                  onClick={() => setMenuOpen(false)}
+                  className="w-full h-[48px] rounded-xl bg-[#FFD400] text-[#111111] font-semibold flex items-center justify-center gap-2"
+                >
+                  <User className="w-4 h-4" />
+                  <span>Student Portal (Roll #{student.rollNumber})</span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => { handleLogout(); setMenuOpen(false); }}
+                  className="w-full h-[42px] rounded-xl bg-white/10 text-white font-medium flex items-center justify-center gap-2 hover:bg-red-500/20 hover:text-red-300"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Log out</span>
+                </button>
+              </div>
+            ) : admin ? (
+              <div className="space-y-2">
+                <Link
+                  to="/admin"
+                  onClick={() => setMenuOpen(false)}
+                  className="w-full h-[48px] rounded-xl bg-[#FFD400] text-[#111111] font-semibold flex items-center justify-center gap-2"
+                >
+                  <ShieldAlert className="w-4 h-4" />
+                  <span>Developer Admin Console</span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => { handleLogout(); setMenuOpen(false); }}
+                  className="w-full h-[42px] rounded-xl bg-white/10 text-white font-medium flex items-center justify-center gap-2 hover:bg-red-500/20 hover:text-red-300"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Log out</span>
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => { navigate('/login'); setMenuOpen(false); }}
+                className="w-full h-[48px] rounded-xl bg-[#FFD400] text-[#111111] font-semibold flex items-center justify-center gap-2"
+              >
+                <User className="w-4 h-4" />
+                <span>Login</span>
+              </button>
+            )}
+          </div>
         </div>
       )}
     </header>
   )
 }
+export default PublicHeader
