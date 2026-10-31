@@ -1,15 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import DesktopEventsShowcase from '@/components/comic/DesktopEventsShowcase';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
-type CategoryKey = 'arts' | 'literature' | 'stage' | 'theatre';
-
-type ComicScenePhase =
-  | 'idle'
-  | 'scene1-press'
-  | 'scene2-expand'
-  | 'scene3-reveal'
-  | 'scene4-events';
+export type CategoryKey = 'arts' | 'literature' | 'stage' | 'theatre' | 'special';
 
 type TabId = 'home' | 'events' | 'schedule' | 'gallery' | 'winners';
 
@@ -53,9 +47,9 @@ interface CategoryConfig {
 }
 
 // ============================================================================
-// 31 OFFICIAL BLOSSOMS EVENTS & CATEGORIES
+// 31 OFFICIAL BLOSSOMS EVENTS ACROSS ALL 5 CATEGORIES
 // ============================================================================
-const CATEGORY_DATA: Record<CategoryKey, CategoryConfig> = {
+export const CATEGORY_DATA: Record<CategoryKey, CategoryConfig> = {
   arts: {
     key: 'arts',
     cardTitle: 'ARTS',
@@ -148,34 +142,34 @@ const CATEGORY_DATA: Record<CategoryKey, CategoryConfig> = {
         id: 'rangoli-design',
         title: 'RANGOLI DESIGN',
         subCategory: 'DESIGN',
-        tagline: 'Vibrant geometric & festive powdered rangoli carpet creation.',
-        time: 'Nov 26 • Block 2',
-        venue: 'Block 2 Front Entrance',
+        tagline: 'Vibrant geometric & thematic rangoli dry powder floor artwork.',
+        time: 'Nov 26 • Block 2 Entrance',
+        venue: 'Block 2 Entrance',
         teamSize: 'Team of 3',
         prize: '₹5,000',
-        badgeColor: '#4ade80',
+        badgeColor: '#fb7185',
       },
       {
         id: 'painting',
-        title: 'PAINTING',
+        title: 'PAINTING (WATER / ACRYLIC / OIL)',
         subCategory: 'PAINTING',
-        tagline: 'Live water, acrylic or gouache painting on on-spot theme.',
+        tagline: 'Live acrylic, oil, and watercolor fine art canvas showdown.',
         time: 'Dec 02 • Classroom',
         venue: 'Classroom',
         teamSize: 'Solo',
         prize: '₹5,000',
-        badgeColor: '#f43f5e',
+        badgeColor: '#2dd4bf',
       },
       {
         id: 'photography',
         title: 'PHOTOGRAPHY (ONLINE)',
         subCategory: 'DIGITAL',
-        tagline: 'Composition, lighting & storytelling frame capturing campus spirit.',
+        tagline: 'Campus documentary and fine art storytelling photography.',
         time: 'Dec 09 • Online',
         venue: 'Online Submission',
         teamSize: 'Solo',
         prize: '₹5,000',
-        badgeColor: '#06b6d4',
+        badgeColor: '#818cf8',
       },
     ],
   },
@@ -185,54 +179,54 @@ const CATEGORY_DATA: Record<CategoryKey, CategoryConfig> = {
     headingTitle: 'LITERARY ARTS',
     subtitle: 'SPEAK. WRITE. THINK.',
     wingTag: 'BLOSSOMS 2026 • LITERARY SOCIETY',
-    heroHeadline: 'WORDS THAT SHAKE THE MULTIVERSE!',
-    heroSummary: '8 Flagship Competitions • ₹45,000 Prize Pool • Debates, Quizzes & Wordplay',
+    heroHeadline: 'WORDS ARE YOUR GREATEST SUPERPOWER!',
+    heroSummary: '8 Flagship Competitions • ₹50,000 Prize Pool • Debates, Quizzes & Writing Showdowns',
     bgHex: '#0088e8',
-    filters: ['ALL', 'DEBATE', 'QUIZ', 'WRITING', 'SPEAKING', 'FUN'],
+    filters: ['ALL', 'DEBATE', 'QUIZ', 'WRITING', 'SPEAKING'],
     events: [
       {
-        id: 'quiz',
+        id: 'general-quiz',
         title: 'GENERAL QUIZ',
         subCategory: 'QUIZ',
-        tagline: 'Multi-round trivia battle spanning pop culture, history, science & sports.',
+        tagline: 'Multi-round buzzer quiz on pop-culture, science, history & trivia.',
         time: 'Nov 25 • Panel Room',
         venue: 'Panel Room',
-        teamSize: 'Team of 2',
-        prize: '₹6,000',
-        badgeColor: '#facc15',
+        teamSize: 'Team of 3',
+        prize: '₹8,000',
+        badgeColor: '#38bdf8',
       },
       {
         id: 'pot-pourri',
         title: 'POT POURRI',
-        subCategory: 'FUN',
-        tagline: 'High-energy word puzzles, anagrams, 20 questions & literary charades.',
+        subCategory: 'QUIZ',
+        tagline: 'Fast-paced word play, 20 questions, anagrams & literary puzzles.',
         time: 'Dec 06 • Seminar Hall',
         venue: 'Seminar Hall',
-        teamSize: 'Team of 3',
+        teamSize: 'Team of 2',
         prize: '₹6,000',
-        badgeColor: '#38bdf8',
+        badgeColor: '#4ade80',
       },
       {
         id: 'extempore',
         title: 'EXTEMPORE',
         subCategory: 'SPEAKING',
-        tagline: 'Speak with wit, poise & clarity on spontaneous topics with 1 min prep.',
+        tagline: 'Two minutes of prep, three minutes of spontaneous impromptu rhetoric.',
         time: 'Nov 28 • Panel Room',
         venue: 'Panel Room',
         teamSize: 'Solo',
         prize: '₹5,000',
-        badgeColor: '#4ade80',
+        badgeColor: '#f472b6',
       },
       {
         id: 'dumb-charades',
         title: 'DUMB CHARADES',
-        subCategory: 'FUN',
-        tagline: 'Act out book titles, movies & pop-culture phrases without speaking a word.',
+        subCategory: 'SPEAKING',
+        tagline: 'Silent mime decoding of classic cinema, literature & idioms.',
         time: 'Nov 19 • Seminar Hall',
         venue: 'Seminar Hall',
         teamSize: 'Team of 3',
         prize: '₹6,000',
-        badgeColor: '#f472b6',
+        badgeColor: '#fb7185',
       },
       {
         id: 'air-crash',
@@ -449,6 +443,63 @@ const CATEGORY_DATA: Record<CategoryKey, CategoryConfig> = {
       },
     ],
   },
+  special: {
+    key: 'special',
+    cardTitle: 'SPECIAL EVENTS',
+    headingTitle: 'FLAGSHIP HEADLINERS',
+    subtitle: 'CEREMONIES. BATTLES. FINALE.',
+    wingTag: 'BLOSSOMS 2026 • FLAGSHIP SERIES',
+    heroHeadline: 'THE ULTIMATE FESTIVAL ARENA!',
+    heroSummary: '4 Flagship Spectacles • ₹1,00,000+ Prize Pool • Amphitheatre & Main Auditorium',
+    bgHex: '#00966b',
+    filters: ['ALL', 'CEREMONY', 'BANDS', 'HEADLINER'],
+    events: [
+      {
+        id: 'inauguration',
+        title: 'BLOSSOMS INAUGURATION',
+        subCategory: 'CEREMONY',
+        tagline: 'Grand opening ceremony, ceremonial lamp lighting, dignitaries keynote & theme unveil.',
+        time: 'Nov 12 • 09:30 AM',
+        venue: "Bird's Park Amphitheatre",
+        teamSize: 'Open to All',
+        prize: 'Honorary Trophy',
+        badgeColor: '#38bdf8',
+      },
+      {
+        id: 'bob-indian-special',
+        title: 'BATTLE OF THE BANDS (INDIAN)',
+        subCategory: 'BANDS',
+        tagline: 'High-voltage Indian fusion, rock & folk band showdown on the open-air concert rig.',
+        time: 'Dec 12 • Open Stage',
+        venue: 'Open Air Stage',
+        teamSize: '4–8 Members',
+        prize: '₹25,000',
+        badgeColor: '#fb923c',
+      },
+      {
+        id: 'acoustic-group-special',
+        title: 'WESTERN ACOUSTIC & ACAPELLA',
+        subCategory: 'HEADLINER',
+        tagline: 'Harmonized vocal arrangements, beatboxing, and multi-part choral arrangements.',
+        time: 'Dec 14 • KE (doc)',
+        venue: 'KE (doc) Auditorium',
+        teamSize: '6–12 Members',
+        prize: '₹15,000',
+        badgeColor: '#facc15',
+      },
+      {
+        id: 'valedictory',
+        title: 'GRAND VALEDICTORY & AWARDS',
+        subCategory: 'CEREMONY',
+        tagline: 'Championship trophy presentation, overall house winners & festival culmination.',
+        time: 'Dec 16 • Main Auditorium',
+        venue: 'Main Auditorium',
+        teamSize: 'All Houses',
+        prize: 'Grand Trophy',
+        badgeColor: '#4ade80',
+      },
+    ],
+  },
 };
 
 const PANEL_DETAILS: Record<string, DetailModal> = {
@@ -462,11 +513,11 @@ const PANEL_DETAILS: Record<string, DetailModal> = {
       { name: 'Greeting Card Competition', time: 'Nov 13', venue: 'Classroom' },
       { name: 'Pot Art', time: 'Nov 20', venue: 'BB COURT' },
       { name: 'Pencil Sketching', time: 'Nov 14', venue: 'Classroom' },
-      { name: 'Reel Making', time: 'Dec 02', venue: 'Online' },
+      { name: 'Reel Making', time: 'Dec 02', venue: 'Online Submission' },
       { name: 'Collage', time: 'Dec 05', venue: 'Classroom' },
       { name: 'Mehendi Design', time: 'Nov 21', venue: 'Classroom' },
       { name: 'Rangoli Design', time: 'Nov 26', venue: 'Block 2 Front Entrance' },
-      { name: 'Painting', time: 'Dec 02', venue: 'Classroom' },
+      { name: 'Painting (Water / Acrylic / Oil)', time: 'Dec 02', venue: 'Classroom' },
       { name: 'Photography (Online)', time: 'Dec 09', venue: 'Online Submission' },
     ],
   },
@@ -513,6 +564,18 @@ const PANEL_DETAILS: Record<string, DetailModal> = {
       { name: 'Street Play (Nukkad Natak)', time: 'Dec 15', venue: 'Garden Street' },
       { name: 'Short Film Making', time: 'Nov 21 / Dec 09', venue: 'Campus View' },
       { name: 'Mime', time: 'Dec 10', venue: 'KE (doc)' },
+    ],
+  },
+  special: {
+    title: 'SPECIAL EVENTS',
+    subtitle: 'CEREMONIES. BATTLES. FINALE.',
+    tag: 'Flagship Series • 4 Headliners',
+    accent: '#00966b',
+    items: [
+      { name: 'Blossoms Inauguration Ceremony', time: 'Nov 12', venue: "Bird's Park Amphitheatre" },
+      { name: 'Battle of the Bands (Indian)', time: 'Dec 12', venue: 'Open Air Stage' },
+      { name: 'Western Acoustic & Acapella', time: 'Dec 14', venue: 'KE (doc) Audi' },
+      { name: 'Grand Valedictory & Awards Ceremony', time: 'Dec 16', venue: 'Main Auditorium' },
     ],
   },
   schedule: {
@@ -588,7 +651,7 @@ function ComicArrowButton({ onClick }: { onClick?: () => void }) {
         }
       }}
       aria-label="Open category"
-      className="w-[32px] h-[32px] rounded-full bg-[#fdfaf0] border-[2.5px] border-[#0f0f0f] shadow-[2px_2px_0px_#0f0f0f] flex items-center justify-center active:translate-y-0.5 transition-transform cursor-pointer z-20 hover:scale-105"
+      className="w-[32px] h-[32px] rounded-full bg-[#fdfaf0] border-[2.5px] border-[#0f0f0f] flex items-center justify-center active:scale-95 transition-transform cursor-pointer z-20 hover:scale-105"
     >
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
         <path
@@ -603,7 +666,7 @@ function ComicArrowButton({ onClick }: { onClick?: () => void }) {
   );
 }
 
-// Reusable Vector Illustrations matching Figma Design
+// Reusable Vector Illustrations
 export function ArtsIllustration({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 210 140" className={className || "w-full h-full pointer-events-none"}>
@@ -644,21 +707,17 @@ export function ArtsIllustration({ className }: { className?: string }) {
 export function LiteratureIllustration({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 190 135" className={className || "w-full h-full pointer-events-none"}>
-      {/* Bottom Blue Book */}
       <path d="M36,105 L108,118 L152,102 L84,90 Z" fill="#0369a1" stroke="#0f0f0f" strokeWidth="2.4" />
       <path d="M36,105 L36,118 L108,130 L152,114 L152,102 L108,118 Z" fill="#fef3c7" stroke="#0f0f0f" strokeWidth="2.4" />
-      {/* Middle Green Book */}
       <g transform="rotate(7 90 90)">
         <path d="M40,88 L106,99 L148,85 L84,75 Z" fill="#059669" stroke="#0f0f0f" strokeWidth="2.4" />
         <path d="M40,88 L40,99 L106,109 L148,96 L148,85 L106,99 Z" fill="#fef3c7" stroke="#0f0f0f" strokeWidth="2.4" />
       </g>
-      {/* Top Red Book */}
       <g transform="rotate(-6 90 70)">
         <path d="M42,66 L108,76 L148,63 L84,54 Z" fill="#dc2626" stroke="#0f0f0f" strokeWidth="2.4" />
         <path d="M42,66 L42,77 L108,87 L148,74 L148,63 L108,76 Z" fill="#fef3c7" stroke="#0f0f0f" strokeWidth="2.4" />
         <path d="M102,75 L106,92 L112,88 L116,92 L116,77 Z" fill="#facc15" stroke="#0f0f0f" strokeWidth="1.8" />
       </g>
-      {/* Quill Pen Feather */}
       <g transform="rotate(32 145 52)">
         <path d="M142,5 C132,24 135,46 142,68 L142,82 L144,82 L144,68 C152,46 154,24 144,5 Z" fill="#fdfaf0" stroke="#0f0f0f" strokeWidth="2.4" />
         <line x1="143" y1="5" x2="143" y2="84" stroke="#0f0f0f" strokeWidth="2.2" />
@@ -678,17 +737,14 @@ export function StageIllustration({ className }: { className?: string }) {
         <line x1="126" y1="22" x2="142" y2="14" />
         <line x1="134" y1="38" x2="152" y2="35" />
       </g>
-      <g transform="translate(15 0)">
-        <path d="M52,50 C52,78 98,78 98,50" fill="none" stroke="#0f0f0f" strokeWidth="4" strokeLinecap="round" />
-        <circle cx="52" cy="50" r="4" fill="#64748b" stroke="#0f0f0f" strokeWidth="2" />
-        <circle cx="98" cy="50" r="4" fill="#64748b" stroke="#0f0f0f" strokeWidth="2" />
-        <rect x="71.5" y="74" width="7" height="38" fill="#475569" stroke="#0f0f0f" strokeWidth="2.5" />
-        <ellipse cx="75" cy="112" rx="22" ry="7" fill="#1e293b" stroke="#0f0f0f" strokeWidth="3" />
-        <rect x="58" y="20" width="34" height="46" rx="17" fill="#e2e8f0" stroke="#0f0f0f" strokeWidth="3.2" />
-        <rect x="58" y="40" width="34" height="6" fill="#334155" stroke="#0f0f0f" strokeWidth="2.2" />
-        <line x1="66" y1="24" x2="66" y2="40" stroke="#0f0f0f" strokeWidth="2" />
-        <line x1="75" y1="21" x2="75" y2="40" stroke="#0f0f0f" strokeWidth="2.2" />
-        <line x1="84" y1="24" x2="84" y2="40" stroke="#0f0f0f" strokeWidth="2" />
+      <g transform="rotate(-15 95 85)">
+        <rect x="88" y="70" width="14" height="65" rx="3" fill="#334155" stroke="#0f0f0f" strokeWidth="2.6" />
+        <path d="M82,32 C82,20 108,20 108,32 L108,58 C108,66 82,66 82,58 Z" fill="#cbd5e1" stroke="#0f0f0f" strokeWidth="2.8" />
+        <line x1="84" y1="38" x2="106" y2="38" stroke="#0f0f0f" strokeWidth="1.8" />
+        <line x1="84" y1="46" x2="106" y2="46" stroke="#0f0f0f" strokeWidth="1.8" />
+        <line x1="84" y1="54" x2="106" y2="54" stroke="#0f0f0f" strokeWidth="1.8" />
+        <line x1="95" y1="24" x2="95" y2="64" stroke="#0f0f0f" strokeWidth="1.8" />
+        <ellipse cx="95" cy="46" rx="8" ry="12" fill="none" stroke="#0f0f0f" strokeWidth="1.6" />
       </g>
     </svg>
   );
@@ -696,25 +752,42 @@ export function StageIllustration({ className }: { className?: string }) {
 
 export function TheatreIllustration({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 190 145" className={className || "w-full h-full pointer-events-none"}>
-      {/* Back Tragedy Mask */}
-      <g transform="rotate(18 120 72)">
-        <path d="M86,30 C74,30 68,44 68,64 C68,88 80,102 96,102 C112,102 124,88 124,64 C124,44 118,30 106,30 Z" fill="#3b82f6" stroke="#0f0f0f" strokeWidth="3.2" />
-        <line x1="78" y1="48" x2="88" y2="54" stroke="#0f0f0f" strokeWidth="3" strokeLinecap="round" />
-        <line x1="114" y1="48" x2="104" y2="54" stroke="#0f0f0f" strokeWidth="3" strokeLinecap="round" />
-        <circle cx="84" cy="58" r="4" fill="#0f0f0f" />
-        <circle cx="108" cy="58" r="4" fill="#0f0f0f" />
-        <path d="M84,88 C88,80 104,80 108,88" fill="none" stroke="#0f0f0f" strokeWidth="3.2" strokeLinecap="round" />
+    <svg viewBox="0 0 190 140" className={className || "w-full h-full pointer-events-none"}>
+      {/* Comedy Mask */}
+      <g transform="rotate(-12 70 70)">
+        <ellipse cx="65" cy="65" rx="28" ry="34" fill="#fdfaf0" stroke="#0f0f0f" strokeWidth="3" />
+        <ellipse cx="56" cy="54" rx="4.5" ry="6" fill="#0f0f0f" />
+        <ellipse cx="74" cy="54" rx="4.5" ry="6" fill="#0f0f0f" />
+        <path d="M52,72 Q 65,92 78,72 Z" fill="#df1b23" stroke="#0f0f0f" strokeWidth="2.4" />
       </g>
-      {/* Front Comedy Mask */}
-      <g transform="rotate(-12 65 72)">
-        <path d="M48,28 C36,28 30,42 30,62 C30,86 42,100 58,100 C74,100 86,86 86,62 C86,42 80,28 68,28 Z" fill="#fdfaf0" stroke="#0f0f0f" strokeWidth="3.4" />
-        <path d="M40,46 Q 47,40 54,46" fill="none" stroke="#0f0f0f" strokeWidth="3" strokeLinecap="round" />
-        <path d="M62,46 Q 69,40 76,46" fill="none" stroke="#0f0f0f" strokeWidth="3" strokeLinecap="round" />
-        <path d="M42,54 Q 47,60 52,54" fill="none" stroke="#0f0f0f" strokeWidth="3.2" strokeLinecap="round" />
-        <path d="M64,54 Q 69,60 74,54" fill="none" stroke="#0f0f0f" strokeWidth="3.2" strokeLinecap="round" />
-        <path d="M42,72 Q 58,96 74,72 Z" fill="#0f0f0f" stroke="#0f0f0f" strokeWidth="2.5" />
-        <path d="M52,82 Q 58,88 64,82 Q 58,76 52,82" fill="#ef4444" />
+      {/* Tragedy Mask */}
+      <g transform="rotate(14 125 75)">
+        <ellipse cx="125" cy="70" rx="27" ry="33" fill="#38bdf8" stroke="#0f0f0f" strokeWidth="3" />
+        <ellipse cx="116" cy="60" rx="4.5" ry="5.5" fill="#0f0f0f" />
+        <ellipse cx="134" cy="60" rx="4.5" ry="5.5" fill="#0f0f0f" />
+        <path d="M115,84 Q 125,72 135,84" fill="none" stroke="#0f0f0f" strokeWidth="2.8" strokeLinecap="round" />
+        <path d="M112,68 Q 110,75 113,78" fill="none" stroke="#0f0f0f" strokeWidth="1.8" strokeLinecap="round" />
+      </g>
+    </svg>
+  );
+}
+
+export function SpecialEventsIllustration({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 190 140" className={className || "w-full h-full pointer-events-none"}>
+      <g stroke="#0f0f0f" strokeWidth="2" strokeLinecap="round" opacity="0.6">
+        <line x1="95" y1="12" x2="95" y2="24" />
+        <line x1="55" y1="28" x2="65" y2="38" />
+        <line x1="135" y1="28" x2="125" y2="38" />
+      </g>
+      <g>
+        <path d="M60 48 C42 48 42 76 64 78" fill="none" stroke="#0f0f0f" strokeWidth="3" />
+        <path d="M130 48 C148 48 148 76 126 78" fill="none" stroke="#0f0f0f" strokeWidth="3" />
+        <path d="M60 40 L130 40 L122 84 C118 98 108 106 95 106 C82 106 72 98 68 84 Z" fill="#facc15" stroke="#0f0f0f" strokeWidth="3.2" />
+        <polygon points="95,54 98,64 108,64 100,70 103,80 95,74 87,80 90,70 82,64 92,64" fill="#df1b23" stroke="#0f0f0f" strokeWidth="1.8" />
+        <rect x="91" y="106" width="8" height="16" fill="#facc15" stroke="#0f0f0f" strokeWidth="3" />
+        <polygon points="76,122 114,122 118,136 72,136" fill="#1e293b" stroke="#0f0f0f" strokeWidth="3" />
+        <rect x="80" y="125" width="30" height="7" fill="#f8ca16" stroke="#0f0f0f" strokeWidth="1.5" />
       </g>
     </svg>
   );
@@ -722,346 +795,258 @@ export function TheatreIllustration({ className }: { className?: string }) {
 
 export function CampusHeritageDome({ className }: { className?: string }) {
   return (
-    <div className={className || "relative w-full h-full flex items-center justify-center"}>
-      <svg viewBox="0 0 200 170" className="w-full h-full max-h-[220px] overflow-visible">
-        <ellipse cx="30" cy="155" rx="35" ry="18" fill="#15803d" stroke="#0f0f0f" strokeWidth="2.5" />
-        <ellipse cx="170" cy="155" rx="40" ry="20" fill="#15803d" stroke="#0f0f0f" strokeWidth="2.5" />
-        <rect x="0" y="152" width="200" height="18" fill="#14532d" stroke="#0f0f0f" strokeWidth="2.5" />
-        <rect x="42" y="82" width="116" height="70" fill="#facc15" stroke="#0f0f0f" strokeWidth="3" />
-        <rect x="52" y="94" width="14" height="24" rx="2" fill="#1e293b" stroke="#0f0f0f" strokeWidth="2" />
-        <rect x="74" y="94" width="14" height="24" rx="2" fill="#1e293b" stroke="#0f0f0f" strokeWidth="2" />
-        <rect x="112" y="94" width="14" height="24" rx="2" fill="#1e293b" stroke="#0f0f0f" strokeWidth="2" />
-        <rect x="134" y="94" width="14" height="24" rx="2" fill="#1e293b" stroke="#0f0f0f" strokeWidth="2" />
-        <path d="M88,152 L88,126 Q 100,116 112,126 L112,152 Z" fill="#0f0f0f" stroke="#0f0f0f" strokeWidth="2.5" />
-        <polygon points="40,82 100,48 160,82" fill="#f59e0b" stroke="#0f0f0f" strokeWidth="3" />
-        <rect x="78" y="32" width="44" height="20" fill="#facc15" stroke="#0f0f0f" strokeWidth="2.5" />
-        <rect x="84" y="38" width="8" height="12" rx="4" fill="#0f0f0f" />
-        <rect x="96" y="38" width="8" height="12" rx="4" fill="#0f0f0f" />
-        <rect x="108" y="38" width="8" height="12" rx="4" fill="#0f0f0f" />
-        <path d="M74,32 Q 100,-4 126,32 Z" fill="#0284c7" stroke="#0f0f0f" strokeWidth="3.2" />
-        <path d="M100,2 Q 100,16 100,32" stroke="#0f0f0f" strokeWidth="2" fill="none" />
-        <line x1="100" y1="2" x2="100" y2="-12" stroke="#facc15" strokeWidth="3.5" />
-        <line x1="94" y1="-7" x2="106" y2="-7" stroke="#facc15" strokeWidth="3" />
-      </svg>
-    </div>
+    <svg viewBox="0 0 160 120" className={className || "w-full h-full pointer-events-none"}>
+      <path d="M80,10 L80,24" stroke="#facc15" strokeWidth="3" strokeLinecap="round" />
+      <path d="M74,16 L86,16" stroke="#facc15" strokeWidth="3" strokeLinecap="round" />
+      <path d="M52,48 C52,28 108,28 108,48 Z" fill="#0284c7" stroke="#0f0f0f" strokeWidth="3" />
+      <rect x="44" y="48" width="72" height="18" fill="#e2c99a" stroke="#0f0f0f" strokeWidth="3" />
+      <rect x="24" y="66" width="112" height="48" fill="#d4b483" stroke="#0f0f0f" strokeWidth="3.2" />
+      <g fill="#0f0f0f">
+        <rect x="36" y="74" width="12" height="24" rx="3" />
+        <rect x="58" y="74" width="12" height="24" rx="3" />
+        <rect x="90" y="74" width="12" height="24" rx="3" />
+        <rect x="112" y="74" width="12" height="24" rx="3" />
+      </g>
+      <circle cx="20" cy="110" r="16" fill="#16a34a" stroke="#0f0f0f" strokeWidth="2.5" />
+      <circle cx="140" cy="110" r="16" fill="#16a34a" stroke="#0f0f0f" strokeWidth="2.5" />
+    </svg>
   );
-}
-
-interface RectBox {
-  top: number;
-  left: number;
-  width: number;
-  height: number;
 }
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<TabId>('home');
-  const [selectedModal, setSelectedModal] = useState<DetailModal | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [notifOpen, setNotifOpen] = useState(false);
-
-  // Mobile measurement refs
-  const screenRef = useRef<HTMLDivElement | null>(null);
-  const panelRefs = useRef<Record<CategoryKey, HTMLDivElement | null>>({
-    arts: null,
-    literature: null,
-    stage: null,
-    theatre: null,
-  });
 
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey | null>(null);
-  const [scenePhase, setScenePhase] = useState<ComicScenePhase>('idle');
-  const [slowMo, _setSlowMo] = useState(false);
-  const [animKey, setAnimKey] = useState(0);
-  const [_originRect, setOriginRect] = useState<RectBox>({
-    top: 222,
-    left: 12,
-    width: 196,
-    height: 182,
-  });
+  const [selectedModal, setSelectedModal] = useState<DetailModal | null>(null);
+  const [activeTab, setActiveTab] = useState<TabId>('home');
   const [activeFilter, setActiveFilter] = useState<string>('ALL');
-  const [registeredIds, setRegisteredIds] = useState<string[]>([]);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const speedMult = slowMo ? 3.2 : 1;
+  // Student registration tracking
+  const [registeredIds, setRegisteredIds] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('blossoms_registered_events');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const toggleRegister = (id: string, title: string) => {
+    setRegisteredIds((prev) => {
+      const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
+      try {
+        localStorage.setItem('blossoms_registered_events', JSON.stringify(next));
+      } catch {
+        // ignore
+      }
+      if (next.includes(id)) {
+        toast.success(`Registered for ${title}!`, {
+          icon: '🎟️',
+          style: {
+            background: '#fdfaf0',
+            border: '2.5px solid #0f0f0f',
+            color: '#0f0f0f',
+            fontFamily: '"Comic Neue", cursive, sans-serif',
+            fontWeight: 700,
+          },
+        });
+      } else {
+        toast(`Cancelled registration for ${title}`, {
+          icon: '↩️',
+          style: {
+            background: '#fdfaf0',
+            border: '2.5px solid #0f0f0f',
+            color: '#0f0f0f',
+            fontFamily: '"Comic Neue", cursive, sans-serif',
+            fontWeight: 700,
+          },
+        });
+      }
+      return next;
+    });
+  };
 
   const triggerCategorySceneTransition = (key: CategoryKey) => {
     setSelectedModal(null);
     setMenuOpen(false);
-    setNotifOpen(false);
-    setActiveFilter('ALL');
-
-    const screenEl = screenRef.current;
-    const panelEl = panelRefs.current[key];
-    if (screenEl && panelEl) {
-      const sRect = screenEl.getBoundingClientRect();
-      const pRect = panelEl.getBoundingClientRect();
-      setOriginRect({
-        top: Math.round(pRect.top - sRect.top),
-        left: Math.round(pRect.left - sRect.left),
-        width: Math.round(pRect.width),
-        height: Math.round(pRect.height),
-      });
-    }
-
     setSelectedCategory(key);
-    setScenePhase('scene1-press');
-    setAnimKey((prev) => prev + 1);
+    setActiveFilter('ALL');
   };
 
   const closeCategoryArena = () => {
-    setScenePhase('idle');
     setSelectedCategory(null);
     setActiveTab('home');
   };
 
-  useEffect(() => {
-    if (!selectedCategory || scenePhase !== 'scene1-press') return;
-    const s1Dur = Math.round(105 * speedMult);
-    const s2Dur = Math.round(310 * speedMult);
-    const s3Dur = Math.round(185 * speedMult);
-
-    const raf1 = window.requestAnimationFrame(() => {});
-    const raf2 = window.requestAnimationFrame(() => {});
-
-    const toScene2Timer = window.setTimeout(() => {
-      setScenePhase('scene2-expand');
-    }, s1Dur);
-
-    const toScene3Timer = window.setTimeout(() => {
-      setScenePhase('scene3-reveal');
-    }, s1Dur + s2Dur);
-
-    const toScene4Timer = window.setTimeout(() => {
-      setScenePhase('scene4-events');
-    }, s1Dur + s2Dur + s3Dur);
-
-    return () => {
-      window.cancelAnimationFrame(raf1);
-      window.cancelAnimationFrame(raf2);
-      window.clearTimeout(toScene2Timer);
-      window.clearTimeout(toScene3Timer);
-      window.clearTimeout(toScene4Timer);
-    };
-  }, [selectedCategory, animKey, speedMult]);
-
-  const toggleRegister = (id: string, title?: string) => {
-    setRegisteredIds((prev) => {
-      const isReg = prev.includes(id);
-      if (isReg) {
-        toast('Removed registration for ' + (title || id), { icon: 'ℹ️' });
-        return prev.filter((item) => item !== id);
-      } else {
-        toast.success('Successfully registered for ' + (title || id) + '! Best of luck hero!');
-        return [...prev, id];
-      }
-    });
-  };
-
-  const isRearranged =
-    selectedCategory !== null &&
-    (scenePhase === 'scene2-expand' ||
-      scenePhase === 'scene3-reveal' ||
-      scenePhase === 'scene4-events');
-
-  const isOverlayActive =
-    selectedCategory !== null &&
-    scenePhase !== 'idle' &&
-    scenePhase !== 'scene1-press';
-
   const activeCategoryConfig = selectedCategory ? CATEGORY_DATA[selectedCategory] : null;
+
   const filteredEvents = activeCategoryConfig
     ? activeFilter === 'ALL'
       ? activeCategoryConfig.events
-      : activeCategoryConfig.events.filter((ev) => ev.subCategory === activeFilter)
+      : activeCategoryConfig.events.filter(
+          (e) => e.subCategory.toUpperCase() === activeFilter.toUpperCase()
+        )
     : [];
 
   return (
-    <div className="min-h-screen w-full bg-[#f5c71a] halftone-dots select-none">
+    <div className="min-h-screen w-full bg-[#f8ca16] text-[#0f0f0f] relative selection:bg-black selection:text-white">
       {/* =========================================================================
-          MOBILE VIEWPORT (Exact Figma Mobile Design - Unchanged)
-          Active on screens < md (width < 768px)
+          MOBILE VIEWPORT (Figma Interface, Screen Width < 768px, Zero Shadows)
          ========================================================================= */}
-      <div className="md:hidden relative w-full h-dvh bg-[#121212] flex flex-col overflow-hidden">
-        {/* Inner Screen */}
-        <div
-          ref={screenRef}
-          className="relative flex-1 w-full h-full bg-[#f8ca16] overflow-hidden flex flex-col justify-between"
-          style={
-            {
-              '--scene1-dur': `${Math.round(105 * speedMult)}ms`,
-              '--scene2-dur': `${Math.round(310 * speedMult)}ms`,
-              '--scene3-dur': `${Math.round(185 * speedMult)}ms`,
-              '--scene4-card-dur': `${Math.round(280 * speedMult)}ms`,
-            } as React.CSSProperties
-          }
-        >
-          {/* Top Status Bar */}
-          <div className="w-full pt-[10px] pb-[2px] px-6 flex items-center justify-between z-30 shrink-0">
-            <span className="text-[15px] font-bold tracking-tight text-[#0f0f0f]">9:41</span>
-            <div className="flex items-center gap-1.5 text-[#0f0f0f]">
-              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor">
-                <rect x="0.5" y="7" width="2.8" height="4" rx="0.8" />
-                <rect x="4.7" y="5" width="2.8" height="6" rx="0.8" />
-                <rect x="8.9" y="2.5" width="2.8" height="8.5" rx="0.8" />
-                <rect x="13.1" y="0.5" width="2.8" height="10.5" rx="0.8" />
-              </svg>
-              <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor">
-                <path d="M8 8.6a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8Zm-4.2-2.8a6 6 0 0 1 8.4 0 .9.9 0 0 0 1.2-1.3 7.8 7.8 0 0 0-10.8 0 .9.9 0 0 0 1.2 1.3Zm-2.6-2.6a9.6 9.6 0 0 1 13.6 0 .9.9 0 1 0 1.3-1.3 11.4 11.4 0 0 0-16.2 0 .9.9 0 0 0 1.3 1.3Z" />
-              </svg>
-              <div className="w-[24px] h-[11px] rounded-[3px] border border-[#0f0f0f] p-[1px] flex items-center">
-                <div className="h-full w-full bg-[#0f0f0f] rounded-[1.5px]" />
+      <div className="flex md:hidden flex-col min-h-screen w-full bg-[#f8ca16] halftone-dots items-center">
+        <div className="w-full max-w-[430px] min-h-screen flex flex-col justify-between relative bg-[#f8ca16] overflow-x-hidden">
+          {/* Top Mobile Bar */}
+          <div className="w-full pt-3 pb-2 px-3 flex items-center justify-between z-30 shrink-0">
+            <div
+              onClick={() => { closeCategoryArena(); setSelectedModal(null); }}
+              className="flex items-center gap-1.5 cursor-pointer"
+            >
+              <div className="w-8 h-8 rounded-full bg-[#df1b23] border-[2px] border-[#0f0f0f] flex items-center justify-center font-comic-display text-white text-[16px]">
+                B
               </div>
+              <span className="font-comic-display text-[22px] tracking-wide text-[#0f0f0f]">
+                BLOSSOMS
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setSelectedModal(PANEL_DETAILS.schedule)}
+                aria-label="Schedule"
+                className="w-8 h-8 rounded-full bg-[#fdfaf0] border-[2px] border-[#0f0f0f] flex items-center justify-center cursor-pointer active:scale-95"
+              >
+                📅
+              </button>
+              <button
+                type="button"
+                onClick={() => setMenuOpen((o) => !o)}
+                aria-label="Menu"
+                className="w-8 h-8 rounded-full bg-[#fdfaf0] border-[2px] border-[#0f0f0f] flex items-center justify-center cursor-pointer active:scale-95"
+              >
+                ☰
+              </button>
             </div>
           </div>
 
-          {/* Main Comic Page Content */}
-          <div className="relative flex-1 w-full px-3 pt-1 pb-2 flex flex-col justify-between overflow-hidden">
-            {/* HERO SECTION */}
-            <div className="relative w-full h-[152px] flex items-center justify-between">
-              <div className="absolute top-1 right-1 flex items-center gap-2 z-30">
-                <button
-                  type="button"
-                  onClick={() => setNotifOpen(!notifOpen)}
-                  className="w-8 h-8 rounded-full bg-[#fdfaf0] border-[2px] border-[#0f0f0f] shadow-[1.8px_1.8px_0px_#0f0f0f] flex items-center justify-center cursor-pointer active:translate-y-0.5"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f0f0f" strokeWidth="2.3">
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMenuOpen(!menuOpen)}
-                  className="w-8 h-8 rounded-full bg-[#fdfaf0] border-[2px] border-[#0f0f0f] shadow-[1.8px_1.8px_0px_#0f0f0f] flex items-center justify-center cursor-pointer active:translate-y-0.5"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f0f0f" strokeWidth="2.4">
-                    <line x1="3" y1="12" x2="21" y2="12" />
-                    <line x1="3" y1="6" x2="21" y2="6" />
-                    <line x1="3" y1="18" x2="21" y2="18" />
-                  </svg>
-                </button>
-              </div>
+          {/* Quick Menu Dropdown */}
+          {menuOpen && (
+            <div className="absolute top-14 right-3 z-40 bg-[#fdfaf0] border-[2.8px] border-[#0f0f0f] p-3 flex flex-col gap-2 rounded-xl">
+              <button
+                type="button"
+                onClick={() => { setMenuOpen(false); setSelectedModal(PANEL_DETAILS.schedule); }}
+                className="text-left font-comic-sub font-bold text-[13px] hover:text-[#df1b23]"
+              >
+                📅 Event Schedule
+              </button>
+              <button
+                type="button"
+                onClick={() => { setMenuOpen(false); setSelectedModal(PANEL_DETAILS.announcements); }}
+                className="text-left font-comic-sub font-bold text-[13px] hover:text-[#df1b23]"
+              >
+                📢 Announcements
+              </button>
+              <button
+                type="button"
+                onClick={() => { setMenuOpen(false); setSelectedModal(PANEL_DETAILS.winners); }}
+                className="text-left font-comic-sub font-bold text-[13px] hover:text-[#df1b23]"
+              >
+                🏆 Winners Leaderboard
+              </button>
+              <button
+                type="button"
+                onClick={() => { setMenuOpen(false); navigate('/login'); }}
+                className="text-left font-comic-sub font-black text-[13px] text-[#df1b23] border-t border-neutral-300 pt-1"
+              >
+                🎓 Student Login
+              </button>
+            </div>
+          )}
 
-              {/* Left Side: BLOSSOMS 2026 Explosion */}
+          {/* Mobile Main Panels Stack */}
+          <div className="flex-1 w-full px-3 py-1 flex flex-col gap-2.5">
+            {/* ROW 0: Blossoms Hero */}
+            <div className="relative w-full h-[148px] bg-[#fdfaf0] border-[3.2px] border-[#0f0f0f] rounded-[14px] flex items-center justify-between overflow-hidden p-1.5">
               <div className="relative w-[56%] h-full flex items-center justify-center">
                 <div className="relative z-10 text-center">
-                  <h1 className="font-comic-display text-[48px] text-[#df1b23] comic-title-stroke tracking-wider leading-[0.85]">
+                  <h1 className="font-comic-display text-[46px] text-[#df1b23] comic-title-stroke tracking-wider leading-[0.85]">
                     BLOSSOMS
                   </h1>
-                  <div className="bg-[#f8ca16] border-[2.2px] border-[#0f0f0f] shadow-[2px_2px_0px_#0f0f0f] px-2 py-0.5 inline-block -rotate-2 mt-1">
-                    <span className="font-comic-display text-[20px] text-[#0f0f0f]">2026</span>
+                  <div className="bg-[#f8ca16] border-[2.2px] border-[#0f0f0f] px-2 py-0.5 inline-block -rotate-2 mt-1">
+                    <span className="font-comic-display text-[22px] text-[#0f0f0f]">2026</span>
                   </div>
-                  <div className="mt-1 bg-white border-[2px] border-[#0f0f0f] shadow-[2px_2px_0px_#0f0f0f] px-2 py-0.5 rotate-1">
-                    <p className="font-comic-sub font-black text-[9px] text-[#0f0f0f] uppercase">
+                  <div className="mt-1 bg-white border-[2px] border-[#0f0f0f] px-2 py-0.5 rotate-1">
+                    <p className="font-comic-sub font-black text-[9.5px] text-[#0f0f0f] uppercase tracking-wide">
                       SAME STAGE. DIFFERENT HEROES!
                     </p>
                   </div>
                 </div>
               </div>
-
-              {/* Right Side: Campus Building */}
-              <div className="relative w-[42%] h-[92%] bg-[#0088e8] border-[3px] border-[#0f0f0f] shadow-[3.5px_3.5px_0px_#0f0f0f] rounded-[8px] overflow-hidden p-1 flex items-center justify-center">
-                <CampusHeritageDome className="w-full h-full" />
+              <div className="relative w-[42%] h-[92%] bg-[#0088e8] border-[3px] border-[#0f0f0f] rounded-[8px] overflow-hidden p-1 flex items-center justify-center">
+                <div className="absolute top-1 left-1 bg-[#fdfaf0] border-[1.6px] border-[#0f0f0f] px-1.5 py-0.5 font-comic-sub font-bold text-[8.5px] uppercase -rotate-2 z-20">
+                  CAMPUS HERITAGE
+                </div>
+                <CampusHeritageDome className="w-full h-full max-h-[110px]" />
               </div>
             </div>
 
-            {/* ROW 1: ARTS & LITERATURE */}
-            <div className="relative w-full h-[182px] flex">
-              {/* ARTS PANEL */}
+            {/* ROW 1: Arts & Literature */}
+            <div className="relative w-full h-[162px] flex">
               <div
-                ref={(el) => { panelRefs.current.arts = el; }}
                 onClick={() => triggerCategorySceneTransition('arts')}
-                style={{
-                  clipPath: 'polygon(0% 0%, 92% 4%, 100% 100%, 0% 96%)',
-                  transitionDuration: `${Math.round(310 * speedMult)}ms`,
-                }}
-                className={`relative w-[53.5%] h-full bg-[#ed1e79] halftone-dots-dense cursor-pointer overflow-hidden select-none group transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  selectedCategory === 'arts' && scenePhase === 'scene1-press'
-                    ? 'animate-scene1-press z-30'
-                    : selectedCategory === 'arts' && isOverlayActive
-                      ? 'opacity-0 pointer-events-none'
-                      : isRearranged
-                        ? '-translate-x-[125%] -translate-y-[25%] -rotate-6 opacity-0 pointer-events-none'
-                        : 'translate-x-0 translate-y-0 rotate-0 opacity-100'
-                }`}
+                style={{ clipPath: 'polygon(0% 0%, 93% 3%, 100% 100%, 0% 96%)' }}
+                className="relative w-[53.5%] h-full bg-[#ed1e79] halftone-dots-dense cursor-pointer overflow-hidden select-none group"
               >
                 <div className="relative z-20 pt-2.5 pl-3">
-                  <h2 className="font-comic-display comic-title-white text-[42px] leading-[0.88] -rotate-[4deg] tracking-wide">
+                  <h2 className="font-comic-display comic-title-white text-[42px] leading-[0.88] -rotate-[3deg] tracking-wide">
                     ARTS
                   </h2>
-                  <div className="mt-1 inline-block bg-[#f9d423] border-[2.4px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-2.5 py-1 -rotate-[5deg]">
-                    <p className="font-comic-sub text-[12px] leading-[1.05] text-[#0f0f0f] text-center">
+                  <div className="mt-1 inline-block bg-[#f9d423] border-[2.4px] border-[#0f0f0f] px-2.5 py-1 -rotate-[5deg]">
+                    <p className="font-comic-sub text-[11px] leading-[1.05] text-[#0f0f0f] font-black text-center">
                       PAINT. DESIGN.<br />EXPRESS.
                     </p>
                   </div>
                 </div>
-                <ArtsIllustration className="absolute bottom-[-4px] left-0 w-full h-[126px] z-10 pointer-events-none" />
+                <ArtsIllustration className="absolute bottom-[-2px] left-0 w-full h-[105px] z-10 pointer-events-none" />
                 <div className="absolute right-3.5 bottom-3.5 z-20">
                   <ComicArrowButton onClick={() => triggerCategorySceneTransition('arts')} />
                 </div>
               </div>
 
-              {/* LITERATURE PANEL */}
               <div
-                ref={(el) => { panelRefs.current.literature = el; }}
                 onClick={() => triggerCategorySceneTransition('literature')}
-                style={{
-                  clipPath: 'polygon(0% 4%, 100% 9%, 100% 100%, 8% 96%)',
-                  transitionDuration: `${Math.round(310 * speedMult)}ms`,
-                }}
-                className={`relative w-[50.5%] -ml-[4%] h-full bg-[#0088e8] halftone-dots-dense cursor-pointer overflow-hidden select-none group transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  selectedCategory === 'literature' && scenePhase === 'scene1-press'
-                    ? 'animate-scene1-press z-30'
-                    : selectedCategory === 'literature' && isOverlayActive
-                      ? 'opacity-0 pointer-events-none'
-                      : isRearranged
-                        ? 'translate-x-[125%] -translate-y-[20%] rotate-6 opacity-0 pointer-events-none'
-                        : 'translate-x-0 translate-y-0 rotate-0 opacity-100'
-                }`}
+                style={{ clipPath: 'polygon(0% 3%, 100% 7%, 100% 100%, 7% 96%)' }}
+                className="relative w-[50.5%] -ml-[4%] h-full bg-[#0088e8] halftone-dots-dense cursor-pointer overflow-hidden select-none group"
               >
-                <div className="relative z-20 pt-4 pl-4 pr-2">
-                  <h2 className="font-comic-display comic-title-white text-[32px] leading-[0.9] -rotate-[3deg] tracking-wide">
+                <div className="relative z-20 pt-2.5 pl-4 pr-1">
+                  <h2 className="font-comic-display comic-title-white text-[34px] leading-[0.9] -rotate-[3deg] tracking-wide">
                     LITERATURE
                   </h2>
-                  <div className="mt-1 inline-block bg-[#f9d423] border-[2.4px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-2 py-0.5 -rotate-[4deg]">
-                    <p className="font-comic-sub text-[11px] leading-[1.05] text-[#0f0f0f] text-center">
+                  <div className="mt-1 inline-block bg-[#f9d423] border-[2.4px] border-[#0f0f0f] px-2 py-0.5 -rotate-[4deg]">
+                    <p className="font-comic-sub text-[10.5px] leading-[1.05] text-[#0f0f0f] font-black text-center">
                       SPEAK. WRITE.<br />THINK.
                     </p>
                   </div>
                 </div>
-                <LiteratureIllustration className="absolute bottom-[-2px] left-1 w-full h-[116px] z-10 pointer-events-none" />
+                <LiteratureIllustration className="absolute bottom-[-2px] left-1 w-full h-[100px] z-10 pointer-events-none" />
                 <div className="absolute right-3.5 bottom-3.5 z-20">
                   <ComicArrowButton onClick={() => triggerCategorySceneTransition('literature')} />
                 </div>
               </div>
             </div>
 
-            {/* ROW 2: STAGE & THEATRE */}
-            <div className="relative w-full h-[180px] flex">
-              {/* STAGE PANEL */}
+            {/* ROW 2: Stage & Theatre */}
+            <div className="relative w-full h-[162px] flex">
               <div
-                ref={(el) => { panelRefs.current.stage = el; }}
                 onClick={() => triggerCategorySceneTransition('stage')}
-                style={{
-                  clipPath: 'polygon(0% 0%, 94% 4%, 100% 100%, 0% 96%)',
-                  transitionDuration: `${Math.round(310 * speedMult)}ms`,
-                }}
-                className={`relative w-[52.5%] h-full bg-[#fdb813] halftone-dots-dense cursor-pointer overflow-hidden select-none group transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  selectedCategory === 'stage' && scenePhase === 'scene1-press'
-                    ? 'animate-scene1-press z-30'
-                    : selectedCategory === 'stage' && isOverlayActive
-                      ? 'opacity-0 pointer-events-none'
-                      : isRearranged
-                        ? '-translate-x-[125%] translate-y-[25%] -rotate-6 opacity-0 pointer-events-none'
-                        : 'translate-x-0 translate-y-0 rotate-0 opacity-100'
-                }`}
+                style={{ clipPath: 'polygon(0% 0%, 94% 4%, 100% 100%, 0% 96%)' }}
+                className="relative w-[52.5%] h-full bg-[#fdb813] halftone-dots-dense cursor-pointer overflow-hidden select-none group"
               >
                 <div className="relative z-20 pt-3 pl-3">
                   <h2 className="font-comic-display comic-title-white text-[42px] leading-[0.88] -rotate-[4deg] tracking-wide">
                     STAGE
                   </h2>
-                  <div className="mt-1 inline-block bg-[#fdfaf0] border-[2.4px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-2.5 py-0.5 -rotate-[3deg]">
+                  <div className="mt-1 inline-block bg-[#fdfaf0] border-[2.4px] border-[#0f0f0f] px-2.5 py-0.5 -rotate-[3deg]">
                     <p className="font-comic-sub text-[11px] leading-[1.05] text-[#0f0f0f] text-center">
                       PERFORM.<br />INSPIRE.
                     </p>
@@ -1073,29 +1058,16 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* THEATRE PANEL */}
               <div
-                ref={(el) => { panelRefs.current.theatre = el; }}
                 onClick={() => triggerCategorySceneTransition('theatre')}
-                style={{
-                  clipPath: 'polygon(0% 4%, 100% 9%, 100% 100%, 6% 96%)',
-                  transitionDuration: `${Math.round(310 * speedMult)}ms`,
-                }}
-                className={`relative w-[51.5%] -ml-[4%] h-full bg-[#861ec2] halftone-dots-dense cursor-pointer overflow-hidden select-none group transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  selectedCategory === 'theatre' && scenePhase === 'scene1-press'
-                    ? 'animate-scene1-press z-30'
-                    : selectedCategory === 'theatre' && isOverlayActive
-                      ? 'opacity-0 pointer-events-none'
-                      : isRearranged
-                        ? 'translate-x-[125%] translate-y-[25%] rotate-6 opacity-0 pointer-events-none'
-                        : 'translate-x-0 translate-y-0 rotate-0 opacity-100'
-                }`}
+                style={{ clipPath: 'polygon(0% 4%, 100% 9%, 100% 100%, 6% 96%)' }}
+                className="relative w-[51.5%] -ml-[4%] h-full bg-[#861ec2] halftone-dots-dense cursor-pointer overflow-hidden select-none group"
               >
                 <div className="relative z-20 pt-3.5 pl-4 pr-2">
                   <h2 className="font-comic-display comic-title-white text-[36px] leading-[0.88] -rotate-[3deg] tracking-wide">
                     THEATRE
                   </h2>
-                  <div className="mt-1 inline-block bg-[#f9d423] border-[2.4px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-2 py-0.5 -rotate-[4deg]">
+                  <div className="mt-1 inline-block bg-[#f9d423] border-[2.4px] border-[#0f0f0f] px-2 py-0.5 -rotate-[4deg]">
                     <p className="font-comic-sub text-[10.5px] leading-[1.05] text-[#0f0f0f] text-center">
                       ACT. IMAGINE.<br />BRING STORIES ALIVE.
                     </p>
@@ -1108,10 +1080,10 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* ROW 3: EVENT SCHEDULE */}
+            {/* ROW 3: EVENT SCHEDULE BANNER */}
             <div
               onClick={() => setSelectedModal(PANEL_DETAILS.schedule)}
-              className="relative w-full h-[62px] bg-[#df1b23] border-[3.2px] border-[#0f0f0f] shadow-[3.5px_3.5px_0px_#0f0f0f] px-3 flex items-center justify-between cursor-pointer active:translate-y-0.5"
+              className="relative w-full h-[62px] bg-[#df1b23] border-[3.2px] border-[#0f0f0f] px-3 flex items-center justify-between cursor-pointer active:scale-95"
             >
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded bg-[#fdfaf0] border-[2px] border-[#0f0f0f] flex items-center justify-center font-bold text-[14px]">
@@ -1127,10 +1099,10 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* ROW 4: ANNOUNCEMENTS */}
+            {/* ROW 4: ANNOUNCEMENTS BANNER */}
             <div
               onClick={() => setSelectedModal(PANEL_DETAILS.announcements)}
-              className="relative w-full h-[60px] bg-[#00966b] border-[3.2px] border-[#0f0f0f] shadow-[3.5px_3.5px_0px_#0f0f0f] px-3 flex items-center justify-between cursor-pointer active:translate-y-0.5"
+              className="relative w-full h-[60px] bg-[#00966b] border-[3.2px] border-[#0f0f0f] px-3 flex items-center justify-between cursor-pointer active:scale-95"
             >
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded bg-[#fdfaf0] border-[2px] border-[#0f0f0f] flex items-center justify-center font-bold text-[14px]">
@@ -1145,7 +1117,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* MOBILE BOTTOM NAVIGATION BAR */}
+          {/* MOBILE BOTTOM NAVIGATION */}
           <div className="w-full bg-[#0f0f0f] border-t-[3.5px] border-[#0f0f0f] pt-2 pb-5 px-3 flex items-center justify-around z-30 shrink-0">
             <button
               type="button"
@@ -1196,14 +1168,9 @@ export default function HomePage() {
 
           {/* MOBILE EXPANDED CATEGORY OVERLAY */}
           {selectedCategory && (
-            <div
-              className={`absolute inset-0 z-30 flex flex-col justify-between overflow-hidden bg-[#fdfaf0] transition-opacity duration-200 ${
-                isOverlayActive ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-              }`}
-            >
-              {/* Category Arena Header */}
+            <div className="absolute inset-0 z-40 flex flex-col justify-between overflow-hidden bg-[#fdfaf0] animate-fadeIn">
               <div
-                className="w-full pt-10 pb-3 px-4 border-b-[3.5px] border-[#0f0f0f] shadow-[0_4px_0_#0f0f0f] flex items-center justify-between"
+                className="w-full pt-10 pb-3 px-4 border-b-[3.5px] border-[#0f0f0f] flex items-center justify-between"
                 style={{ backgroundColor: activeCategoryConfig?.bgHex }}
               >
                 <div>
@@ -1217,7 +1184,7 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={closeCategoryArena}
-                  className="bg-[#f8ca16] border-[2.4px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-3 py-1 font-comic-sub font-black text-[12px] cursor-pointer active:translate-y-0.5"
+                  className="bg-[#f8ca16] border-[2.4px] border-[#0f0f0f] px-3 py-1 font-comic-sub font-black text-[12px] cursor-pointer active:scale-95"
                 >
                   ✕ BACK
                 </button>
@@ -1230,7 +1197,7 @@ export default function HomePage() {
                     key={fil}
                     type="button"
                     onClick={() => setActiveFilter(fil)}
-                    className={`px-2.5 py-1 text-[11px] font-comic-sub font-black border-[1.8px] border-[#0f0f0f] shadow-[1.5px_1.5px_0px_#0f0f0f] shrink-0 cursor-pointer ${
+                    className={`px-2.5 py-1 text-[11px] font-comic-sub font-black border-[1.8px] border-[#0f0f0f] shrink-0 cursor-pointer ${
                       activeFilter === fil ? 'bg-[#0f0f0f] text-white' : 'bg-[#fdfaf0] text-[#0f0f0f]'
                     }`}
                   >
@@ -1239,14 +1206,14 @@ export default function HomePage() {
                 ))}
               </div>
 
-              {/* Event Cards Scroll Area */}
+              {/* Event Cards Scroll */}
               <div className="flex-1 w-full p-3 overflow-y-auto space-y-3 pb-20">
                 {filteredEvents.map((ev) => {
                   const isRegistered = registeredIds.includes(ev.id);
                   return (
                     <div
                       key={ev.id}
-                      className="bg-white border-[2.8px] border-[#0f0f0f] shadow-[3.5px_3.5px_0px_#0f0f0f] p-3 rounded-lg"
+                      className="bg-white border-[2.8px] border-[#0f0f0f] p-3 rounded-lg flex flex-col justify-between"
                     >
                       <div className="flex items-start justify-between">
                         <span
@@ -1256,7 +1223,7 @@ export default function HomePage() {
                           {ev.subCategory}
                         </span>
                         <span className="font-comic-sub font-bold text-[12px] text-[#df1b23]">
-                          {ev.prize}
+                          🏆 {ev.prize}
                         </span>
                       </div>
                       <h4 className="font-comic-display text-[22px] text-[#0f0f0f] mt-1">{ev.title}</h4>
@@ -1270,7 +1237,7 @@ export default function HomePage() {
                         <button
                           type="button"
                           onClick={() => toggleRegister(ev.id, ev.title)}
-                          className={`px-3 py-1 font-comic-sub text-[12px] font-black border-[2px] border-[#0f0f0f] shadow-[2px_2px_0px_#0f0f0f] cursor-pointer active:translate-y-0.5 ${
+                          className={`px-3 py-1 font-comic-sub text-[12px] font-black border-[2px] border-[#0f0f0f] cursor-pointer active:scale-95 ${
                             isRegistered ? 'bg-[#22c55e] text-white' : 'bg-[#f8ca16] text-[#0f0f0f]'
                           }`}
                         >
@@ -1287,352 +1254,16 @@ export default function HomePage() {
       </div>
 
       {/* =========================================================================
-          DESKTOP VIEWPORT (A Little Wide, Exact Comic Book Spread Matching Figma)
-          Active on screens >= md (768px+)
+          DESKTOP VIEWPORT: BLOSSOMS 2026 EVENTS SHOWCASE PAGE
+          Faithfully reproduces supplied reference image (media_1793448918534_6173b0ce.jpg)
+          Black nav (#080808, 95px), warm cream background (#F7F3E9), 4 comic panels
          ========================================================================= */}
-      <div className="hidden md:flex flex-col min-h-screen w-full bg-[#f5c71a] halftone-dots items-center py-6 px-4">
-        {/* Sleek Minimal Desktop Comic Header: Only Necessary Utilities */}
-        <header className="w-full max-w-[840px] flex items-center justify-between mb-4 px-1">
-          <div
-            onClick={() => { setSelectedCategory(null); setActiveTab('home'); }}
-            className="flex items-center gap-2.5 cursor-pointer group select-none"
-          >
-            <div className="bg-[#df1b23] border-[2.8px] border-[#0f0f0f] shadow-[3px_3px_0px_#0f0f0f] px-3 py-1 -rotate-2 group-hover:rotate-0 transition-transform">
-              <span className="font-comic-display text-white text-[24px] tracking-wide">BLOSSOMS 2026</span>
-            </div>
-            <span className="font-comic-sub font-black text-[12px] text-[#0f0f0f] uppercase tracking-wider hidden sm:inline">
-              CHRIST (DEEMED TO BE UNIVERSITY)
-            </span>
-          </div>
-
-          {/* Useful Action Buttons Only - NO duplicate event names */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setSelectedModal(PANEL_DETAILS.schedule)}
-              className="px-3 py-1.5 bg-[#df1b23] text-white border-[2.2px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] font-comic-sub font-black text-[13px] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-transform"
-            >
-              📅 Schedule
-            </button>
-            <button
-              type="button"
-              onClick={() => setSelectedModal(PANEL_DETAILS.announcements)}
-              className="px-3 py-1.5 bg-[#00966b] text-white border-[2.2px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] font-comic-sub font-black text-[13px] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-transform"
-            >
-              📢 Alerts
-            </button>
-            <button
-              type="button"
-              onClick={() => setSelectedModal(PANEL_DETAILS.winners)}
-              className="px-3 py-1.5 bg-[#fdb813] text-[#0f0f0f] border-[2.2px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] font-comic-sub font-black text-[13px] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-transform"
-            >
-              🏆 Winners
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/login')}
-              className="px-3.5 py-1.5 bg-[#fdfaf0] hover:bg-white text-[#0f0f0f] border-[2.4px] border-[#0f0f0f] shadow-[3px_3px_0px_#0f0f0f] font-comic-sub font-black text-[13px] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-transform ml-1"
-            >
-              🎓 Student Login
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/login?role=admin')}
-              className="px-2.5 py-1.5 bg-[#0f0f0f] text-white border-[2.4px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] font-comic-sub font-bold text-[12px] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-transform"
-            >
-              Admin
-            </button>
-          </div>
-        </header>
-
-        {/* Desktop Comic Book Page Spread: Width ~840px (A Little Wide, Exactly Like Figma) */}
-        <div className="w-full max-w-[840px] bg-[#f8ca16] border-[4px] border-[#0f0f0f] shadow-[10px_10px_0px_#0f0f0f] rounded-[24px] p-4 flex flex-col gap-3.5 relative overflow-hidden select-none">
-          {selectedCategory ? (
-            /* DESKTOP EXPANDED CATEGORY ARENA */
-            <div className="w-full flex flex-col gap-4 animate-fadeIn">
-              {/* Header Banner */}
-              <div
-                className="w-full border-[3.5px] border-[#0f0f0f] shadow-[5px_5px_0px_#0f0f0f] rounded-[16px] p-6 text-white flex items-center justify-between"
-                style={{ backgroundColor: activeCategoryConfig?.bgHex }}
-              >
-                <div>
-                  <span className="bg-[#fdfaf0] text-[#0f0f0f] border-[2px] border-[#0f0f0f] px-2.5 py-0.5 font-comic-sub font-black text-[11px] uppercase">
-                    {activeCategoryConfig?.wingTag}
-                  </span>
-                  <h1 className="font-comic-display text-[48px] leading-tight comic-title-stroke mt-1">
-                    {activeCategoryConfig?.cardTitle} ARENA
-                  </h1>
-                  <p className="font-comic-sub text-[15px] font-bold text-white/95 mt-0.5">
-                    {activeCategoryConfig?.heroSummary}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={closeCategoryArena}
-                  className="px-4 py-2 bg-[#f8ca16] text-[#0f0f0f] border-[2.5px] border-[#0f0f0f] shadow-[3px_3px_0px_#0f0f0f] font-comic-sub font-black text-[14px] cursor-pointer hover:bg-white active:translate-y-0.5 transition-all"
-                >
-                  ✕ BACK TO COMIC PAGE
-                </button>
-              </div>
-
-              {/* Filters */}
-              <div className="w-full bg-[#fdfaf0] border-[3px] border-[#0f0f0f] shadow-[3.5px_3.5px_0px_#0f0f0f] p-2.5 rounded-xl flex items-center justify-between">
-                <div className="flex items-center gap-2 overflow-x-auto">
-                  <span className="font-comic-sub font-black text-[13px] text-neutral-800 ml-1">FILTER:</span>
-                  {activeCategoryConfig?.filters.map((fil) => (
-                    <button
-                      key={fil}
-                      type="button"
-                      onClick={() => setActiveFilter(fil)}
-                      className={`px-3 py-1 font-comic-sub font-black text-[12px] border-[1.8px] border-[#0f0f0f] shadow-[1.5px_1.5px_0px_#0f0f0f] cursor-pointer transition-all ${
-                        activeFilter === fil
-                          ? 'bg-[#0f0f0f] text-white -translate-y-0.5'
-                          : 'bg-white hover:bg-[#f8ca16] text-[#0f0f0f]'
-                      }`}
-                    >
-                      {fil}
-                    </button>
-                  ))}
-                </div>
-                <span className="font-comic-sub font-bold text-[12px] text-neutral-600 mr-2 shrink-0">
-                  {filteredEvents.length} Competitions
-                </span>
-              </div>
-
-              {/* 2-Column Wide Event Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {filteredEvents.map((ev) => {
-                  const isRegistered = registeredIds.includes(ev.id);
-                  return (
-                    <div
-                      key={ev.id}
-                      className="bg-white border-[3px] border-[#0f0f0f] shadow-[4px_4px_0px_#0f0f0f] p-4 rounded-xl flex flex-col justify-between hover:-translate-y-0.5 transition-all group"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span
-                            className="px-2 py-0.5 font-comic-sub font-black text-[10.5px] border border-[#0f0f0f]"
-                            style={{ backgroundColor: ev.badgeColor }}
-                          >
-                            {ev.subCategory}
-                          </span>
-                          <span className="font-comic-sub font-black text-[13px] text-[#df1b23]">
-                            🏆 {ev.prize}
-                          </span>
-                        </div>
-                        <h3 className="font-comic-display text-[22px] text-[#0f0f0f] leading-snug group-hover:text-[#df1b23] transition-colors">
-                          {ev.title}
-                        </h3>
-                        <p className="text-[12.5px] text-neutral-700 font-medium leading-snug mt-1">
-                          {ev.tagline}
-                        </p>
-                      </div>
-
-                      <div className="mt-3 pt-2.5 border-t border-neutral-200">
-                        <div className="flex items-center justify-between text-[11.5px] font-semibold text-neutral-700 mb-2.5">
-                          <span>📅 {ev.time}</span>
-                          <span>📍 {ev.venue}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-[11.5px] font-bold text-neutral-800">👥 {ev.teamSize}</span>
-                          <button
-                            type="button"
-                            onClick={() => toggleRegister(ev.id, ev.title)}
-                            className={`px-4 py-1.5 font-comic-sub font-black text-[12.5px] border-[2px] border-[#0f0f0f] shadow-[2px_2px_0px_#0f0f0f] cursor-pointer active:translate-y-0.5 transition-all ${
-                              isRegistered
-                                ? 'bg-[#22c55e] text-white'
-                                : 'bg-[#f8ca16] hover:bg-[#fde047] text-[#0f0f0f]'
-                            }`}
-                          >
-                            {isRegistered ? 'REGISTERED ✓' : 'REGISTER'}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ) : (
-            /* DESKTOP MAIN COMIC BOOK COVER (Exact 1:1 Figma Design) */
-            <>
-              {/* TOP ROW: HERO PANEL */}
-              <div className="relative w-full h-[180px] sm:h-[196px] bg-[#fdfaf0] border-[3.5px] border-[#0f0f0f] shadow-[4px_4px_0px_#0f0f0f] rounded-[16px] flex items-center justify-between overflow-hidden p-2">
-                {/* Left: BLOSSOMS 2026 Explosion */}
-                <div className="relative w-[56%] h-full flex items-center justify-center">
-                  <div className="relative z-10 text-center">
-                    <h1 className="font-comic-display text-[58px] sm:text-[68px] text-[#df1b23] comic-title-stroke tracking-wider leading-[0.85]">
-                      BLOSSOMS
-                    </h1>
-                    <div className="bg-[#f8ca16] border-[2.6px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-3 py-0.5 inline-block -rotate-2 mt-1">
-                      <span className="font-comic-display text-[26px] text-[#0f0f0f]">2026</span>
-                    </div>
-                    <div className="mt-1 bg-white border-[2.2px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-3 py-0.5 rotate-1">
-                      <p className="font-comic-sub font-black text-[11px] text-[#0f0f0f] uppercase tracking-wide">
-                        SAME STAGE. DIFFERENT HEROES!
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right: Heritage Building Panel */}
-                <div className="relative w-[42%] h-full bg-[#0088e8] border-[3px] border-[#0f0f0f] shadow-[3.5px_3.5px_0px_#0f0f0f] rounded-[12px] overflow-hidden p-2 flex items-center justify-center">
-                  <div className="absolute top-2 left-2 bg-[#fdfaf0] border-[2px] border-[#0f0f0f] px-2.5 py-0.5 font-comic-sub font-black text-[10px] uppercase -rotate-2 z-20">
-                    CULTURE. CREATIVITY. COMMUNITY.
-                  </div>
-                  <CampusHeritageDome className="w-full h-full max-h-[160px]" />
-                </div>
-              </div>
-
-              {/* ROW 1: ARTS & LITERATURE (Angled Comic Panels) */}
-              <div className="relative w-full h-[220px] flex">
-                {/* ARTS PANEL */}
-                <div
-                  onClick={() => triggerCategorySceneTransition('arts')}
-                  style={{
-                    clipPath: 'polygon(0% 0%, 93% 3%, 100% 100%, 0% 97%)',
-                  }}
-                  className="relative w-[53.5%] h-full bg-[#ed1e79] halftone-dots-dense cursor-pointer overflow-hidden select-none group hover:scale-[1.01] transition-transform"
-                >
-                  <div className="relative z-20 pt-3 pl-4">
-                    <h2 className="font-comic-display comic-title-white text-[52px] leading-[0.88] -rotate-[3deg] tracking-wide">
-                      ARTS
-                    </h2>
-                    <div className="mt-1 inline-block bg-[#f9d423] border-[2.4px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-3 py-0.5 -rotate-[4deg]">
-                      <p className="font-comic-sub text-[12px] leading-[1.05] text-[#0f0f0f] font-black text-center">
-                        PAINT. DESIGN.<br />EXPRESS.
-                      </p>
-                    </div>
-                  </div>
-                  <ArtsIllustration className="absolute bottom-[-2px] left-0 w-full h-[140px] z-10 pointer-events-none" />
-                  <div className="absolute right-4 bottom-4 z-20">
-                    <ComicArrowButton onClick={() => triggerCategorySceneTransition('arts')} />
-                  </div>
-                </div>
-
-                {/* LITERATURE PANEL */}
-                <div
-                  onClick={() => triggerCategorySceneTransition('literature')}
-                  style={{
-                    clipPath: 'polygon(0% 3%, 100% 7%, 100% 100%, 7% 97%)',
-                  }}
-                  className="relative w-[50.5%] -ml-[4%] h-full bg-[#0088e8] halftone-dots-dense cursor-pointer overflow-hidden select-none group hover:scale-[1.01] transition-transform"
-                >
-                  <div className="relative z-20 pt-3.5 pl-5 pr-2">
-                    <h2 className="font-comic-display comic-title-white text-[42px] leading-[0.9] -rotate-[3deg] tracking-wide">
-                      LITERATURE
-                    </h2>
-                    <div className="mt-1 inline-block bg-[#f9d423] border-[2.4px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-2.5 py-0.5 -rotate-[3deg]">
-                      <p className="font-comic-sub text-[12px] leading-[1.05] text-[#0f0f0f] font-black text-center">
-                        SPEAK. WRITE.<br />THINK.
-                      </p>
-                    </div>
-                  </div>
-                  <LiteratureIllustration className="absolute bottom-[-2px] left-1 w-full h-[135px] z-10 pointer-events-none" />
-                  <div className="absolute right-4 bottom-4 z-20">
-                    <ComicArrowButton onClick={() => triggerCategorySceneTransition('literature')} />
-                  </div>
-                </div>
-              </div>
-
-              {/* ROW 2: STAGE & THEATRE (Angled Comic Panels) */}
-              <div className="relative w-full h-[220px] flex">
-                {/* STAGE PANEL */}
-                <div
-                  onClick={() => triggerCategorySceneTransition('stage')}
-                  style={{
-                    clipPath: 'polygon(0% 0%, 94% 3%, 100% 100%, 0% 97%)',
-                  }}
-                  className="relative w-[52.5%] h-full bg-[#fdb813] halftone-dots-dense cursor-pointer overflow-hidden select-none group hover:scale-[1.01] transition-transform"
-                >
-                  <div className="relative z-20 pt-3 pl-4">
-                    <h2 className="font-comic-display comic-title-white text-[52px] leading-[0.88] -rotate-[3deg] tracking-wide">
-                      STAGE
-                    </h2>
-                    <div className="mt-1 inline-block bg-[#fdfaf0] border-[2.4px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-3 py-0.5 -rotate-[3deg]">
-                      <p className="font-comic-sub text-[12px] leading-[1.05] text-[#0f0f0f] font-black text-center">
-                        PERFORM.<br />INSPIRE.
-                      </p>
-                    </div>
-                  </div>
-                  <StageIllustration className="absolute bottom-[-2px] left-0 w-full h-[140px] z-10 pointer-events-none" />
-                  <div className="absolute right-4 bottom-4 z-20">
-                    <ComicArrowButton onClick={() => triggerCategorySceneTransition('stage')} />
-                  </div>
-                </div>
-
-                {/* THEATRE PANEL */}
-                <div
-                  onClick={() => triggerCategorySceneTransition('theatre')}
-                  style={{
-                    clipPath: 'polygon(0% 3%, 100% 7%, 100% 100%, 6% 97%)',
-                  }}
-                  className="relative w-[51.5%] -ml-[4%] h-full bg-[#861ec2] halftone-dots-dense cursor-pointer overflow-hidden select-none group hover:scale-[1.01] transition-transform"
-                >
-                  <div className="relative z-20 pt-3.5 pl-5 pr-2">
-                    <h2 className="font-comic-display comic-title-white text-[46px] leading-[0.88] -rotate-[3deg] tracking-wide">
-                      THEATRE
-                    </h2>
-                    <div className="mt-1 inline-block bg-[#f9d423] border-[2.4px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-2.5 py-0.5 -rotate-[4deg]">
-                      <p className="font-comic-sub text-[11px] leading-[1.05] text-[#0f0f0f] font-black text-center">
-                        ACT. IMAGINE.<br />BRING STORIES ALIVE.
-                      </p>
-                    </div>
-                  </div>
-                  <TheatreIllustration className="absolute bottom-[-2px] left-0 w-full h-[135px] z-10 pointer-events-none" />
-                  <div className="absolute right-4 bottom-4 z-20">
-                    <ComicArrowButton onClick={() => triggerCategorySceneTransition('theatre')} />
-                  </div>
-                </div>
-              </div>
-
-              {/* ROW 3: EVENT SCHEDULE BANNER */}
-              <div
-                onClick={() => setSelectedModal(PANEL_DETAILS.schedule)}
-                className="relative w-full h-[76px] bg-[#df1b23] border-[3.5px] border-[#0f0f0f] shadow-[4px_4px_0px_#0f0f0f] rounded-[12px] px-4 flex items-center justify-between cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-transform"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#fdfaf0] border-[2.2px] border-[#0f0f0f] flex items-center justify-center font-bold text-[18px]">
-                    📅
-                  </div>
-                  <div>
-                    <h3 className="font-comic-display text-white text-[30px] leading-none">EVENT SCHEDULE</h3>
-                    <p className="font-comic-sub text-[12px] text-white/90 font-bold">DATES, TIMINGS & VENUES • NOV 12 – DEC 16</p>
-                  </div>
-                </div>
-                <div className="bg-[#f8ca16] border-[2.2px] border-[#0f0f0f] px-3 py-1 font-comic-sub font-black text-[13px] rotate-1 shadow-[2px_2px_0px_#0f0f0f]">
-                  CHECK NOW!
-                </div>
-              </div>
-
-              {/* ROW 4: ANNOUNCEMENTS BANNER */}
-              <div
-                onClick={() => setSelectedModal(PANEL_DETAILS.announcements)}
-                className="relative w-full h-[72px] bg-[#00966b] border-[3.5px] border-[#0f0f0f] shadow-[4px_4px_0px_#0f0f0f] rounded-[12px] px-4 flex items-center justify-between cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-transform"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#fdfaf0] border-[2.2px] border-[#0f0f0f] flex items-center justify-center font-bold text-[18px]">
-                    📢
-                  </div>
-                  <div>
-                    <h3 className="font-comic-display text-white text-[28px] leading-none">ANNOUNCEMENTS</h3>
-                    <p className="font-comic-sub text-[12px] text-white/90 font-bold">LIVE FEST UPDATES & BULLETINS</p>
-                  </div>
-                </div>
-                <ComicArrowButton onClick={() => setSelectedModal(PANEL_DETAILS.announcements)} />
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Minimal Footer */}
-        <footer className="mt-6 text-center text-[#0f0f0f] font-comic-sub font-bold text-[13px]">
-          <p>CHRIST (DEEMED TO BE UNIVERSITY) • BANGALORE • SAME STAGE. DIFFERENT HEROES!</p>
-        </footer>
+      <div className="hidden md:block w-full">
+        <DesktopEventsShowcase />
       </div>
 
       {/* =========================================================================
-          UNIVERSAL INTERACTIVE COMIC MODAL (Desktop & Mobile)
+          UNIVERSAL INTERACTIVE COMIC MODAL (Desktop & Mobile, Zero Shadows)
          ========================================================================= */}
       {selectedModal && (
         <div
@@ -1644,13 +1275,13 @@ export default function HomePage() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-xl bg-[#fdfaf0] border-[4px] border-[#0f0f0f] shadow-[8px_8px_0px_#0f0f0f] p-5 max-h-[85vh] flex flex-col relative rounded-2xl"
+            className="w-full max-w-xl bg-[#fdfaf0] border-[4px] border-[#0f0f0f] p-5 max-h-[85vh] flex flex-col relative rounded-2xl"
           >
             {/* Modal Header */}
             <div className="flex items-start justify-between pb-3 border-b-[2.5px] border-[#0f0f0f]">
               <div>
                 <div
-                  className="inline-block px-2.5 py-0.5 border-[2px] border-[#0f0f0f] font-comic-sub text-[11px] font-bold text-white mb-1 shadow-[2px_2px_0px_#0f0f0f]"
+                  className="inline-block px-2.5 py-0.5 border-[2px] border-[#0f0f0f] font-comic-sub text-[11px] font-bold text-white mb-1"
                   style={{ backgroundColor: selectedModal.accent }}
                 >
                   {selectedModal.tag}
@@ -1668,7 +1299,7 @@ export default function HomePage() {
                   setSelectedModal(null);
                   setActiveTab('home');
                 }}
-                className="w-8 h-8 bg-[#f8ca16] border-[2px] border-[#0f0f0f] shadow-[2px_2px_0px_#0f0f0f] font-comic-display text-[18px] flex items-center justify-center cursor-pointer hover:bg-red-500 hover:text-white transition-colors"
+                className="w-8 h-8 bg-[#f8ca16] border-[2px] border-[#0f0f0f] font-comic-display text-[18px] flex items-center justify-center cursor-pointer hover:bg-red-500 hover:text-white transition-colors"
               >
                 ✕
               </button>
@@ -1679,7 +1310,7 @@ export default function HomePage() {
               {selectedModal.items.map((item, idx) => (
                 <div
                   key={idx}
-                  className="bg-white border-[2.2px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] p-2.5 flex items-center justify-between rounded-lg hover:-translate-y-0.5 transition-transform"
+                  className="bg-white border-[2.2px] border-[#0f0f0f] p-2.5 flex items-center justify-between rounded-lg"
                 >
                   <div>
                     <p className="font-bold text-[13.5px] text-[#0f0f0f]">{item.name}</p>

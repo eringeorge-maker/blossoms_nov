@@ -21,18 +21,15 @@ const buttonVariants = cva(
       variant: {
         primary: [
           'bg-blossoms-red text-white',
-          'shadow-[2px_2px_0px_0px_#1A1A1A]',
-          'hover:shadow-[3px_3px_0px_0px_#1A1A1A] hover:-translate-x-[0.5px] hover:-translate-y-[0.5px]',
+          'hover:opacity-90 active:scale-95',
         ],
         secondary: [
           'bg-blossoms-yellow text-ink',
-          'shadow-[2px_2px_0px_0px_#1A1A1A]',
-          'hover:shadow-[3px_3px_0px_0px_#1A1A1A] hover:-translate-x-[0.5px] hover:-translate-y-[0.5px]',
+          'hover:opacity-90 active:scale-95',
         ],
         outline: [
           'bg-paper text-ink',
-          'shadow-[2px_2px_0px_0px_#1A1A1A]',
-          'hover:bg-gutter hover:shadow-[3px_3px_0px_0px_#1A1A1A] hover:-translate-x-[0.5px] hover:-translate-y-[0.5px]',
+          'hover:bg-gutter active:scale-95',
         ],
         ghost: [
           'border-transparent bg-transparent text-ink',
@@ -41,14 +38,13 @@ const buttonVariants = cva(
         ],
         danger: [
           'bg-blossoms-red text-white',
-          'shadow-[2px_2px_0px_0px_#1A1A1A]',
-          'hover:opacity-90',
+          'hover:opacity-90 active:scale-95',
         ],
       },
       size: {
         sm:  'text-sm min-h-[36px] px-3 py-1.5 rounded-lg',
         md:  'text-base min-h-[44px] px-5 py-2',
-        lg:  'text-lg min-h-[52px] px-6 py-3 shadow-[3px_3px_0px_0px_#1A1A1A]',
+        lg:  'text-lg min-h-[52px] px-6 py-3',
         icon:'min-h-[44px] min-w-[44px] px-2 py-2 rounded-xl',
       },
     },

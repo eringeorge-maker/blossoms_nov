@@ -3,6 +3,7 @@ import { useState, useMemo } from 'react'
 import { Search, Sparkles, CheckCircle2, Calendar, MapPin, Users, X, Info } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
+import DesktopEventsShowcase from '@/components/comic/DesktopEventsShowcase'
 import { DisplayText, ComicCaptionBox, HalftoneAccent } from '@/components/comic/ComicPrimitives'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
@@ -152,7 +153,14 @@ export default function EventsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[1240px] px-3 sm:px-4 py-6 md:py-8">
+    <>
+      {/* ── Desktop Events Showcase Page (Faithful to Reference Image) ── */}
+      <div className="hidden md:block w-full">
+        <DesktopEventsShowcase />
+      </div>
+
+      {/* ── Mobile Events Catalogue View ── */}
+      <div className="block md:hidden mx-auto max-w-[1240px] px-3 sm:px-4 py-6">
       {/* ── Top Comic Caption & Heading ──────────────────────── */}
       <div className="mb-3">
         <ComicCaptionBox>
@@ -563,6 +571,7 @@ export default function EventsPage() {
           })}
         </div>
       )}
-    </div>
+      </div>
+    </>
   )
 }
