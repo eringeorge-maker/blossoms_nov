@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,700;1,700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
 /* ==========================================================
    Blossoms Fest — Authentic Comic Universe Design System
    Tailwind v4 @theme layer with rich Comic Anthology tokens
@@ -403,3 +404,281 @@ body {
   animation: comicPanelSettleEven 320ms cubic-bezier(0.18, 0.89, 0.32, 1.25) both;
 }
 
+
+
+/* === FIGMA MODERN MOBILE INTERFACE DESIGN SYSTEM === */
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #f6c915;
+    color: #111111;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+.font-comic-display {
+  font-family: 'Bangers', cursive;
+  letter-spacing: 0.03em;
+}
+
+.font-comic-sub {
+  font-family: 'Bangers', cursive;
+  letter-spacing: 0.045em;
+}
+
+/* Comic book text extrusion & outline */
+.comic-title-white {
+  color: #ffffff;
+  -webkit-text-stroke: 2.2px #0f0f0f;
+  paint-order: stroke fill;
+  text-shadow:
+    0px 2px 0px #0f0f0f,
+    2px 3px 0px #0f0f0f,
+    3px 4px 0px #0f0f0f;
+}
+
+.comic-title-red {
+  color: #df1b23;
+  -webkit-text-stroke: 2.4px #0f0f0f;
+  paint-order: stroke fill;
+  text-shadow:
+    1px 2px 0px #0f0f0f,
+    2px 4px 0px #0f0f0f,
+    4px 5px 0px #0f0f0f;
+}
+
+/* Halftone dot overlays */
+.halftone-dots {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.16) 1.3px, transparent 1.4px);
+  background-size: 6px 6px;
+}
+
+.halftone-dots-dense {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.22) 1.5px, transparent 1.6px);
+  background-size: 5px 5px;
+}
+
+.halftone-dots-light {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.18) 1.2px, transparent 1.3px);
+  background-size: 6px 6px;
+}
+
+/* Hide scrollbars inside mobile frame */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ==========================================================================
+   ART PAGE CHOREOGRAPHED TRANSITION ANIMATIONS
+   1. Pink background expands from Top-Right corner & Bottom-Left corner
+   2. After full expansion, 'ART' text moves upward to form the page heading
+   3. Page content reveals below the new heading
+   ========================================================================== */
+/* ==========================================================================
+   4-SCENE COMIC-BOOK TRANSITION SYSTEM
+   Scene 1 (~100ms): Physical comic panel inward press + sharp spring-back
+   Scene 2 (~250-350ms): Selected panel expands from original bounds, black
+                         outline thickens, other panels slide away to edges
+   Scene 3 (~150-200ms): Diagonal ink wipe + burst of speed lines + red/yellow
+                         offset-print registration shift reveals new page
+   Scene 4 (~250-350ms): Event panels enter one by one with a sharp clipped
+                         reveal and slight rotation settling into alignment
+   ========================================================================== */
+
+/* SCENE 1: Physical inward press + sharp spring-back (~100ms) */
+@keyframes scene1ComicPress {
+  0% {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  45% {
+    transform: scale(0.915) translate3d(2px, 3px, 0);
+  }
+  82% {
+    transform: scale(1.045) translate3d(-1px, -1px, 0);
+  }
+  100% {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+}
+
+.animate-scene1-press {
+  animation: scene1ComicPress var(--scene1-dur, 105ms) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  will-change: transform;
+}
+
+/* SCENE 3A: Diagonal ink wipe sweeping across the expanded panel (~180ms) */
+@keyframes scene3DiagonalInkWipe {
+  0% {
+    transform: translate3d(-115%, -115%, 0) rotate(-32deg);
+    opacity: 1;
+  }
+  55% {
+    transform: translate3d(0%, 0%, 0) rotate(-32deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(115%, 115%, 0) rotate(-32deg);
+    opacity: 0.95;
+  }
+}
+
+.animate-scene3-ink-wipe {
+  animation: scene3DiagonalInkWipe var(--scene3-dur, 185ms) cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* SCENE 3B: Brief burst of comic speed lines across the panel (~180ms) */
+@keyframes scene3SpeedLines {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+  80% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+
+.animate-scene3-speed-lines {
+  animation: scene3SpeedLines var(--scene3-dur, 185ms) ease-out forwards;
+  will-change: transform, opacity;
+}
+
+/* SCENE 3C: Printed-comic CMYK/risograph red & yellow offset-print shift */
+@keyframes scene3OffsetPrint {
+  0% {
+    box-shadow:
+      -6px -4px 0px #df1b23,
+      6px 5px 0px #facc15,
+      0 0 0 4px #0f0f0f;
+    transform: translate3d(2px, -2px, 0);
+  }
+  45% {
+    box-shadow:
+      4px -3px 0px #df1b23,
+      -5px 4px 0px #facc15,
+      0 0 0 5px #0f0f0f;
+    transform: translate3d(-2px, 1px, 0);
+  }
+  80% {
+    box-shadow:
+      -2px 2px 0px #df1b23,
+      3px -2px 0px #facc15,
+      0 0 0 5px #0f0f0f;
+    transform: translate3d(1px, 0, 0);
+  }
+  100% {
+    box-shadow:
+      -2.5px -2px 0px #df1b23,
+      2.5px 2.5px 0px #facc15,
+      0 0 0 5px #0f0f0f;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-scene3-offset-print {
+  animation: scene3OffsetPrint var(--scene3-dur, 190ms) steps(4, end) forwards;
+}
+
+/* Text offset-print effect (red & yellow outlines shifting a few pixels) */
+@keyframes scene3TextOffsetPrint {
+  0% {
+    text-shadow:
+      -5px -3px 0px #df1b23,
+      5px 4px 0px #facc15,
+      2px 3px 0px #0f0f0f;
+  }
+  50% {
+    text-shadow:
+      4px 3px 0px #df1b23,
+      -4px -3px 0px #facc15,
+      2px 3px 0px #0f0f0f;
+  }
+  100% {
+    text-shadow:
+      -2px -1.5px 0px #df1b23,
+      2.5px 2px 0px #facc15,
+      2px 4px 0px #0f0f0f;
+  }
+}
+
+.comic-heading-offset-print {
+  color: #ffffff;
+  -webkit-text-stroke: 2.3px #0f0f0f;
+  paint-order: stroke fill;
+  animation: scene3TextOffsetPrint 0.24s steps(3, end) forwards;
+}
+
+/* SCENE 4: Sharp clipped reveal + slight rotation settling into perfect alignment (~280ms) */
+@keyframes scene4EventPanelInOdd {
+  0% {
+    opacity: 0;
+    clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
+    transform: translateY(14px) rotate(-2.8deg) scale(0.96);
+  }
+  55% {
+    opacity: 1;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    transform: translateY(-2px) rotate(1.1deg) scale(1.01);
+  }
+  82% {
+    opacity: 1;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    transform: translateY(0px) rotate(-0.4deg) scale(1);
+  }
+  100% {
+    opacity: 1;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes scene4EventPanelInEven {
+  0% {
+    opacity: 0;
+    clip-path: polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%);
+    transform: translateY(14px) rotate(2.8deg) scale(0.96);
+  }
+  55% {
+    opacity: 1;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    transform: translateY(-2px) rotate(-1.1deg) scale(1.01);
+  }
+  82% {
+    opacity: 1;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    transform: translateY(0px) rotate(0.4deg) scale(1);
+  }
+  100% {
+    opacity: 1;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+}
+
+.animate-scene4-panel-odd {
+  opacity: 0;
+  animation: scene4EventPanelInOdd var(--scene4-card-dur, 280ms) cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: clip-path, transform, opacity;
+}
+
+.animate-scene4-panel-even {
+  opacity: 0;
+  animation: scene4EventPanelInEven var(--scene4-card-dur, 280ms) cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: clip-path, transform, opacity;
+}

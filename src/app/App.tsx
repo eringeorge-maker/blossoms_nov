@@ -66,9 +66,11 @@ export default function App() {
       <BrowserRouter>
         <Suspense fallback={<PageFallback />}>
           <Routes>
+            {/* ── Home route (Authentic Figma Modern Mobile Interface Design) ── */}
+            <Route path="/" element={<HomePage />} />
+
             {/* ── Public routes ─────────────────────────────── */}
             <Route element={<PublicShell />}>
-              <Route index element={<HomePage />} />
               <Route path="events" element={<EventsPage />} />
               <Route path="events/:slug" element={<EventDetailPage />} />
               <Route path="schedule" element={<SchedulePage />} />
