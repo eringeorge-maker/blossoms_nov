@@ -519,7 +519,7 @@ const PANEL_DETAILS: Record<string, DetailModal> = {
     title: 'EVENT SCHEDULE',
     subtitle: 'DATES, TIMINGS & VENUES',
     tag: 'Nov 12 – Dec 16, 2025 • Full Lineup',
-    accent: '#df2328',
+    accent: '#df1b23',
     items: [
       { name: 'Blossoms Inauguration', time: '12.11.2025', venue: 'Birds park' },
       { name: 'Greeting Card Competition', time: '13.11.2025', venue: 'Classroom' },
@@ -588,7 +588,7 @@ function ComicArrowButton({ onClick }: { onClick?: () => void }) {
         }
       }}
       aria-label="Open category"
-      className="w-[30px] h-[30px] sm:w-[34px] sm:h-[34px] rounded-full bg-[#fdfaf0] border-[2.5px] border-[#0f0f0f] shadow-[2px_2px_0px_#0f0f0f] flex items-center justify-center active:translate-y-0.5 transition-transform cursor-pointer z-20 hover:scale-105"
+      className="w-[32px] h-[32px] rounded-full bg-[#fdfaf0] border-[2.5px] border-[#0f0f0f] shadow-[2px_2px_0px_#0f0f0f] flex items-center justify-center active:translate-y-0.5 transition-transform cursor-pointer z-20 hover:scale-105"
     >
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
         <path
@@ -1287,142 +1287,104 @@ export default function HomePage() {
       </div>
 
       {/* =========================================================================
-          DESKTOP VIEWPORT (Wide Comic Universe Experience)
+          DESKTOP VIEWPORT (A Little Wide, Exact Comic Book Spread Matching Figma)
           Active on screens >= md (768px+)
          ========================================================================= */}
-      <div className="hidden md:flex flex-col min-h-screen w-full bg-[#f5c71a] halftone-dots">
-        {/* Desktop Sticky Comic Topbar */}
-        <header className="sticky top-0 z-40 w-full bg-[#f8ca16] border-b-[4px] border-[#0f0f0f] shadow-[0_4px_0_#0f0f0f] px-6 py-3">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            {/* Left Brand Lockup */}
-            <div
-              onClick={() => { setSelectedCategory(null); setActiveTab('home'); }}
-              className="flex items-center gap-3 cursor-pointer group"
+      <div className="hidden md:flex flex-col min-h-screen w-full bg-[#f5c71a] halftone-dots items-center py-6 px-4">
+        {/* Sleek Minimal Desktop Comic Header: Only Necessary Utilities */}
+        <header className="w-full max-w-[840px] flex items-center justify-between mb-4 px-1">
+          <div
+            onClick={() => { setSelectedCategory(null); setActiveTab('home'); }}
+            className="flex items-center gap-2.5 cursor-pointer group select-none"
+          >
+            <div className="bg-[#df1b23] border-[2.8px] border-[#0f0f0f] shadow-[3px_3px_0px_#0f0f0f] px-3 py-1 -rotate-2 group-hover:rotate-0 transition-transform">
+              <span className="font-comic-display text-white text-[24px] tracking-wide">BLOSSOMS 2026</span>
+            </div>
+            <span className="font-comic-sub font-black text-[12px] text-[#0f0f0f] uppercase tracking-wider hidden sm:inline">
+              CHRIST (DEEMED TO BE UNIVERSITY)
+            </span>
+          </div>
+
+          {/* Useful Action Buttons Only - NO duplicate event names */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setSelectedModal(PANEL_DETAILS.schedule)}
+              className="px-3 py-1.5 bg-[#df1b23] text-white border-[2.2px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] font-comic-sub font-black text-[13px] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-transform"
             >
-              <div className="bg-[#df1b23] border-[2.8px] border-[#0f0f0f] shadow-[3px_3px_0px_#0f0f0f] px-2.5 py-1 -rotate-2 group-hover:rotate-0 transition-transform">
-                <span className="font-comic-display text-white text-[24px] tracking-wide">BLOSSOMS</span>
-              </div>
-              <div>
-                <span className="font-comic-display text-[#0f0f0f] text-[22px] tracking-wider">2026</span>
-                <span className="ml-2 font-comic-sub text-[12px] font-bold text-neutral-800 uppercase tracking-widest hidden lg:inline">
-                  CHRIST (DEEMED TO BE UNIVERSITY)
-                </span>
-              </div>
-            </div>
-
-            {/* Center Navigation Links */}
-            <nav className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => { setSelectedCategory(null); setActiveTab('home'); }}
-                className={`px-3 py-1.5 font-comic-sub font-bold text-[13px] border-[2.2px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] cursor-pointer transition-transform hover:-translate-y-0.5 ${
-                  selectedCategory === null && activeTab === 'home' ? 'bg-[#0f0f0f] text-white' : 'bg-[#fdfaf0] text-[#0f0f0f]'
-                }`}
-              >
-                🏠 HOME
-              </button>
-              {(['arts', 'literature', 'stage', 'theatre'] as CategoryKey[]).map((key) => {
-                const conf = CATEGORY_DATA[key];
-                const isActive = selectedCategory === key;
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => triggerCategorySceneTransition(key)}
-                    style={{ backgroundColor: isActive ? conf.bgHex : '#fdfaf0' }}
-                    className={`px-3 py-1.5 font-comic-sub font-black text-[13px] border-[2.2px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] cursor-pointer transition-transform hover:-translate-y-0.5 ${
-                      isActive ? 'text-white' : 'text-[#0f0f0f]'
-                    }`}
-                  >
-                    {conf.cardTitle}
-                  </button>
-                );
-              })}
-              <button
-                type="button"
-                onClick={() => setSelectedModal(PANEL_DETAILS.schedule)}
-                className="px-3 py-1.5 font-comic-sub font-bold text-[13px] bg-[#df1b23] text-white border-[2.2px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] cursor-pointer hover:-translate-y-0.5"
-              >
-                📅 SCHEDULE
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedModal(PANEL_DETAILS.announcements)}
-                className="px-3 py-1.5 font-comic-sub font-bold text-[13px] bg-[#00966b] text-white border-[2.2px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] cursor-pointer hover:-translate-y-0.5"
-              >
-                📢 ALERTS
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedModal(PANEL_DETAILS.winners)}
-                className="px-3 py-1.5 font-comic-sub font-bold text-[13px] bg-[#fdb813] text-[#0f0f0f] border-[2.2px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] cursor-pointer hover:-translate-y-0.5"
-              >
-                🏆 WINNERS
-              </button>
-            </nav>
-
-            {/* Right Action Buttons */}
-            <div className="flex items-center gap-2.5">
-              <button
-                type="button"
-                onClick={() => navigate('/login')}
-                className="px-3.5 py-1.5 bg-[#fdfaf0] hover:bg-white text-[#0f0f0f] border-[2.5px] border-[#0f0f0f] shadow-[3px_3px_0px_#0f0f0f] font-comic-sub font-black text-[13px] cursor-pointer active:translate-y-0.5"
-              >
-                🎓 STUDENT LOGIN
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/login?role=admin')}
-                className="px-3 py-1.5 bg-[#0f0f0f] hover:bg-neutral-800 text-white border-[2.5px] border-[#0f0f0f] shadow-[3px_3px_0px_#0f0f0f] font-comic-sub font-bold text-[13px] cursor-pointer active:translate-y-0.5"
-              >
-                ADMIN
-              </button>
-            </div>
+              📅 Schedule
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedModal(PANEL_DETAILS.announcements)}
+              className="px-3 py-1.5 bg-[#00966b] text-white border-[2.2px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] font-comic-sub font-black text-[13px] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-transform"
+            >
+              📢 Alerts
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedModal(PANEL_DETAILS.winners)}
+              className="px-3 py-1.5 bg-[#fdb813] text-[#0f0f0f] border-[2.2px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] font-comic-sub font-black text-[13px] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-transform"
+            >
+              🏆 Winners
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/login')}
+              className="px-3.5 py-1.5 bg-[#fdfaf0] hover:bg-white text-[#0f0f0f] border-[2.4px] border-[#0f0f0f] shadow-[3px_3px_0px_#0f0f0f] font-comic-sub font-black text-[13px] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-transform ml-1"
+            >
+              🎓 Student Login
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/login?role=admin')}
+              className="px-2.5 py-1.5 bg-[#0f0f0f] text-white border-[2.4px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] font-comic-sub font-bold text-[12px] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-transform"
+            >
+              Admin
+            </button>
           </div>
         </header>
 
-        {/* Desktop Main Content Container */}
-        <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-6 flex flex-col gap-8">
-          {/* If a category is selected on Desktop -> render Desktop Category Arena */}
+        {/* Desktop Comic Book Page Spread: Width ~840px (A Little Wide, Exactly Like Figma) */}
+        <div className="w-full max-w-[840px] bg-[#f8ca16] border-[4px] border-[#0f0f0f] shadow-[10px_10px_0px_#0f0f0f] rounded-[24px] p-4 flex flex-col gap-3.5 relative overflow-hidden select-none">
           {selectedCategory ? (
-            <div className="w-full flex flex-col gap-6 animate-fadeIn">
-              {/* Desktop Arena Header Banner */}
+            /* DESKTOP EXPANDED CATEGORY ARENA */
+            <div className="w-full flex flex-col gap-4 animate-fadeIn">
+              {/* Header Banner */}
               <div
-                className="w-full border-[4px] border-[#0f0f0f] shadow-[8px_8px_0px_#0f0f0f] rounded-[20px] p-8 text-white relative overflow-hidden"
+                className="w-full border-[3.5px] border-[#0f0f0f] shadow-[5px_5px_0px_#0f0f0f] rounded-[16px] p-6 text-white flex items-center justify-between"
                 style={{ backgroundColor: activeCategoryConfig?.bgHex }}
               >
-                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div>
-                    <div className="inline-block bg-[#fdfaf0] text-[#0f0f0f] border-[2.2px] border-[#0f0f0f] shadow-[2px_2px_0px_#0f0f0f] px-3 py-1 font-comic-sub font-black text-[12px] uppercase">
-                      {activeCategoryConfig?.wingTag}
-                    </div>
-                    <h1 className="font-comic-display text-[64px] leading-tight comic-title-stroke mt-1">
-                      {activeCategoryConfig?.cardTitle} ARENA
-                    </h1>
-                    <p className="font-comic-sub text-[18px] text-white/95 max-w-2xl font-bold mt-1">
-                      {activeCategoryConfig?.heroSummary}
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedCategory(null)}
-                    className="self-start md:self-center px-5 py-2.5 bg-[#f8ca16] text-[#0f0f0f] border-[3px] border-[#0f0f0f] shadow-[4px_4px_0px_#0f0f0f] font-comic-sub font-black text-[15px] cursor-pointer hover:bg-white hover:-translate-y-0.5 active:translate-y-0.5"
-                  >
-                    ← BACK TO ALL CATEGORIES
-                  </button>
+                <div>
+                  <span className="bg-[#fdfaf0] text-[#0f0f0f] border-[2px] border-[#0f0f0f] px-2.5 py-0.5 font-comic-sub font-black text-[11px] uppercase">
+                    {activeCategoryConfig?.wingTag}
+                  </span>
+                  <h1 className="font-comic-display text-[48px] leading-tight comic-title-stroke mt-1">
+                    {activeCategoryConfig?.cardTitle} ARENA
+                  </h1>
+                  <p className="font-comic-sub text-[15px] font-bold text-white/95 mt-0.5">
+                    {activeCategoryConfig?.heroSummary}
+                  </p>
                 </div>
+                <button
+                  type="button"
+                  onClick={closeCategoryArena}
+                  className="px-4 py-2 bg-[#f8ca16] text-[#0f0f0f] border-[2.5px] border-[#0f0f0f] shadow-[3px_3px_0px_#0f0f0f] font-comic-sub font-black text-[14px] cursor-pointer hover:bg-white active:translate-y-0.5 transition-all"
+                >
+                  ✕ BACK TO COMIC PAGE
+                </button>
               </div>
 
-              {/* Desktop Subcategory Filters */}
-              <div className="w-full bg-[#fdfaf0] border-[3.5px] border-[#0f0f0f] shadow-[5px_5px_0px_#0f0f0f] p-3 rounded-xl flex items-center justify-between gap-4">
+              {/* Filters */}
+              <div className="w-full bg-[#fdfaf0] border-[3px] border-[#0f0f0f] shadow-[3.5px_3.5px_0px_#0f0f0f] p-2.5 rounded-xl flex items-center justify-between">
                 <div className="flex items-center gap-2 overflow-x-auto">
-                  <span className="font-comic-sub font-black text-[14px] text-neutral-700 ml-2">FILTER:</span>
+                  <span className="font-comic-sub font-black text-[13px] text-neutral-800 ml-1">FILTER:</span>
                   {activeCategoryConfig?.filters.map((fil) => (
                     <button
                       key={fil}
                       type="button"
                       onClick={() => setActiveFilter(fil)}
-                      className={`px-4 py-1.5 font-comic-sub font-black text-[13px] border-[2px] border-[#0f0f0f] shadow-[2px_2px_0px_#0f0f0f] cursor-pointer transition-all ${
+                      className={`px-3 py-1 font-comic-sub font-black text-[12px] border-[1.8px] border-[#0f0f0f] shadow-[1.5px_1.5px_0px_#0f0f0f] cursor-pointer transition-all ${
                         activeFilter === fil
                           ? 'bg-[#0f0f0f] text-white -translate-y-0.5'
                           : 'bg-white hover:bg-[#f8ca16] text-[#0f0f0f]'
@@ -1432,64 +1394,57 @@ export default function HomePage() {
                     </button>
                   ))}
                 </div>
-                <span className="font-comic-sub font-bold text-[13px] text-neutral-600 mr-2 shrink-0">
-                  Showing {filteredEvents.length} competitions
+                <span className="font-comic-sub font-bold text-[12px] text-neutral-600 mr-2 shrink-0">
+                  {filteredEvents.length} Competitions
                 </span>
               </div>
 
-              {/* Desktop 3-Column Event Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* 2-Column Wide Event Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {filteredEvents.map((ev) => {
                   const isRegistered = registeredIds.includes(ev.id);
                   return (
                     <div
                       key={ev.id}
-                      className="bg-[#fdfaf0] border-[3.5px] border-[#0f0f0f] shadow-[6px_6px_0px_#0f0f0f] p-5 rounded-[16px] flex flex-col justify-between hover:-translate-y-1 hover:shadow-[9px_9px_0px_#0f0f0f] transition-all relative overflow-hidden group"
+                      className="bg-white border-[3px] border-[#0f0f0f] shadow-[4px_4px_0px_#0f0f0f] p-4 rounded-xl flex flex-col justify-between hover:-translate-y-0.5 transition-all group"
                     >
                       <div>
-                        <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center justify-between mb-1.5">
                           <span
-                            className="px-2.5 py-0.5 font-comic-sub font-black text-[11px] border-[1.8px] border-[#0f0f0f] shadow-[1.5px_1.5px_0px_#0f0f0f]"
+                            className="px-2 py-0.5 font-comic-sub font-black text-[10.5px] border border-[#0f0f0f]"
                             style={{ backgroundColor: ev.badgeColor }}
                           >
                             {ev.subCategory}
                           </span>
-                          <span className="font-comic-sub font-black text-[14px] text-[#df1b23] bg-white border border-[#0f0f0f] px-2 py-0.5">
+                          <span className="font-comic-sub font-black text-[13px] text-[#df1b23]">
                             🏆 {ev.prize}
                           </span>
                         </div>
-                        <h3 className="font-comic-display text-[26px] text-[#0f0f0f] leading-tight group-hover:text-[#df1b23] transition-colors">
+                        <h3 className="font-comic-display text-[22px] text-[#0f0f0f] leading-snug group-hover:text-[#df1b23] transition-colors">
                           {ev.title}
                         </h3>
-                        <p className="mt-2 text-[13px] text-neutral-700 leading-normal font-medium">
+                        <p className="text-[12.5px] text-neutral-700 font-medium leading-snug mt-1">
                           {ev.tagline}
                         </p>
                       </div>
 
-                      <div className="mt-4 pt-3 border-t-[2px] border-neutral-300">
-                        <div className="grid grid-cols-2 gap-2 text-[12px] font-semibold text-neutral-800 mb-3">
-                          <div className="bg-white border border-[#0f0f0f] p-1.5 rounded">
-                            📅 {ev.time}
-                          </div>
-                          <div className="bg-white border border-[#0f0f0f] p-1.5 rounded">
-                            📍 {ev.venue}
-                          </div>
-                          <div className="bg-white border border-[#0f0f0f] p-1.5 rounded col-span-2">
-                            👥 Team Size: <span className="font-bold">{ev.teamSize}</span>
-                          </div>
+                      <div className="mt-3 pt-2.5 border-t border-neutral-200">
+                        <div className="flex items-center justify-between text-[11.5px] font-semibold text-neutral-700 mb-2.5">
+                          <span>📅 {ev.time}</span>
+                          <span>📍 {ev.venue}</span>
                         </div>
-
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11.5px] font-bold text-neutral-800">👥 {ev.teamSize}</span>
                           <button
                             type="button"
                             onClick={() => toggleRegister(ev.id, ev.title)}
-                            className={`flex-1 py-2 font-comic-sub font-black text-[14px] border-[2.2px] border-[#0f0f0f] shadow-[3px_3px_0px_#0f0f0f] cursor-pointer active:translate-y-0.5 transition-all ${
+                            className={`px-4 py-1.5 font-comic-sub font-black text-[12.5px] border-[2px] border-[#0f0f0f] shadow-[2px_2px_0px_#0f0f0f] cursor-pointer active:translate-y-0.5 transition-all ${
                               isRegistered
-                                ? 'bg-[#22c55e] hover:bg-green-600 text-white'
+                                ? 'bg-[#22c55e] text-white'
                                 : 'bg-[#f8ca16] hover:bg-[#fde047] text-[#0f0f0f]'
                             }`}
                           >
-                            {isRegistered ? 'REGISTERED ✓' : 'REGISTER NOW'}
+                            {isRegistered ? 'REGISTERED ✓' : 'REGISTER'}
                           </button>
                         </div>
                       </div>
@@ -1499,301 +1454,180 @@ export default function HomePage() {
               </div>
             </div>
           ) : (
-            /* Main Landing View on Desktop: Hero Banner + 4 Arena Panels + Schedule & Announcements */
-            <div className="w-full flex flex-col gap-8">
-              {/* Wide Hero Banner */}
-              <div className="w-full bg-[#fdfaf0] border-[4px] border-[#0f0f0f] shadow-[8px_8px_0px_#0f0f0f] rounded-[20px] p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative overflow-hidden">
-                <div className="lg:col-span-7 flex flex-col justify-center">
-                  <div className="inline-block self-start bg-[#df1b23] text-white border-[2px] border-[#0f0f0f] px-3 py-1 font-comic-sub font-black text-[12px] uppercase -rotate-1">
-                    CHRIST UNIVERSITY • ANNUAL CULTURAL FESTIVAL 2026
-                  </div>
-                  <h1 className="font-comic-display text-[64px] lg:text-[76px] text-[#df1b23] comic-title-stroke tracking-wider leading-[0.85] mt-3">
-                    BLOSSOMS 2026
-                  </h1>
-                  <div className="mt-2 inline-block self-start bg-[#f8ca16] border-[2.6px] border-[#0f0f0f] shadow-[3px_3px_0px_#0f0f0f] px-3.5 py-1 rotate-1">
-                    <span className="font-comic-sub font-black text-[15px] text-[#0f0f0f] uppercase tracking-wider">
-                      SAME STAGE. DIFFERENT HEROES!
-                    </span>
-                  </div>
-                  <p className="font-comic-sub text-[16px] text-neutral-800 font-bold mt-4 max-w-xl leading-relaxed">
-                    31 Flagship Inter-Collegiate Competitions across Fine Arts, Literature, Mainstage Music, and Theatrical Arts. Register with your 6-digit student roll number and bring victory to your house!
-                  </p>
-                  <div className="mt-6 flex flex-wrap items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => triggerCategorySceneTransition('arts')}
-                      className="px-5 py-2.5 bg-[#f8ca16] hover:bg-[#fde047] text-[#0f0f0f] border-[3px] border-[#0f0f0f] shadow-[4px_4px_0px_#0f0f0f] font-comic-sub font-black text-[15px] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5"
-                    >
-                      EXPLORE 4 ARENAS ↓
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedModal(PANEL_DETAILS.schedule)}
-                      className="px-5 py-2.5 bg-[#df1b23] hover:bg-red-700 text-white border-[3px] border-[#0f0f0f] shadow-[4px_4px_0px_#0f0f0f] font-comic-sub font-black text-[15px] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5"
-                    >
-                      VIEW SCHEDULE 📅
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => navigate('/login')}
-                      className="px-5 py-2.5 bg-white hover:bg-neutral-100 text-[#0f0f0f] border-[3px] border-[#0f0f0f] shadow-[4px_4px_0px_#0f0f0f] font-comic-sub font-black text-[15px] cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5"
-                    >
-                      STUDENT LOGIN 🎓
-                    </button>
+            /* DESKTOP MAIN COMIC BOOK COVER (Exact 1:1 Figma Design) */
+            <>
+              {/* TOP ROW: HERO PANEL */}
+              <div className="relative w-full h-[180px] sm:h-[196px] bg-[#fdfaf0] border-[3.5px] border-[#0f0f0f] shadow-[4px_4px_0px_#0f0f0f] rounded-[16px] flex items-center justify-between overflow-hidden p-2">
+                {/* Left: BLOSSOMS 2026 Explosion */}
+                <div className="relative w-[56%] h-full flex items-center justify-center">
+                  <div className="relative z-10 text-center">
+                    <h1 className="font-comic-display text-[58px] sm:text-[68px] text-[#df1b23] comic-title-stroke tracking-wider leading-[0.85]">
+                      BLOSSOMS
+                    </h1>
+                    <div className="bg-[#f8ca16] border-[2.6px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-3 py-0.5 inline-block -rotate-2 mt-1">
+                      <span className="font-comic-display text-[26px] text-[#0f0f0f]">2026</span>
+                    </div>
+                    <div className="mt-1 bg-white border-[2.2px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-3 py-0.5 rotate-1">
+                      <p className="font-comic-sub font-black text-[11px] text-[#0f0f0f] uppercase tracking-wide">
+                        SAME STAGE. DIFFERENT HEROES!
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="lg:col-span-5 bg-[#0088e8] border-[3.5px] border-[#0f0f0f] shadow-[6px_6px_0px_#0f0f0f] rounded-[16px] p-6 flex flex-col items-center justify-center relative overflow-hidden min-h-[300px]">
-                  <div className="absolute top-3 left-3 bg-[#fdfaf0] border-[2px] border-[#0f0f0f] px-3 py-1 font-comic-sub font-black text-[11px] uppercase -rotate-2 z-20">
+                {/* Right: Heritage Building Panel */}
+                <div className="relative w-[42%] h-full bg-[#0088e8] border-[3px] border-[#0f0f0f] shadow-[3.5px_3.5px_0px_#0f0f0f] rounded-[12px] overflow-hidden p-2 flex items-center justify-center">
+                  <div className="absolute top-2 left-2 bg-[#fdfaf0] border-[2px] border-[#0f0f0f] px-2.5 py-0.5 font-comic-sub font-black text-[10px] uppercase -rotate-2 z-20">
                     CULTURE. CREATIVITY. COMMUNITY.
                   </div>
-                  <CampusHeritageDome className="w-full h-full max-h-[220px]" />
-                  <div className="mt-3 bg-[#f8ca16] border-[2px] border-[#0f0f0f] px-3 py-0.5 font-comic-sub font-black text-[12px]">
-                    NOV 12 – DEC 16 • CENTRAL CAMPUS
-                  </div>
+                  <CampusHeritageDome className="w-full h-full max-h-[160px]" />
                 </div>
               </div>
 
-              {/* 4 Wide Category Panels Grid */}
-              <div className="w-full">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h2 className="font-comic-display text-[44px] text-[#0f0f0f] leading-none">
-                      CHOOSE YOUR ARENA
+              {/* ROW 1: ARTS & LITERATURE (Angled Comic Panels) */}
+              <div className="relative w-full h-[220px] flex">
+                {/* ARTS PANEL */}
+                <div
+                  onClick={() => triggerCategorySceneTransition('arts')}
+                  style={{
+                    clipPath: 'polygon(0% 0%, 93% 3%, 100% 100%, 0% 97%)',
+                  }}
+                  className="relative w-[53.5%] h-full bg-[#ed1e79] halftone-dots-dense cursor-pointer overflow-hidden select-none group hover:scale-[1.01] transition-transform"
+                >
+                  <div className="relative z-20 pt-3 pl-4">
+                    <h2 className="font-comic-display comic-title-white text-[52px] leading-[0.88] -rotate-[3deg] tracking-wide">
+                      ARTS
                     </h2>
-                    <p className="font-comic-sub text-[15px] text-neutral-800 font-bold mt-1">
-                      SELECT ANY BATTLEGROUND TO EXPLORE COMPETITIONS & REGISTER
-                    </p>
+                    <div className="mt-1 inline-block bg-[#f9d423] border-[2.4px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-3 py-0.5 -rotate-[4deg]">
+                      <p className="font-comic-sub text-[12px] leading-[1.05] text-[#0f0f0f] font-black text-center">
+                        PAINT. DESIGN.<br />EXPRESS.
+                      </p>
+                    </div>
+                  </div>
+                  <ArtsIllustration className="absolute bottom-[-2px] left-0 w-full h-[140px] z-10 pointer-events-none" />
+                  <div className="absolute right-4 bottom-4 z-20">
+                    <ComicArrowButton onClick={() => triggerCategorySceneTransition('arts')} />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {/* ARTS */}
-                  <div
-                    onClick={() => triggerCategorySceneTransition('arts')}
-                    className="bg-[#ed1e79] border-[4px] border-[#0f0f0f] shadow-[6px_6px_0px_#0f0f0f] rounded-[18px] p-5 flex flex-col justify-between min-h-[360px] cursor-pointer hover:-translate-y-2 hover:shadow-[10px_10px_0px_#0f0f0f] transition-all relative overflow-hidden group select-none"
-                  >
-                    <div>
-                      <h3 className="font-comic-display comic-title-white text-[48px] leading-tight -rotate-2">
-                        ARTS
-                      </h3>
-                      <div className="bg-[#f9d423] border-[2.2px] border-[#0f0f0f] shadow-[2px_2px_0px_#0f0f0f] px-2.5 py-0.5 inline-block -rotate-3 mt-1">
-                        <span className="font-comic-sub font-black text-[12px] text-[#0f0f0f]">
-                          PAINT. DESIGN. EXPRESS.
-                        </span>
-                      </div>
-                    </div>
-                    <div className="h-[140px] flex items-center justify-center my-2">
-                      <ArtsIllustration className="w-full h-full" />
-                    </div>
-                    <div className="flex items-center justify-between pt-2 border-t-[2px] border-black/20">
-                      <span className="bg-[#fdfaf0] border-[2px] border-[#0f0f0f] px-2.5 py-0.5 font-comic-sub font-black text-[12px]">
-                        10 COMPETITIONS
-                      </span>
-                      <ComicArrowButton onClick={() => triggerCategorySceneTransition('arts')} />
+                {/* LITERATURE PANEL */}
+                <div
+                  onClick={() => triggerCategorySceneTransition('literature')}
+                  style={{
+                    clipPath: 'polygon(0% 3%, 100% 7%, 100% 100%, 7% 97%)',
+                  }}
+                  className="relative w-[50.5%] -ml-[4%] h-full bg-[#0088e8] halftone-dots-dense cursor-pointer overflow-hidden select-none group hover:scale-[1.01] transition-transform"
+                >
+                  <div className="relative z-20 pt-3.5 pl-5 pr-2">
+                    <h2 className="font-comic-display comic-title-white text-[42px] leading-[0.9] -rotate-[3deg] tracking-wide">
+                      LITERATURE
+                    </h2>
+                    <div className="mt-1 inline-block bg-[#f9d423] border-[2.4px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-2.5 py-0.5 -rotate-[3deg]">
+                      <p className="font-comic-sub text-[12px] leading-[1.05] text-[#0f0f0f] font-black text-center">
+                        SPEAK. WRITE.<br />THINK.
+                      </p>
                     </div>
                   </div>
-
-                  {/* LITERATURE */}
-                  <div
-                    onClick={() => triggerCategorySceneTransition('literature')}
-                    className="bg-[#0088e8] border-[4px] border-[#0f0f0f] shadow-[6px_6px_0px_#0f0f0f] rounded-[18px] p-5 flex flex-col justify-between min-h-[360px] cursor-pointer hover:-translate-y-2 hover:shadow-[10px_10px_0px_#0f0f0f] transition-all relative overflow-hidden group select-none"
-                  >
-                    <div>
-                      <h3 className="font-comic-display comic-title-white text-[44px] leading-tight -rotate-2">
-                        LITERATURE
-                      </h3>
-                      <div className="bg-[#f9d423] border-[2.2px] border-[#0f0f0f] shadow-[2px_2px_0px_#0f0f0f] px-2.5 py-0.5 inline-block -rotate-3 mt-1">
-                        <span className="font-comic-sub font-black text-[12px] text-[#0f0f0f]">
-                          SPEAK. WRITE. THINK.
-                        </span>
-                      </div>
-                    </div>
-                    <div className="h-[140px] flex items-center justify-center my-2">
-                      <LiteratureIllustration className="w-full h-full" />
-                    </div>
-                    <div className="flex items-center justify-between pt-2 border-t-[2px] border-black/20">
-                      <span className="bg-[#fdfaf0] border-[2px] border-[#0f0f0f] px-2.5 py-0.5 font-comic-sub font-black text-[12px]">
-                        8 COMPETITIONS
-                      </span>
-                      <ComicArrowButton onClick={() => triggerCategorySceneTransition('literature')} />
-                    </div>
-                  </div>
-
-                  {/* STAGE */}
-                  <div
-                    onClick={() => triggerCategorySceneTransition('stage')}
-                    className="bg-[#fdb813] border-[4px] border-[#0f0f0f] shadow-[6px_6px_0px_#0f0f0f] rounded-[18px] p-5 flex flex-col justify-between min-h-[360px] cursor-pointer hover:-translate-y-2 hover:shadow-[10px_10px_0px_#0f0f0f] transition-all relative overflow-hidden group select-none"
-                  >
-                    <div>
-                      <h3 className="font-comic-display comic-title-white text-[48px] leading-tight -rotate-2">
-                        STAGE
-                      </h3>
-                      <div className="bg-[#fdfaf0] border-[2.2px] border-[#0f0f0f] shadow-[2px_2px_0px_#0f0f0f] px-2.5 py-0.5 inline-block -rotate-3 mt-1">
-                        <span className="font-comic-sub font-black text-[12px] text-[#0f0f0f]">
-                          PERFORM. INSPIRE.
-                        </span>
-                      </div>
-                    </div>
-                    <div className="h-[140px] flex items-center justify-center my-2">
-                      <StageIllustration className="w-full h-full" />
-                    </div>
-                    <div className="flex items-center justify-between pt-2 border-t-[2px] border-black/20">
-                      <span className="bg-[#fdfaf0] border-[2px] border-[#0f0f0f] px-2.5 py-0.5 font-comic-sub font-black text-[12px]">
-                        8 COMPETITIONS
-                      </span>
-                      <ComicArrowButton onClick={() => triggerCategorySceneTransition('stage')} />
-                    </div>
-                  </div>
-
-                  {/* THEATRE */}
-                  <div
-                    onClick={() => triggerCategorySceneTransition('theatre')}
-                    className="bg-[#861ec2] border-[4px] border-[#0f0f0f] shadow-[6px_6px_0px_#0f0f0f] rounded-[18px] p-5 flex flex-col justify-between min-h-[360px] cursor-pointer hover:-translate-y-2 hover:shadow-[10px_10px_0px_#0f0f0f] transition-all relative overflow-hidden group select-none"
-                  >
-                    <div>
-                      <h3 className="font-comic-display comic-title-white text-[44px] leading-tight -rotate-2">
-                        THEATRE
-                      </h3>
-                      <div className="bg-[#f9d423] border-[2.2px] border-[#0f0f0f] shadow-[2px_2px_0px_#0f0f0f] px-2.5 py-0.5 inline-block -rotate-3 mt-1">
-                        <span className="font-comic-sub font-black text-[11px] text-[#0f0f0f]">
-                          ACT. EMOTE. BRING ALIVE.
-                        </span>
-                      </div>
-                    </div>
-                    <div className="h-[140px] flex items-center justify-center my-2">
-                      <TheatreIllustration className="w-full h-full" />
-                    </div>
-                    <div className="flex items-center justify-between pt-2 border-t-[2px] border-black/20">
-                      <span className="bg-[#fdfaf0] border-[2px] border-[#0f0f0f] px-2.5 py-0.5 font-comic-sub font-black text-[12px]">
-                        5 COMPETITIONS
-                      </span>
-                      <ComicArrowButton onClick={() => triggerCategorySceneTransition('theatre')} />
-                    </div>
+                  <LiteratureIllustration className="absolute bottom-[-2px] left-1 w-full h-[135px] z-10 pointer-events-none" />
+                  <div className="absolute right-4 bottom-4 z-20">
+                    <ComicArrowButton onClick={() => triggerCategorySceneTransition('literature')} />
                   </div>
                 </div>
               </div>
 
-              {/* Side-by-Side Wide Banners: Schedule & Announcements */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Event Schedule Banner */}
+              {/* ROW 2: STAGE & THEATRE (Angled Comic Panels) */}
+              <div className="relative w-full h-[220px] flex">
+                {/* STAGE PANEL */}
                 <div
-                  onClick={() => setSelectedModal(PANEL_DETAILS.schedule)}
-                  className="bg-[#df1b23] border-[4px] border-[#0f0f0f] shadow-[7px_7px_0px_#0f0f0f] rounded-[18px] p-6 text-white cursor-pointer hover:-translate-y-1.5 hover:shadow-[10px_10px_0px_#0f0f0f] transition-all flex flex-col justify-between select-none"
+                  onClick={() => triggerCategorySceneTransition('stage')}
+                  style={{
+                    clipPath: 'polygon(0% 0%, 94% 3%, 100% 100%, 0% 97%)',
+                  }}
+                  className="relative w-[52.5%] h-full bg-[#fdb813] halftone-dots-dense cursor-pointer overflow-hidden select-none group hover:scale-[1.01] transition-transform"
                 >
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="text-[32px]">📅</span>
-                        <div>
-                          <h3 className="font-comic-display text-[36px] leading-none">EVENT SCHEDULE</h3>
-                          <p className="font-comic-sub text-[13px] text-white/90 font-bold mt-0.5">
-                            DATES, TIMINGS & VENUES • NOV 12 – DEC 16
-                          </p>
-                        </div>
-                      </div>
-                      <span className="bg-[#f8ca16] text-[#0f0f0f] border-[2px] border-[#0f0f0f] px-3 py-1 font-comic-sub font-black text-[12px] rotate-2">
-                        CHECK NOW!
-                      </span>
-                    </div>
-
-                    <div className="mt-4 grid grid-cols-2 gap-2 text-[12px] font-bold text-neutral-900">
-                      <div className="bg-white/95 border border-[#0f0f0f] p-2 rounded">
-                        12.11: Inauguration @ Birds park
-                      </div>
-                      <div className="bg-white/95 border border-[#0f0f0f] p-2 rounded">
-                        13.11: Greeting Card @ Classroom
-                      </div>
-                      <div className="bg-white/95 border border-[#0f0f0f] p-2 rounded">
-                        14.11: Pencil Sketching @ Classroom
-                      </div>
-                      <div className="bg-white/95 border border-[#0f0f0f] p-2 rounded">
-                        17.11: Dance Duet @ Birds park
-                      </div>
+                  <div className="relative z-20 pt-3 pl-4">
+                    <h2 className="font-comic-display comic-title-white text-[52px] leading-[0.88] -rotate-[3deg] tracking-wide">
+                      STAGE
+                    </h2>
+                    <div className="mt-1 inline-block bg-[#fdfaf0] border-[2.4px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-3 py-0.5 -rotate-[3deg]">
+                      <p className="font-comic-sub text-[12px] leading-[1.05] text-[#0f0f0f] font-black text-center">
+                        PERFORM.<br />INSPIRE.
+                      </p>
                     </div>
                   </div>
-
-                  <div className="mt-4 pt-3 border-t border-white/20 flex items-center justify-between">
-                    <span className="text-[13px] font-bold text-white/90">
-                      View all 28+ competition schedules & venue maps
-                    </span>
-                    <span className="bg-white text-[#0f0f0f] border-[2px] border-[#0f0f0f] px-3 py-1 font-comic-sub font-black text-[12px]">
-                      OPEN SCHEDULE →
-                    </span>
+                  <StageIllustration className="absolute bottom-[-2px] left-0 w-full h-[140px] z-10 pointer-events-none" />
+                  <div className="absolute right-4 bottom-4 z-20">
+                    <ComicArrowButton onClick={() => triggerCategorySceneTransition('stage')} />
                   </div>
                 </div>
 
-                {/* Announcements Banner */}
+                {/* THEATRE PANEL */}
                 <div
-                  onClick={() => setSelectedModal(PANEL_DETAILS.announcements)}
-                  className="bg-[#00966b] border-[4px] border-[#0f0f0f] shadow-[7px_7px_0px_#0f0f0f] rounded-[18px] p-6 text-white cursor-pointer hover:-translate-y-1.5 hover:shadow-[10px_10px_0px_#0f0f0f] transition-all flex flex-col justify-between select-none"
+                  onClick={() => triggerCategorySceneTransition('theatre')}
+                  style={{
+                    clipPath: 'polygon(0% 3%, 100% 7%, 100% 100%, 6% 97%)',
+                  }}
+                  className="relative w-[51.5%] -ml-[4%] h-full bg-[#861ec2] halftone-dots-dense cursor-pointer overflow-hidden select-none group hover:scale-[1.01] transition-transform"
                 >
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="text-[32px]">📢</span>
-                        <div>
-                          <h3 className="font-comic-display text-[36px] leading-none">ANNOUNCEMENTS</h3>
-                          <p className="font-comic-sub text-[13px] text-white/90 font-bold mt-0.5">
-                            LIVE FEST BULLETIN & UPDATES
-                          </p>
-                        </div>
-                      </div>
-                      <span className="bg-[#f8ca16] text-[#0f0f0f] border-[2px] border-[#0f0f0f] px-3 py-1 font-comic-sub font-black text-[12px] -rotate-2">
-                        LIVE UPDATES
-                      </span>
-                    </div>
-
-                    <div className="mt-4 space-y-2 text-[12px] font-bold text-neutral-900">
-                      <div className="bg-white/95 border border-[#0f0f0f] p-2 rounded flex items-center justify-between">
-                        <span>• Student registrations open with 6-digit roll number</span>
-                        <span className="text-[10px] bg-[#f8ca16] px-1.5 py-0.5 border border-[#0f0f0f]">NEW</span>
-                      </div>
-                      <div className="bg-white/95 border border-[#0f0f0f] p-2 rounded flex items-center justify-between">
-                        <span>• Stage pass QR codes are now active in the student dashboard</span>
-                        <span className="text-[10px] text-neutral-600">25m ago</span>
-                      </div>
-                      <div className="bg-white/95 border border-[#0f0f0f] p-2 rounded flex items-center justify-between">
-                        <span>• Collect participant comic badges at Information Desk A</span>
-                        <span className="text-[10px] text-neutral-600">1h ago</span>
-                      </div>
+                  <div className="relative z-20 pt-3.5 pl-5 pr-2">
+                    <h2 className="font-comic-display comic-title-white text-[46px] leading-[0.88] -rotate-[3deg] tracking-wide">
+                      THEATRE
+                    </h2>
+                    <div className="mt-1 inline-block bg-[#f9d423] border-[2.4px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] px-2.5 py-0.5 -rotate-[4deg]">
+                      <p className="font-comic-sub text-[11px] leading-[1.05] text-[#0f0f0f] font-black text-center">
+                        ACT. IMAGINE.<br />BRING STORIES ALIVE.
+                      </p>
                     </div>
                   </div>
-
-                  <div className="mt-4 pt-3 border-t border-white/20 flex items-center justify-between">
-                    <span className="text-[13px] font-bold text-white/90">
-                      Get real-time announcements & house notices
-                    </span>
-                    <span className="bg-white text-[#0f0f0f] border-[2px] border-[#0f0f0f] px-3 py-1 font-comic-sub font-black text-[12px]">
-                      VIEW ALL ALERTS →
-                    </span>
+                  <TheatreIllustration className="absolute bottom-[-2px] left-0 w-full h-[135px] z-10 pointer-events-none" />
+                  <div className="absolute right-4 bottom-4 z-20">
+                    <ComicArrowButton onClick={() => triggerCategorySceneTransition('theatre')} />
                   </div>
                 </div>
               </div>
-            </div>
+
+              {/* ROW 3: EVENT SCHEDULE BANNER */}
+              <div
+                onClick={() => setSelectedModal(PANEL_DETAILS.schedule)}
+                className="relative w-full h-[76px] bg-[#df1b23] border-[3.5px] border-[#0f0f0f] shadow-[4px_4px_0px_#0f0f0f] rounded-[12px] px-4 flex items-center justify-between cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-transform"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#fdfaf0] border-[2.2px] border-[#0f0f0f] flex items-center justify-center font-bold text-[18px]">
+                    📅
+                  </div>
+                  <div>
+                    <h3 className="font-comic-display text-white text-[30px] leading-none">EVENT SCHEDULE</h3>
+                    <p className="font-comic-sub text-[12px] text-white/90 font-bold">DATES, TIMINGS & VENUES • NOV 12 – DEC 16</p>
+                  </div>
+                </div>
+                <div className="bg-[#f8ca16] border-[2.2px] border-[#0f0f0f] px-3 py-1 font-comic-sub font-black text-[13px] rotate-1 shadow-[2px_2px_0px_#0f0f0f]">
+                  CHECK NOW!
+                </div>
+              </div>
+
+              {/* ROW 4: ANNOUNCEMENTS BANNER */}
+              <div
+                onClick={() => setSelectedModal(PANEL_DETAILS.announcements)}
+                className="relative w-full h-[72px] bg-[#00966b] border-[3.5px] border-[#0f0f0f] shadow-[4px_4px_0px_#0f0f0f] rounded-[12px] px-4 flex items-center justify-between cursor-pointer hover:-translate-y-0.5 active:translate-y-0.5 transition-transform"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#fdfaf0] border-[2.2px] border-[#0f0f0f] flex items-center justify-center font-bold text-[18px]">
+                    📢
+                  </div>
+                  <div>
+                    <h3 className="font-comic-display text-white text-[28px] leading-none">ANNOUNCEMENTS</h3>
+                    <p className="font-comic-sub text-[12px] text-white/90 font-bold">LIVE FEST UPDATES & BULLETINS</p>
+                  </div>
+                </div>
+                <ComicArrowButton onClick={() => setSelectedModal(PANEL_DETAILS.announcements)} />
+              </div>
+            </>
           )}
-        </main>
+        </div>
 
-        {/* Desktop Footer */}
-        <footer className="w-full border-t-[4px] border-[#0f0f0f] bg-[#f8ca16] py-8 mt-12 px-6">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="bg-[#df1b23] border-[2px] border-[#0f0f0f] px-2 py-0.5 -rotate-1">
-                <span className="font-comic-display text-white text-[18px]">BLOSSOMS 2026</span>
-              </div>
-              <p className="font-comic-sub font-bold text-[13px] text-[#0f0f0f]">
-                CHRIST (Deemed to be University), Bangalore • Same Stage. Different Heroes!
-              </p>
-            </div>
-            <div className="flex items-center gap-4 text-[13px] font-comic-sub font-black">
-              <button type="button" onClick={() => setSelectedCategory('arts')} className="hover:underline cursor-pointer">ARTS</button>
-              <button type="button" onClick={() => setSelectedCategory('literature')} className="hover:underline cursor-pointer">LITERATURE</button>
-              <button type="button" onClick={() => setSelectedCategory('stage')} className="hover:underline cursor-pointer">STAGE</button>
-              <button type="button" onClick={() => setSelectedCategory('theatre')} className="hover:underline cursor-pointer">THEATRE</button>
-              <button type="button" onClick={() => setSelectedModal(PANEL_DETAILS.schedule)} className="hover:underline cursor-pointer">SCHEDULE</button>
-              <button type="button" onClick={() => navigate('/login')} className="hover:underline cursor-pointer">STUDENT PORTAL</button>
-            </div>
-          </div>
+        {/* Minimal Footer */}
+        <footer className="mt-6 text-center text-[#0f0f0f] font-comic-sub font-bold text-[13px]">
+          <p>CHRIST (DEEMED TO BE UNIVERSITY) • BANGALORE • SAME STAGE. DIFFERENT HEROES!</p>
         </footer>
       </div>
 
@@ -1810,21 +1644,21 @@ export default function HomePage() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-2xl bg-[#fdfaf0] border-[4px] border-[#0f0f0f] shadow-[8px_8px_0px_#0f0f0f] p-6 max-h-[85vh] flex flex-col relative rounded-xl"
+            className="w-full max-w-xl bg-[#fdfaf0] border-[4px] border-[#0f0f0f] shadow-[8px_8px_0px_#0f0f0f] p-5 max-h-[85vh] flex flex-col relative rounded-2xl"
           >
             {/* Modal Header */}
-            <div className="flex items-start justify-between pb-4 border-b-[2.5px] border-[#0f0f0f]">
+            <div className="flex items-start justify-between pb-3 border-b-[2.5px] border-[#0f0f0f]">
               <div>
                 <div
-                  className="inline-block px-3 py-1 border-[2px] border-[#0f0f0f] font-comic-sub text-[12px] font-bold text-white mb-1 shadow-[2px_2px_0px_#0f0f0f]"
+                  className="inline-block px-2.5 py-0.5 border-[2px] border-[#0f0f0f] font-comic-sub text-[11px] font-bold text-white mb-1 shadow-[2px_2px_0px_#0f0f0f]"
                   style={{ backgroundColor: selectedModal.accent }}
                 >
                   {selectedModal.tag}
                 </div>
-                <h3 className="font-comic-display text-[40px] leading-tight text-[#0f0f0f]">
+                <h3 className="font-comic-display text-[34px] leading-tight text-[#0f0f0f]">
                   {selectedModal.title}
                 </h3>
-                <p className="font-comic-sub text-[14px] text-neutral-700 font-bold">
+                <p className="font-comic-sub text-[13px] text-neutral-700 font-bold">
                   {selectedModal.subtitle}
                 </p>
               </div>
@@ -1834,24 +1668,24 @@ export default function HomePage() {
                   setSelectedModal(null);
                   setActiveTab('home');
                 }}
-                className="w-9 h-9 bg-[#f8ca16] border-[2.5px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] font-comic-display text-[20px] flex items-center justify-center cursor-pointer hover:bg-red-500 hover:text-white transition-colors"
+                className="w-8 h-8 bg-[#f8ca16] border-[2px] border-[#0f0f0f] shadow-[2px_2px_0px_#0f0f0f] font-comic-display text-[18px] flex items-center justify-center cursor-pointer hover:bg-red-500 hover:text-white transition-colors"
               >
                 ✕
               </button>
             </div>
 
             {/* Modal Items List */}
-            <div className="mt-4 flex-1 overflow-y-auto space-y-2.5 pr-1">
+            <div className="mt-3.5 flex-1 overflow-y-auto space-y-2 pr-1">
               {selectedModal.items.map((item, idx) => (
                 <div
                   key={idx}
-                  className="bg-white border-[2.2px] border-[#0f0f0f] shadow-[3px_3px_0px_#0f0f0f] p-3 flex items-center justify-between rounded-lg hover:-translate-y-0.5 transition-transform"
+                  className="bg-white border-[2.2px] border-[#0f0f0f] shadow-[2.5px_2.5px_0px_#0f0f0f] p-2.5 flex items-center justify-between rounded-lg hover:-translate-y-0.5 transition-transform"
                 >
                   <div>
-                    <p className="font-bold text-[14px] text-[#0f0f0f]">{item.name}</p>
-                    <p className="text-[12px] text-neutral-600 font-semibold">📍 {item.venue}</p>
+                    <p className="font-bold text-[13.5px] text-[#0f0f0f]">{item.name}</p>
+                    <p className="text-[11.5px] text-neutral-600 font-semibold">📍 {item.venue}</p>
                   </div>
-                  <span className="bg-[#f8ca16] border-[1.8px] border-[#0f0f0f] px-2.5 py-1 font-comic-sub font-bold text-[13px] shrink-0">
+                  <span className="bg-[#f8ca16] border-[1.8px] border-[#0f0f0f] px-2 py-0.5 font-comic-sub font-bold text-[12px] shrink-0">
                     {item.time}
                   </span>
                 </div>
