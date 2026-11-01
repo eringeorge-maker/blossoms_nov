@@ -3,7 +3,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { Search, Sparkles, CheckCircle2, Calendar, MapPin, Users, X, Info } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
-import DesktopEventsArena from '@/features/events/DesktopEventsArena'
+import DesktopEventsShowcase from '@/components/comic/DesktopEventsShowcase'
 import { DisplayText, ComicCaptionBox, HalftoneAccent } from '@/components/comic/ComicPrimitives'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
@@ -300,20 +300,11 @@ export default function EventsPage() {
     <>
       {eventSheet}
 
-      {/* ── Desktop Comic Events Arena ── */}
-      <DesktopEventsArena
-        activeCategory={activeCategory}
-        search={search}
-        isLoading={isLoading}
-        eventCount={events.length}
-        eventsByCategory={eventsByCategory}
-        onCategoryChange={handleCategoryClick}
-        onSearchChange={setSearch}
-        onRegister={setSelectedEventId}
-      />
+      {/* ── Desktop & Mobile 4-Panel Comic Events Category Showcase ── */}
+      <DesktopEventsShowcase hideHeader />
 
-      {/* ── Mobile Events Catalogue View ── */}
-      <div className="block md:hidden mx-auto max-w-[1240px] px-3 sm:px-4 py-6">
+      {/* ── Legacy Events Catalogue View (hidden while 4-panel showcase is active) ── */}
+      <div className="hidden mx-auto max-w-[1240px] px-3 sm:px-4 py-6">
       {/* ── Top Comic Caption & Heading ──────────────────────── */}
       <div className="mb-3">
         <ComicCaptionBox>

@@ -682,3 +682,191 @@ body {
   animation: scene4EventPanelInEven var(--scene4-card-dur, 280ms) cubic-bezier(0.22, 1, 0.36, 1) forwards;
   will-change: clip-path, transform, opacity;
 }
+
+/* ==========================================================================
+   EVENTS CATEGORY SHOWCASE PAGE (DESKTOP & MOBILE 4-PANEL COMIC + EXPANSION)
+   ========================================================================== */
+.events-showcase-page {
+  min-height: calc(100vh - 76px);
+  width: 100%;
+  background-color: #000000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+}
+
+.comic-layout {
+  width: min(1120px, calc(100vw - 96px), calc((100vh - 95px - 48px) * (1120 / 704)));
+  aspect-ratio: 1120 / 704;
+  margin: clamp(24px, calc((100vh - 95px - 704px) / 2), 64px) auto;
+  position: relative;
+  user-select: none;
+}
+
+.comic-layout-mobile {
+  width: calc(100% - 28px);
+  aspect-ratio: 840 / 1566;
+  margin: 14px auto 84px;
+  position: relative;
+  user-select: none;
+}
+
+.comic-panel-button {
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background-color: #080808;
+  cursor: pointer;
+  overflow: hidden;
+  display: block;
+  outline: none;
+}
+
+.comic-panel-button:focus-visible {
+  filter: brightness(1.04);
+}
+
+.comic-panel-border-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+  pointer-events: none;
+}
+
+.comic-panel-inner-clip {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.comic-panel-artwork {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+  transform: scale(1);
+  filter: contrast(1);
+  transition:
+    transform 200ms ease,
+    filter 200ms ease;
+  will-change: transform, filter;
+}
+
+.comic-panel-button:hover .comic-panel-artwork {
+  transform: scale(1.018);
+  filter: contrast(1.04);
+}
+
+/* 650ms ease-in-out Smart Animate Panel Expansion */
+.expanded-category-frame {
+  position: fixed;
+  z-index: 100;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  transition:
+    left 650ms cubic-bezier(0.42, 0, 0.58, 1),
+    top 650ms cubic-bezier(0.42, 0, 0.58, 1),
+    width 650ms cubic-bezier(0.42, 0, 0.58, 1),
+    height 650ms cubic-bezier(0.42, 0, 0.58, 1),
+    clip-path 650ms cubic-bezier(0.42, 0, 0.58, 1),
+    -webkit-clip-path 650ms cubic-bezier(0.42, 0, 0.58, 1);
+  will-change: left, top, width, height, clip-path;
+}
+
+.expanded-category-origin-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+  pointer-events: none;
+  transition: opacity 420ms cubic-bezier(0.42, 0, 0.58, 1);
+}
+
+.expanded-category-origin-layer.is-collapsed {
+  opacity: 1;
+}
+
+.expanded-category-origin-layer.is-expanded {
+  opacity: 0;
+}
+
+.expanded-category-ink-border {
+  position: absolute;
+  inset: 0;
+  border: 7px solid #080808;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.expanded-destination-ui {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28px 36px;
+  transition: opacity 260ms ease-in-out;
+}
+
+.expanded-destination-ui.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.expanded-destination-ui.is-visible {
+  opacity: 1;
+  transition-delay: 420ms;
+}
+
+.expanded-back-button {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 20px 0 16px;
+  background-color: #F7F3E9;
+  color: #080808;
+  border: 3px solid #080808;
+  box-shadow: 4px 4px 0px #080808;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    background-color 150ms ease;
+}
+
+.expanded-back-button:hover {
+  background-color: #FFD400;
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0px #080808;
+}
+
+.expanded-back-button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #080808;
+}
+
+.expanded-category-content-stage {
+  flex: 1;
+  width: 100%;
+  pointer-events: none;
+}
