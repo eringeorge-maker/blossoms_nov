@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { CalendarDays, MapPin, Clock, Sparkles, Search } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
-import { DisplayText, ComicCaptionBox, HalftoneAccent } from '@/components/comic/ComicPrimitives'
+import { DisplayText, HalftoneAccent } from '@/components/comic/ComicPrimitives'
 import { Badge } from '@/components/ui/Badge'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { Link } from 'react-router-dom'
@@ -132,23 +132,6 @@ export default function SchedulePage() {
 
   return (
     <div className="mx-auto max-w-[1240px] px-4 py-8">
-      {/* Top Caption Banner */}
-      <div className="mb-4 flex items-center justify-between flex-wrap gap-2">
-        <ComicCaptionBox>
-          OFFICIAL FESTIVAL PROGRAM · ASIA/KOLKATA (IST)
-        </ComicCaptionBox>
-        <span className="text-xs font-mono font-bold text-ink/70 uppercase bg-[#FFF8E8] px-3 py-1 rounded-md border border-ink shadow-[1px_1px_0px_#151515]">
-          ★ CHRIST (DEEMED TO BE UNIVERSITY) · CENTRAL CAMPUS ★
-        </span>
-      </div>
-
-      <DisplayText as="h1" className="text-4xl sm:text-5xl md:text-6xl mb-2 text-ink">
-        Festival Timetable
-      </DisplayText>
-      <p className="text-ink/70 text-base mb-8 max-w-2xl font-medium">
-        Complete timeline of competition heats, live stage battles, digital deadlines, and auditorium showcases scheduled from 12 November to 16 December 2025.
-      </p>
-
       {/* ── TOP CONTROLS & SEARCH ──────────────────────────────── */}
       <div className="bg-white border-2 border-ink p-4 sm:p-5 rounded-2xl shadow-[4px_4px_0px_#151515] mb-8 space-y-4">
         {/* Search bar & Quick Stats */}
@@ -314,23 +297,23 @@ export default function SchedulePage() {
               </div>
 
               {/* Day Slots Grid / Cards */}
-              <ul className="space-y-4">
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {slots.map((slot, index) => {
                   const isOnline = slot.venue?.id === 'v-online' || slot.slot_title?.toLowerCase().includes('online') || slot.slot_title?.toLowerCase().includes('upload')
                   const isTbd = slot.status === 'tbd' || !slot.starts_at
 
                   return (
-                    <li key={slot.id}>
+                    <li key={slot.id} className="h-full">
                       <Link
                         to={`/events/${slot.event.slug}`}
-                        className="comic-card group p-5 flex flex-col md:flex-row gap-5 items-start md:items-center justify-between bg-white hover:border-[#F04438] transition-all block relative overflow-hidden"
+                        className="comic-card group h-full p-4 sm:p-5 flex flex-col justify-between gap-4 bg-white hover:border-[#F04438] transition-all relative overflow-hidden"
                       >
                         <HalftoneAccent color="yellow" className="opacity-0 group-hover:opacity-20 transition-opacity" />
 
-                        <div className="flex flex-col sm:flex-row gap-4 items-start w-full md:w-auto">
+                        <div className="flex flex-col sm:flex-row gap-3.5 items-start w-full min-w-0">
                           {/* Time Stamp / Format Box */}
                           <div className={cn(
-                            'flex-shrink-0 text-center w-full sm:w-36 p-3 rounded-xl border-2 border-ink shadow-[2px_2px_0px_#151515]',
+                            'flex-shrink-0 text-center w-full sm:w-32 p-2.5 rounded-xl border-2 border-ink shadow-[2px_2px_0px_#151515]',
                             isTbd
                               ? 'bg-[#FFD43B]/30'
                               : isOnline
@@ -353,8 +336,8 @@ export default function SchedulePage() {
                           </div>
 
                           {/* Event Information */}
-                          <div className="min-w-0">
-                            <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
                               <span className="comic-caption-box text-[10px] py-0 px-2 bg-[#FFD43B]">
                                 PANEL #{index + 1 < 10 ? `0${index + 1}` : index + 1}
                               </span>
@@ -378,12 +361,12 @@ export default function SchedulePage() {
 
                             <DisplayText
                               as="h2"
-                              className="text-2xl sm:text-3xl text-ink leading-tight group-hover:text-[#F04438] transition-colors"
+                              className="text-xl sm:text-2xl text-ink leading-tight break-words group-hover:text-[#F04438] transition-colors"
                             >
                               {slot.event.title}
                             </DisplayText>
 
-                            <p className="text-xs text-ink/80 flex items-center gap-1.5 mt-2 font-medium">
+                            <p className="text-xs text-ink/80 flex flex-wrap items-center gap-1 mt-2 font-medium break-words">
                               <MapPin className="w-4 h-4 text-[#F04438] flex-shrink-0" aria-hidden="true" />
                               <span className="font-bold text-ink">
                                 {slot.venue?.name || 'Central Campus (TBA)'}
@@ -399,7 +382,7 @@ export default function SchedulePage() {
                         </div>
 
                         {/* CTA / Action */}
-                        <div className="self-end md:self-center flex-shrink-0 pt-2 md:pt-0">
+                        <div className="w-full pt-2.5 border-t border-ink/10 flex items-center justify-end flex-shrink-0">
                           <span className="font-display text-sm uppercase tracking-wider text-[#F04438] flex items-center gap-1 font-bold group-hover:translate-x-1 transition-transform">
                             <Sparkles className="w-3.5 h-3.5" />
                             Rules &amp; Entry →
