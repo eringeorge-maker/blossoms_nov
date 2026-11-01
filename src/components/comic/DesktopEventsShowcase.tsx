@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { PublicHeader } from '@/components/layout/PublicHeader'
 
 interface PanelMeta {
@@ -46,12 +47,16 @@ interface DesktopEventsShowcaseProps {
 
 export default function DesktopEventsShowcase({ onSelectCategory, hideHeader = false }: DesktopEventsShowcaseProps) {
   const [hoveredPanel, setHoveredPanel] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   const handlePanelClick = useCallback((panelId: string) => {
     if (onSelectCategory) {
       onSelectCategory(panelId)
+      return
     }
-  }, [onSelectCategory])
+
+    navigate(`/events?category=${encodeURIComponent(panelId)}`)
+  }, [navigate, onSelectCategory])
 
   return (
     <div

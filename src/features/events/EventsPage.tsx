@@ -1,9 +1,9 @@
 import { Link, useSearchParams } from 'react-router-dom'
-import { useState, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Search, Sparkles, CheckCircle2, Calendar, MapPin, Users, X, Info } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
-import DesktopEventsShowcase from '@/components/comic/DesktopEventsShowcase'
+import DesktopEventsArena from '@/features/events/DesktopEventsArena'
 import { DisplayText, ComicCaptionBox, HalftoneAccent } from '@/components/comic/ComicPrimitives'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
@@ -108,6 +108,15 @@ export default function EventsPage() {
     return events.find((e) => e.id === selectedEventId) || null
   }, [selectedEventId, events])
 
+  useEffect(() => {
+    if (!selectedEventId) return
+    function closeOnEscape(e: KeyboardEvent) {
+      if (e.key === 'Escape') setSelectedEventId(null)
+    }
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [selectedEventId])
+
   function handleCategoryClick(slug: string) {
     if (slug === 'all') {
       searchParams.delete('category')
@@ -152,12 +161,156 @@ export default function EventsPage() {
     }
   }
 
+  // Detail sheet shared by the mobile catalogue and the desktop arena
+  const eventSheet = selectedEvent && (
+    <div
+      onClick={() => setSelectedEventId(null)}
+      className="fixed inset-x-0 bottom-0 md:top-0 z-50 p-3 sm:p-6 flex items-end md:items-center justify-center pointer-events-none md:pointer-events-auto md:bg-black/60 animate-in fade-in slide-in-from-bottom md:slide-in-from-bottom-0 duration-200"
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={selectedEvent.title}
+        onClick={(e) => e.stopPropagation()}
+        className="pointer-events-auto w-full max-w-xl bg-[#FFF8E8] border-[3px] md:border-[4px] border-[#151515] rounded-2xl shadow-[6px_6px_0px_#151515] md:shadow-none p-4 sm:p-6 relative max-h-[85vh] overflow-y-auto"
+      >
+        {/* Close Button */}
+        <button
+          onClick={() => setSelectedEventId(null)}
+          className="absolute top-3.5 right-3.5 w-8 h-8 rounded-full bg-white border-2 border-[#151515] flex items-center justify-center text-[#151515] hover:bg-[#FFD43B] transition-colors shadow-[1.5px_1.5px_0px_#151515]"
+          aria-label="Close event sheet"
+        >
+          <X className="w-4 h-4" />
+        </button>
+
+        {/* Event Category Tag */}
+        <div className="inline-block bg-[#FFD43B] border-2 border-[#151515] px-2.5 py-0.5 rounded shadow-[1.5px_1.5px_0px_#151515] mb-2 -rotate-1">
+          <span className="font-display text-[10px] sm:text-xs tracking-wider uppercase font-black">
+            {selectedEvent.category?.name || 'PANEL'}
+          </span>
+        </div>
+
+        <DisplayText as="h3" className="text-2xl sm:text-3xl text-[#151515] font-black leading-tight mb-2">
+          {selectedEvent.title}
+        </DisplayText>
+
+        <p className="text-ink/80 text-xs sm:text-sm leading-relaxed mb-4">
+          {selectedEvent.description}
+        </p>
+
+        {/* Slots & Venue Info */}
+        <div className="bg-white border-2 border-[#151515] rounded-xl p-3 shadow-[2px_2px_0px_#151515] space-y-2 mb-4 text-xs sm:text-sm">
+          {selectedEvent.schedule_slots && selectedEvent.schedule_slots.length > 0 ? (
+            selectedEvent.schedule_slots.map((slot) => (
+              <div key={slot.id} className="space-y-1">
+                <div className="flex items-center gap-1.5 font-bold text-[#151515]">
+                  <Calendar className="w-4 h-4 text-[#DC2626]" />
+                  <span>{formatSlot(slot.starts_at, slot.ends_at)}</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-ink/70">
+                  <MapPin className="w-4 h-4 text-[#DC2626]" />
+                  <span>{slot.venue?.name || 'Central Campus Grounds'} ({slot.venue?.room || slot.venue?.building || 'Main Block'})</span>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="flex items-center gap-1.5 text-ink/70">
+              <Calendar className="w-4 h-4 text-[#DC2626]" />
+              <span>Schedule timings &amp; venue: To Be Decided (TBD)</span>
+            </div>
+          )}
+
+          <div className="flex items-center gap-1.5 text-ink/70 pt-1 border-t border-ink/10">
+            <Users className="w-4 h-4 text-[#00A8FF]" />
+            <span className="capitalize">{selectedEvent.event_format} Participation · Capacity: {selectedEvent.capacity || 'Open'}</span>
+          </div>
+        </div>
+
+        {/* Quick 1-Tap 6-Digit Registration Flow */}
+        <div className="bg-[#FFEB99]/60 border-2 border-[#151515] rounded-xl p-3 shadow-[2px_2px_0px_#151515] mb-3">
+          {student ? (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-1 text-xs font-bold text-[#151515]">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Identified as Roll #{student.rollNumber}</span>
+                </div>
+                <span className="text-[11px] text-ink/70">
+                  {student.name} · {student.className} · TRINITY MERLIN A
+                </span>
+              </div>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => handleQuickRegister(selectedEvent)}
+                className="font-display tracking-wider uppercase text-xs sm:text-sm bg-[#DC2626] hover:bg-[#b91c1c] text-white border-2 border-[#151515] shadow-[2px_2px_0px_#151515]"
+              >
+                ⚡ Register with #{student.rollNumber}
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex items-center gap-1 text-xs font-bold text-[#151515]">
+                <Info className="w-3.5 h-3.5 text-[#DC2626]" />
+                <span>Quick Student Registration (6-digit roll number only)</span>
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={6}
+                  placeholder="e.g. 241201"
+                  value={rollInput}
+                  onChange={(e) => setRollInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  className="flex-1 bg-white border-2 border-[#151515] rounded-lg px-3 py-1.5 font-mono text-sm font-bold text-center shadow-[1.5px_1.5px_0px_#151515] focus:outline-none focus:border-[#DC2626]"
+                />
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => handleQuickRegister(selectedEvent)}
+                  className="font-display tracking-wider uppercase text-xs bg-[#DC2626] hover:bg-[#b91c1c] text-white border-2 border-[#151515] shadow-[2px_2px_0px_#151515]"
+                >
+                  Register Now
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex justify-between items-center text-xs">
+          <Link
+            to={`/events/${selectedEvent.slug}`}
+            className="text-[#DC2626] font-bold underline hover:text-[#b91c1c] flex items-center gap-1"
+          >
+            <span>Full Rules &amp; Regulations Page →</span>
+          </Link>
+          <button
+            onClick={() => setSelectedEventId(null)}
+            className="text-ink/60 hover:text-ink font-semibold"
+          >
+            Dismiss
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+
   return (
     <>
-      {/* ── Desktop Events Showcase Page (Faithful to Reference Image) ── */}
-      <div className="hidden md:block w-full">
-        <DesktopEventsShowcase hideHeader={true} />
-      </div>
+      {eventSheet}
+
+      {/* ── Desktop Comic Events Arena ── */}
+      <DesktopEventsArena
+        activeCategory={activeCategory}
+        search={search}
+        isLoading={isLoading}
+        eventCount={events.length}
+        eventsByCategory={eventsByCategory}
+        onCategoryChange={handleCategoryClick}
+        onSearchChange={setSearch}
+        onRegister={setSelectedEventId}
+      />
 
       {/* ── Mobile Events Catalogue View ── */}
       <div className="block md:hidden mx-auto max-w-[1240px] px-3 sm:px-4 py-6">
@@ -375,131 +528,6 @@ export default function EventsPage() {
             </>
           )}
 
-          {/* ── Slide-up / Embedded Event Detail Modal & Quick Register ── */}
-          {selectedEvent && (
-            <div className="fixed inset-x-0 bottom-0 z-50 p-3 sm:p-6 flex items-end justify-center pointer-events-none animate-in fade-in slide-in-from-bottom duration-200">
-              <div className="pointer-events-auto w-full max-w-xl bg-[#FFF8E8] border-[3px] border-[#151515] rounded-2xl shadow-[6px_6px_0px_#151515] p-4 sm:p-6 relative max-h-[85vh] overflow-y-auto">
-                {/* Close Button */}
-                <button
-                  onClick={() => setSelectedEventId(null)}
-                  className="absolute top-3.5 right-3.5 w-8 h-8 rounded-full bg-white border-2 border-[#151515] flex items-center justify-center text-[#151515] hover:bg-[#FFD43B] transition-colors shadow-[1.5px_1.5px_0px_#151515]"
-                  aria-label="Close event sheet"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-
-                {/* Event Category Tag */}
-                <div className="inline-block bg-[#FFD43B] border-2 border-[#151515] px-2.5 py-0.5 rounded shadow-[1.5px_1.5px_0px_#151515] mb-2 -rotate-1">
-                  <span className="font-display text-[10px] sm:text-xs tracking-wider uppercase font-black">
-                    {selectedEvent.category?.name || 'PANEL'}
-                  </span>
-                </div>
-
-                <DisplayText as="h3" className="text-2xl sm:text-3xl text-[#151515] font-black leading-tight mb-2">
-                  {selectedEvent.title}
-                </DisplayText>
-
-                <p className="text-ink/80 text-xs sm:text-sm leading-relaxed mb-4">
-                  {selectedEvent.description}
-                </p>
-
-                {/* Slots & Venue Info */}
-                <div className="bg-white border-2 border-[#151515] rounded-xl p-3 shadow-[2px_2px_0px_#151515] space-y-2 mb-4 text-xs sm:text-sm">
-                  {selectedEvent.schedule_slots && selectedEvent.schedule_slots.length > 0 ? (
-                    selectedEvent.schedule_slots.map((slot) => (
-                      <div key={slot.id} className="space-y-1">
-                        <div className="flex items-center gap-1.5 font-bold text-[#151515]">
-                          <Calendar className="w-4 h-4 text-[#DC2626]" />
-                          <span>{formatSlot(slot.starts_at, slot.ends_at)}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-ink/70">
-                          <MapPin className="w-4 h-4 text-[#DC2626]" />
-                          <span>{slot.venue?.name || 'Central Campus Grounds'} ({slot.venue?.room || slot.venue?.building || 'Main Block'})</span>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="flex items-center gap-1.5 text-ink/70">
-                      <Calendar className="w-4 h-4 text-[#DC2626]" />
-                      <span>Schedule timings &amp; venue: To Be Decided (TBD)</span>
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-1.5 text-ink/70 pt-1 border-t border-ink/10">
-                    <Users className="w-4 h-4 text-[#00A8FF]" />
-                    <span className="capitalize">{selectedEvent.event_format} Participation · Capacity: {selectedEvent.capacity || 'Open'}</span>
-                  </div>
-                </div>
-
-                {/* Quick 1-Tap 6-Digit Registration Flow */}
-                <div className="bg-[#FFEB99]/60 border-2 border-[#151515] rounded-xl p-3 shadow-[2px_2px_0px_#151515] mb-3">
-                  {student ? (
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-1 text-xs font-bold text-[#151515]">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>Identified as Roll #{student.rollNumber}</span>
-                        </div>
-                        <span className="text-[11px] text-ink/70">
-                          {student.name} · {student.className} · TRINITY MERLIN A
-                        </span>
-                      </div>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => handleQuickRegister(selectedEvent)}
-                        className="font-display tracking-wider uppercase text-xs sm:text-sm bg-[#DC2626] hover:bg-[#b91c1c] text-white border-2 border-[#151515] shadow-[2px_2px_0px_#151515]"
-                      >
-                        ⚡ Register with #{student.rollNumber}
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-1 text-xs font-bold text-[#151515]">
-                        <Info className="w-3.5 h-3.5 text-[#DC2626]" />
-                        <span>Quick Student Registration (6-digit roll number only)</span>
-                      </div>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          inputMode="numeric"
-                          pattern="[0-9]*"
-                          maxLength={6}
-                          placeholder="e.g. 241201"
-                          value={rollInput}
-                          onChange={(e) => setRollInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                          className="flex-1 bg-white border-2 border-[#151515] rounded-lg px-3 py-1.5 font-mono text-sm font-bold text-center shadow-[1.5px_1.5px_0px_#151515] focus:outline-none focus:border-[#DC2626]"
-                        />
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() => handleQuickRegister(selectedEvent)}
-                          className="font-display tracking-wider uppercase text-xs bg-[#DC2626] hover:bg-[#b91c1c] text-white border-2 border-[#151515] shadow-[2px_2px_0px_#151515]"
-                        >
-                          Register Now
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex justify-between items-center text-xs">
-                  <Link
-                    to={`/events/${selectedEvent.slug}`}
-                    className="text-[#DC2626] font-bold underline hover:text-[#b91c1c] flex items-center gap-1"
-                  >
-                    <span>Full Rules &amp; Regulations Page →</span>
-                  </Link>
-                  <button
-                    onClick={() => setSelectedEventId(null)}
-                    className="text-ink/60 hover:text-ink font-semibold"
-                  >
-                    Dismiss
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       ) : (
         /* ── COMIC CARDS VIEW ───────────────────────────────── */
