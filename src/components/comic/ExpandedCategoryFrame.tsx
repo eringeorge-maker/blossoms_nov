@@ -2,7 +2,7 @@ import React from 'react'
 import { Calendar, MapPin, Users } from 'lucide-react'
 import type { Event } from '@/types'
 import { formatSlot } from '@/lib/utils'
-import { ComicPanelConfig } from './ComicPanel'
+import type { ComicPanelConfig } from './ComicPanel'
 
 export type ExpansionPhase = 'idle' | 'expanding-init' | 'expanded' | 'contracting'
 

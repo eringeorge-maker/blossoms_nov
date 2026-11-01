@@ -2,11 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { PublicHeader } from '@/components/layout/PublicHeader'
 import { EVENTS } from '@/lib/data/eventsData'
 import type { Event } from '@/types'
-import { ComicPanel, ComicPanelConfig } from './ComicPanel'
+import { ComicPanel, type ComicPanelConfig } from './ComicPanel'
 import {
-  BoundingRectBox,
+  type BoundingRectBox,
   ExpandedCategoryFrame,
-  ExpansionPhase,
+  type ExpansionPhase,
 } from './ExpandedCategoryFrame'
 
 const TRANSITION_DURATION_MS = 650
