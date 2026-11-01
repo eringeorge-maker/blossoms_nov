@@ -303,6 +303,8 @@ export default function EventsPage() {
       {/* ── Desktop & Mobile 4-Panel Comic Events Category Showcase ── */}
       <DesktopEventsShowcase
         hideHeader
+        activeCategory={activeCategory}
+        onSelectCategory={handleCategoryClick}
         eventsByCategory={eventsByCategory}
         onSelectEvent={setSelectedEventId}
       />

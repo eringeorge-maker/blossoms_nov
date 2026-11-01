@@ -853,7 +853,7 @@ export default function HomePage() {
             {/* ROW 1: Arts & Literature */}
             <div className="relative w-full h-[162px] flex">
               <div
-                onClick={() => triggerCategorySceneTransition('arts')}
+                onClick={() => navigate('/events?category=arts')}
                 style={{ clipPath: 'polygon(0% 0%, 93% 3%, 100% 100%, 0% 96%)' }}
                 className="relative w-[53.5%] h-full bg-[#ed1e79] halftone-dots-dense cursor-pointer overflow-hidden select-none group"
               >
@@ -869,12 +869,12 @@ export default function HomePage() {
                 </div>
                 <ArtsIllustration className="absolute bottom-[-2px] left-0 w-full h-[105px] z-10 pointer-events-none" />
                 <div className="absolute right-3.5 bottom-3.5 z-20">
-                  <ComicArrowButton onClick={() => triggerCategorySceneTransition('arts')} />
+                  <ComicArrowButton onClick={() => navigate('/events?category=arts')} />
                 </div>
               </div>
 
               <div
-                onClick={() => triggerCategorySceneTransition('literature')}
+                onClick={() => navigate('/events?category=literature')}
                 style={{ clipPath: 'polygon(0% 3%, 100% 7%, 100% 100%, 7% 96%)' }}
                 className="relative w-[50.5%] -ml-[4%] h-full bg-[#0088e8] halftone-dots-dense cursor-pointer overflow-hidden select-none group"
               >
@@ -890,7 +890,7 @@ export default function HomePage() {
                 </div>
                 <LiteratureIllustration className="absolute bottom-[-2px] left-1 w-full h-[100px] z-10 pointer-events-none" />
                 <div className="absolute right-3.5 bottom-3.5 z-20">
-                  <ComicArrowButton onClick={() => triggerCategorySceneTransition('literature')} />
+                  <ComicArrowButton onClick={() => navigate('/events?category=literature')} />
                 </div>
               </div>
             </div>
@@ -898,7 +898,7 @@ export default function HomePage() {
             {/* ROW 2: Stage & Theatre */}
             <div className="relative w-full h-[162px] flex">
               <div
-                onClick={() => triggerCategorySceneTransition('stage')}
+                onClick={() => navigate('/events?category=stage')}
                 style={{ clipPath: 'polygon(0% 0%, 94% 4%, 100% 100%, 0% 96%)' }}
                 className="relative w-[52.5%] h-full bg-[#fdb813] halftone-dots-dense cursor-pointer overflow-hidden select-none group"
               >
@@ -914,12 +914,12 @@ export default function HomePage() {
                 </div>
                 <StageIllustration className="absolute bottom-[-2px] left-0 w-full h-[120px] z-10 pointer-events-none" />
                 <div className="absolute right-3.5 bottom-3.5 z-20">
-                  <ComicArrowButton onClick={() => triggerCategorySceneTransition('stage')} />
+                  <ComicArrowButton onClick={() => navigate('/events?category=stage')} />
                 </div>
               </div>
 
               <div
-                onClick={() => triggerCategorySceneTransition('theatre')}
+                onClick={() => navigate('/events?category=theatre')}
                 style={{ clipPath: 'polygon(0% 4%, 100% 9%, 100% 100%, 6% 96%)' }}
                 className="relative w-[51.5%] -ml-[4%] h-full bg-[#861ec2] halftone-dots-dense cursor-pointer overflow-hidden select-none group"
               >
@@ -935,7 +935,7 @@ export default function HomePage() {
                 </div>
                 <TheatreIllustration className="absolute bottom-[-2px] left-0 w-full h-[116px] z-10 pointer-events-none" />
                 <div className="absolute right-3.5 bottom-3.5 z-20">
-                  <ComicArrowButton onClick={() => triggerCategorySceneTransition('theatre')} />
+                  <ComicArrowButton onClick={() => navigate('/events?category=theatre')} />
                 </div>
               </div>
             </div>
@@ -990,7 +990,7 @@ export default function HomePage() {
             </button>
             <button
               type="button"
-              onClick={() => { setActiveTab('events'); triggerCategorySceneTransition('arts'); }}
+              onClick={() => navigate('/events')}
               className="flex flex-col items-center gap-1 cursor-pointer"
             >
               <span className={`text-[11px] font-bold ${activeTab === 'events' ? 'text-[#f8ca16]' : 'text-[#8e8e93]'}`}>

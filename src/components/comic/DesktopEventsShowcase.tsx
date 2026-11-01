@@ -192,6 +192,7 @@ const MOBILE_COMIC_PANELS: ComicPanelConfig[] = [
 ]
 
 interface DesktopEventsShowcaseProps {
+  activeCategory?: string
   onSelectCategory?: (category: string) => void
   onSelectEvent?: (eventId: string) => void
   eventsByCategory?: Record<string, Event[]>
@@ -199,6 +200,7 @@ interface DesktopEventsShowcaseProps {
 }
 
 export default function DesktopEventsShowcase({
+  activeCategory = 'all',
   onSelectCategory,
   onSelectEvent,
   eventsByCategory,
@@ -217,8 +219,6 @@ export default function DesktopEventsShowcase({
     height: 704,
   })
   const transitionTimerRef = useRef<number | null>(null)
-  const rafRef1 = useRef<number | null>(null)
-  const rafRef2 = useRef<number | null>(null)
 
   useEffect(() => {
     const handleResize = () => {
@@ -232,8 +232,6 @@ export default function DesktopEventsShowcase({
   useEffect(() => {
     return () => {
       if (transitionTimerRef.current) window.clearTimeout(transitionTimerRef.current)
-      if (rafRef1.current) window.cancelAnimationFrame(rafRef1.current)
-      if (rafRef2.current) window.cancelAnimationFrame(rafRef2.current)
     }
   }, [])
 
@@ -248,19 +246,15 @@ export default function DesktopEventsShowcase({
       height: rect.height,
     })
     setActiveExpandedPanel(panel)
-    setExpansionPhase('expanding-init')
-
-    rafRef1.current = window.requestAnimationFrame(() => {
-      rafRef2.current = window.requestAnimationFrame(() => {
-        setExpansionPhase('expanded')
-      })
-    })
-
-    onSelectCategory?.(panel.categoryKey)
+    setExpansionPhase('expanding')
+    if (transitionTimerRef.current) window.clearTimeout(transitionTimerRef.current)
+    transitionTimerRef.current = window.setTimeout(() => {
+      setExpansionPhase('expanded')
+    }, TRANSITION_DURATION_MS)
   }
 
   const handleBackToShowcase = () => {
-    if (!activeExpandedPanel || expansionPhase !== 'expanded') return
+    if (!activeExpandedPanel || (expansionPhase !== 'expanded' && expansionPhase !== 'expanding')) return
 
     const sourceEl = panelElementRefs.current[activeExpandedPanel.id]
     if (sourceEl) {
@@ -278,10 +272,31 @@ export default function DesktopEventsShowcase({
     transitionTimerRef.current = window.setTimeout(() => {
       setExpansionPhase('idle')
       setActiveExpandedPanel(null)
+      if (activeCategory !== 'all') {
+        onSelectCategory?.('all')
+      }
     }, TRANSITION_DURATION_MS)
   }
 
   const activePanels = isMobileViewport ? MOBILE_COMIC_PANELS : DESKTOP_COMIC_PANELS
+
+  // If navigated with ?category=arts|literature|stage|theatre, auto-expand that panel once mounted
+  useEffect(() => {
+    if (
+      activeCategory &&
+      activeCategory !== 'all' &&
+      expansionPhase === 'idle' &&
+      !activeExpandedPanel
+    ) {
+      const targetPanel = activePanels.find((p) => p.categoryKey === activeCategory)
+      if (targetPanel) {
+        const el = panelElementRefs.current[targetPanel.id]
+        if (el) {
+          handlePanelSelect(targetPanel, el)
+        }
+      }
+    }
+  }, [activeCategory, isMobileViewport])
 
   const activeCategoryEvents = useMemo(() => {
     if (!activeExpandedPanel) return []

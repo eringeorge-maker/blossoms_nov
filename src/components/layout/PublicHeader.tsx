@@ -51,7 +51,7 @@ export function PublicHeader() {
     <header
       className={`sticky top-0 z-50 w-full px-4 sm:px-6 md:px-10 py-3.5 flex items-center justify-between select-none transition-all ${
         isEventsPage
-          ? 'bg-[#080808] border-b border-white/10'
+          ? 'bg-[#080808] border-b border-white/10 lg:bg-transparent lg:border-none'
           : 'bg-[#F7F3E9]/90 backdrop-blur-md border-b border-black/5'
       }`}
       style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" }}
@@ -62,7 +62,13 @@ export function PublicHeader() {
 
       {/* ── Left Section: Brand Identity ─────────────────────────────── */}
       <div className="flex items-center shrink-0">
-        <div className="flex items-center bg-[#1D1D1F] px-3.5 py-1.5 rounded-full shadow-xs">
+        <div
+          className={`flex items-center py-1.5 ${
+            isEventsPage
+              ? 'px-1 bg-transparent'
+              : 'bg-[#1D1D1F] px-3.5 rounded-full shadow-xs'
+          }`}
+        >
           <Link to="/" className="flex items-center focus:outline-none" aria-label="Department of Commerce">
             <img
               src="/assets/doc_logo.png"

@@ -1,10 +1,11 @@
 import React from 'react'
+import { motion } from 'framer-motion'
 import { Calendar, MapPin, Users } from 'lucide-react'
 import type { Event } from '@/types'
 import { formatSlot } from '@/lib/utils'
 import type { ComicPanelConfig } from './ComicPanel'
 
-export type ExpansionPhase = 'idle' | 'expanding-init' | 'expanded' | 'contracting'
+export type ExpansionPhase = 'idle' | 'expanding' | 'expanded' | 'contracting'
 
 export interface BoundingRectBox {
   left: number
@@ -57,42 +58,80 @@ export const ExpandedCategoryFrame: React.FC<ExpandedCategoryFrameProps> = ({
 }) => {
   if (phase === 'idle') return null
 
-  const isAtFullscreen = phase === 'expanded'
-  const currentClipPath = isAtFullscreen ? FULLSCREEN_CLIP_PATH : panel.outerClipPath
+  const isContracting = phase === 'contracting'
+  const showContent = phase === 'expanding' || phase === 'expanded'
   const categoryHeading = CATEGORY_TITLES[panel.categoryKey] || panel.categoryKey.toUpperCase()
+  const viewportW = typeof window !== 'undefined' ? window.innerWidth : 1648
+  const viewportH = typeof window !== 'undefined' ? window.innerHeight : 928
 
   return (
-    <section
+    <motion.section
       data-frame-name={panel.expandedFrameName}
       aria-label={panel.expandedFrameName}
       className="expanded-category-frame"
-      style={{
-        backgroundColor: panel.accentColor,
-        left: isAtFullscreen ? '0px' : `${originRect.left}px`,
-        top: isAtFullscreen ? '0px' : `${originRect.top}px`,
-        width: isAtFullscreen ? '100vw' : `${originRect.width}px`,
-        height: isAtFullscreen ? '100vh' : `${originRect.height}px`,
-        clipPath: currentClipPath,
-        WebkitClipPath: currentClipPath,
+      style={{ backgroundColor: panel.accentColor }}
+      initial={{
+        left: originRect.left,
+        top: originRect.top,
+        width: originRect.width,
+        height: originRect.height,
+        clipPath: panel.outerClipPath,
+      }}
+      animate={
+        isContracting
+          ? {
+              left: originRect.left,
+              top: originRect.top,
+              width: originRect.width,
+              height: originRect.height,
+              clipPath: panel.outerClipPath,
+            }
+          : {
+              left: 0,
+              top: 0,
+              width: viewportW,
+              height: viewportH,
+              clipPath: FULLSCREEN_CLIP_PATH,
+            }
+      }
+      transition={{
+        duration: 0.65,
+        ease: [0.22, 1, 0.36, 1],
       }}
     >
       {/* Original panel illustration fades out smoothly during expansion so the expanded state is a plain background */}
-      <img
+      <motion.img
         src={panel.imageSrc}
         alt=""
         aria-hidden="true"
         draggable={false}
-        className={`expanded-category-origin-layer ${
-          isAtFullscreen ? 'is-expanded' : 'is-collapsed'
-        }`}
+        className="expanded-category-origin-layer"
+        initial={{ opacity: 1 }}
+        animate={{ opacity: isContracting ? 1 : 0 }}
+        transition={{
+          duration: isContracting ? 0.45 : 0.36,
+          delay: isContracting ? 0.18 : 0,
+          ease: 'easeInOut',
+        }}
       />
 
       <div className="expanded-category-ink-border" aria-hidden="true" />
 
-      <div
-        className={`expanded-destination-ui ${
-          isAtFullscreen ? 'is-visible' : 'is-hidden'
-        }`}
+      <motion.div
+        className="expanded-destination-ui"
+        initial={{ opacity: 0, y: 14 }}
+        animate={{
+          opacity: showContent ? 1 : 0,
+          y: showContent ? 0 : 10,
+        }}
+        transition={{
+          duration: isContracting ? 0.18 : 0.34,
+          delay: isContracting ? 0 : 0.28,
+          ease: 'easeOut',
+        }}
+        style={{
+          pointerEvents: showContent ? 'auto' : 'none',
+        }}
       >
         {/* Top Header Bar: Back Button + Category Heading */}
         <div className="expanded-destination-header">
@@ -141,11 +180,20 @@ export const ExpandedCategoryFrame: React.FC<ExpandedCategoryFrameProps> = ({
               const venueText = firstSlot?.venue?.name || 'Venue TBD'
 
               return (
-                <article
+                <motion.article
                   key={ev.id}
                   onClick={() => onSelectEvent?.(ev.id)}
-                  style={{ animationDelay: `${index * 45}ms` }}
                   className="expanded-event-card"
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{
+                    opacity: showContent ? 1 : 0,
+                    y: showContent ? 0 : 12,
+                  }}
+                  transition={{
+                    duration: 0.32,
+                    delay: isContracting ? 0 : 0.32 + index * 0.035,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
                 >
                   <div className="expanded-event-card-top">
                     <div className="expanded-event-badges">
@@ -185,12 +233,12 @@ export const ExpandedCategoryFrame: React.FC<ExpandedCategoryFrameProps> = ({
                       Details &amp; Register →
                     </button>
                   </div>
-                </article>
+                </motion.article>
               )
             })}
           </div>
         </div>
-      </div>
-    </section>
+      </motion.div>
+    </motion.section>
   )
 }
