@@ -51,7 +51,7 @@ export function PublicHeader() {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full px-4 sm:px-6 md:px-10 py-3.5 flex items-center justify-between select-none transition-all ${
+      className={`sticky top-0 z-50 w-full px-4 sm:px-6 md:px-8 py-2 flex items-center justify-between select-none transition-all ${
         isEventsPage
           ? 'bg-[#080808] border-b border-white/10 lg:bg-transparent lg:border-none'
           : 'bg-[#F7F3E9]/90 backdrop-blur-md border-b border-black/5'
@@ -65,23 +65,23 @@ export function PublicHeader() {
       {/* ── Left Section: Brand Identity ─────────────────────────────── */}
       <div className="flex items-center shrink-0">
         <div
-          className={`flex items-center py-1.5 ${
+          className={`flex items-center py-1 ${
             isEventsPage
               ? 'px-1 bg-transparent'
-              : 'bg-[#1D1D1F] px-3.5 rounded-full shadow-xs'
+              : 'bg-[#1D1D1F] px-3 rounded-full shadow-xs'
           }`}
         >
           <Link to="/" className="flex items-center focus:outline-none" aria-label="Department of Commerce">
             <img
               src={docLogoUrl}
               alt="Department of Commerce"
-              className="w-[85px] h-[28px] md:w-[105px] md:h-[34px] object-contain"
+              className="w-[78px] h-[24px] md:w-[90px] md:h-[28px] object-contain"
               loading="eager"
             />
           </Link>
 
           <div
-            className="w-[1px] h-[20px] md:h-[24px] bg-white/20 mx-2 md:mx-2.5"
+            className="w-[1px] h-[18px] md:h-[20px] bg-white/20 mx-2"
             role="separator"
             aria-orientation="vertical"
           />
@@ -90,7 +90,7 @@ export function PublicHeader() {
             <img
               src={blossomsLogoUrl}
               alt="Blossoms 2026"
-              className="w-[80px] h-[32px] md:w-[100px] md:h-[38px] object-contain"
+              className="w-[74px] h-[28px] md:w-[86px] md:h-[32px] object-contain"
               loading="eager"
             />
           </Link>
@@ -105,9 +105,9 @@ export function PublicHeader() {
           textColor="#000000"
           activeBackgroundColor="#1D1D1F"
           activeTextColor="#FFFFFF"
-          padding={6}
+          padding={4}
           gap={2}
-          linkPadding="9px 20px"
+          linkPadding="6px 16px"
         />
       </div>
 
@@ -155,11 +155,11 @@ export function PublicHeader() {
           <button
             type="button"
             onClick={() => navigate('/login')}
-            className="h-[44px] px-5 rounded-full bg-[#FFD400] hover:bg-[#fed61a] active:scale-95 text-[#111111] font-semibold text-[15px] flex items-center justify-center gap-2 cursor-pointer transition-all duration-150 focus:outline-none shadow-xs"
+            className="h-[36px] px-4 rounded-full bg-[#FFD400] hover:bg-[#fed61a] active:scale-95 text-[#111111] font-semibold text-[13.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-all duration-150 focus:outline-none shadow-xs"
             aria-label="User Login"
           >
             <span>Login</span>
-            <User className="w-[17px] h-[17px] stroke-[2.4]" aria-hidden="true" />
+            <User className="w-[15px] h-[15px] stroke-[2.4]" aria-hidden="true" />
           </button>
         )}
       </div>
