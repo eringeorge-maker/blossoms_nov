@@ -306,7 +306,7 @@ export default function SchedulePage() {
                     <li key={slot.id} className="h-full">
                       <Link
                         to={`/events/${slot.event.slug}`}
-                        className="comic-card group h-full p-4 sm:p-5 flex flex-col justify-between gap-4 bg-white hover:border-[#F04438] transition-all relative overflow-hidden"
+                        className="comic-card group h-full p-4 sm:p-5 flex flex-col justify-center bg-white hover:border-[#F04438] transition-all relative overflow-hidden"
                       >
                         <HalftoneAccent color="yellow" className="opacity-0 group-hover:opacity-20 transition-opacity" />
 
@@ -337,27 +337,38 @@ export default function SchedulePage() {
 
                           {/* Event Information */}
                           <div className="flex-1 min-w-0">
-                            <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
-                              <span className="comic-caption-box text-[10px] py-0 px-2 bg-[#FFD43B]">
-                                PANEL #{index + 1 < 10 ? `0${index + 1}` : index + 1}
-                              </span>
-
-                              <Badge variant="outline">
-                                {slot.event.category?.name || 'Festival'}
-                              </Badge>
-
-                              {slot.slot_title && (
-                                <Badge variant={isOnline ? 'blue' : 'default'}>
-                                  {slot.slot_title}
-                                </Badge>
-                              )}
-
-                              {isTbd && (
-                                <span className="bg-[#FFD43B] text-ink border border-ink text-[10px] font-display font-black px-2 py-0.5 rounded shadow-[1px_1px_0px_#151515]">
-                                  ★ SCHEDULE TBA ★
+                            <div className="flex items-center justify-between gap-2 mb-1.5">
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <span className="comic-caption-box text-[10px] py-0 px-2 bg-[#FFD43B]">
+                                  PANEL #{index + 1 < 10 ? `0${index + 1}` : index + 1}
                                 </span>
-                              )}
+
+                                <Badge variant="outline">
+                                  {slot.event.category?.name || 'Festival'}
+                                </Badge>
+                              </div>
+
+                              <span className="font-display text-sm uppercase tracking-wider text-[#F04438] flex items-center gap-1 font-bold shrink-0 group-hover:translate-x-1 transition-transform">
+                                <Sparkles className="w-3.5 h-3.5" />
+                                Rules &amp; Entry →
+                              </span>
                             </div>
+
+                            {(slot.slot_title || isTbd) && (
+                              <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+                                {slot.slot_title && (
+                                  <Badge variant={isOnline ? 'blue' : 'default'}>
+                                    {slot.slot_title}
+                                  </Badge>
+                                )}
+
+                                {isTbd && (
+                                  <span className="bg-[#FFD43B] text-ink border border-ink text-[10px] font-display font-black px-2 py-0.5 rounded shadow-[1px_1px_0px_#151515]">
+                                    ★ SCHEDULE TBA ★
+                                  </span>
+                                )}
+                              </div>
+                            )}
 
                             <DisplayText
                               as="h2"
@@ -379,14 +390,6 @@ export default function SchedulePage() {
                               )}
                             </p>
                           </div>
-                        </div>
-
-                        {/* CTA / Action */}
-                        <div className="w-full pt-2.5 border-t border-ink/10 flex items-center justify-end flex-shrink-0">
-                          <span className="font-display text-sm uppercase tracking-wider text-[#F04438] flex items-center gap-1 font-bold group-hover:translate-x-1 transition-transform">
-                            <Sparkles className="w-3.5 h-3.5" />
-                            Rules &amp; Entry →
-                          </span>
                         </div>
                       </Link>
                     </li>
