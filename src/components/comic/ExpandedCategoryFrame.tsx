@@ -207,7 +207,6 @@ export const ExpandedCategoryFrame: React.FC<ExpandedCategoryFrameProps> = ({
                     </div>
 
                     <h2 className="expanded-event-title">{ev.title}</h2>
-                    <p className="expanded-event-desc">{ev.description}</p>
                   </div>
 
                   <div className="expanded-event-card-footer">

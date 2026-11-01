@@ -6,13 +6,12 @@ import {
   TheatreIllustration,
 } from '@/components/comic/CategoryIllustrations';
 import DesktopHome from '@/features/public/DesktopHome';
+import { PublicHeader } from '@/components/layout/PublicHeader';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 export type CategoryKey = 'arts' | 'literature' | 'stage' | 'theatre' | 'special';
-
-type TabId = 'home' | 'events' | 'schedule' | 'gallery' | 'winners';
 
 interface DetailItem {
   name: string;
@@ -678,9 +677,7 @@ export default function HomePage() {
 
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey | null>(null);
   const [selectedModal, setSelectedModal] = useState<DetailModal | null>(null);
-  const [activeTab, setActiveTab] = useState<TabId>('home');
   const [activeFilter, setActiveFilter] = useState<string>('ALL');
-  const [menuOpen, setMenuOpen] = useState(false);
 
   // Student registration tracking
   const [registeredIds, setRegisteredIds] = useState<string[]>(() => {
@@ -727,16 +724,8 @@ export default function HomePage() {
     });
   };
 
-  const triggerCategorySceneTransition = (key: CategoryKey) => {
-    setSelectedModal(null);
-    setMenuOpen(false);
-    setSelectedCategory(key);
-    setActiveFilter('ALL');
-  };
-
   const closeCategoryArena = () => {
     setSelectedCategory(null);
-    setActiveTab('home');
   };
 
   const activeCategoryConfig = selectedCategory ? CATEGORY_DATA[selectedCategory] : null;
@@ -755,76 +744,12 @@ export default function HomePage() {
           MOBILE VIEWPORT (Figma Interface, Screen Width < 768px, Zero Shadows)
          ========================================================================= */}
       <div className="flex md:hidden flex-col min-h-screen w-full bg-[#f8ca16] halftone-dots items-center">
-        <div className="w-full max-w-[430px] min-h-screen flex flex-col justify-between relative bg-[#f8ca16] overflow-x-hidden">
-          {/* Top Mobile Bar */}
-          <div className="w-full pt-3 pb-2 px-3 flex items-center justify-between z-30 shrink-0">
-            <div
-              onClick={() => { closeCategoryArena(); setSelectedModal(null); }}
-              className="flex items-center gap-1.5 cursor-pointer"
-            >
-              <div className="w-8 h-8 rounded-full bg-[#df1b23] border-[2px] border-[#0f0f0f] flex items-center justify-center font-comic-display text-white text-[16px]">
-                B
-              </div>
-              <span className="font-comic-display text-[22px] tracking-wide text-[#0f0f0f]">
-                BLOSSOMS
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setSelectedModal(PANEL_DETAILS.schedule)}
-                aria-label="Schedule"
-                className="w-8 h-8 rounded-full bg-[#fdfaf0] border-[2px] border-[#0f0f0f] flex items-center justify-center cursor-pointer active:scale-95"
-              >
-                📅
-              </button>
-              <button
-                type="button"
-                onClick={() => setMenuOpen((o) => !o)}
-                aria-label="Menu"
-                className="w-8 h-8 rounded-full bg-[#fdfaf0] border-[2px] border-[#0f0f0f] flex items-center justify-center cursor-pointer active:scale-95"
-              >
-                ☰
-              </button>
-            </div>
-          </div>
-
-          {/* Quick Menu Dropdown */}
-          {menuOpen && (
-            <div className="absolute top-14 right-3 z-40 bg-[#fdfaf0] border-[2.8px] border-[#0f0f0f] p-3 flex flex-col gap-2 rounded-xl">
-              <button
-                type="button"
-                onClick={() => { setMenuOpen(false); setSelectedModal(PANEL_DETAILS.schedule); }}
-                className="text-left font-comic-sub font-bold text-[13px] hover:text-[#df1b23]"
-              >
-                📅 Event Schedule
-              </button>
-              <button
-                type="button"
-                onClick={() => { setMenuOpen(false); setSelectedModal(PANEL_DETAILS.announcements); }}
-                className="text-left font-comic-sub font-bold text-[13px] hover:text-[#df1b23]"
-              >
-                📢 Announcements
-              </button>
-              <button
-                type="button"
-                onClick={() => { setMenuOpen(false); setSelectedModal(PANEL_DETAILS.winners); }}
-                className="text-left font-comic-sub font-bold text-[13px] hover:text-[#df1b23]"
-              >
-                🏆 Winners Leaderboard
-              </button>
-              <button
-                type="button"
-                onClick={() => { setMenuOpen(false); navigate('/login'); }}
-                className="text-left font-comic-sub font-black text-[13px] text-[#df1b23] border-t border-neutral-300 pt-1"
-              >
-                🎓 Student Login
-              </button>
-            </div>
-          )}
+        <div className="w-full max-w-[430px] min-h-screen flex flex-col relative bg-[#f8ca16] overflow-x-hidden">
+          {/* Unified Top Mobile Bar with Top-Right Navigation Drawer */}
+          <PublicHeader />
 
           {/* Mobile Main Panels Stack */}
-          <div className="flex-1 w-full px-3 py-1 flex flex-col gap-2.5">
+          <div className="flex-1 w-full px-3 py-2.5 flex flex-col gap-2.5">
             {/* ROW 0: Blossoms Hero */}
             <div className="relative w-full h-[148px] bg-[#fdfaf0] border-[3.2px] border-[#0f0f0f] rounded-[14px] flex items-center justify-between overflow-hidden p-1.5">
               <div className="relative w-[56%] h-full flex items-center justify-center">
@@ -977,55 +902,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* MOBILE BOTTOM NAVIGATION */}
-          <div className="w-full bg-[#0f0f0f] border-t-[3.5px] border-[#0f0f0f] pt-2 pb-5 px-3 flex items-center justify-around z-30 shrink-0">
-            <button
-              type="button"
-              onClick={() => { setActiveTab('home'); closeCategoryArena(); }}
-              className="flex flex-col items-center gap-1 cursor-pointer"
-            >
-              <span className={`text-[11px] font-bold ${activeTab === 'home' ? 'text-[#f8ca16]' : 'text-[#8e8e93]'}`}>
-                🏠 Home
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/events')}
-              className="flex flex-col items-center gap-1 cursor-pointer"
-            >
-              <span className={`text-[11px] font-bold ${activeTab === 'events' ? 'text-[#f8ca16]' : 'text-[#8e8e93]'}`}>
-                ⚡ Events
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={() => { setActiveTab('schedule'); setSelectedModal(PANEL_DETAILS.schedule); }}
-              className="flex flex-col items-center gap-1 cursor-pointer"
-            >
-              <span className={`text-[11px] font-bold ${activeTab === 'schedule' ? 'text-[#f8ca16]' : 'text-[#8e8e93]'}`}>
-                📅 Schedule
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={() => { setActiveTab('winners'); setSelectedModal(PANEL_DETAILS.winners); }}
-              className="flex flex-col items-center gap-1 cursor-pointer"
-            >
-              <span className={`text-[11px] font-bold ${activeTab === 'winners' ? 'text-[#f8ca16]' : 'text-[#8e8e93]'}`}>
-                🏆 Winners
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/login')}
-              className="flex flex-col items-center gap-1 cursor-pointer"
-            >
-              <span className="text-[11px] font-bold text-[#f8ca16] bg-[#262626] border border-[#f8ca16] px-2 py-0.5 rounded">
-                Login
-              </span>
-            </button>
-          </div>
-
           {/* MOBILE EXPANDED CATEGORY OVERLAY */}
           {selectedCategory && (
             <div className="absolute inset-0 z-40 flex flex-col justify-between overflow-hidden bg-[#fdfaf0] animate-fadeIn">
@@ -1129,7 +1005,6 @@ export default function HomePage() {
           className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs animate-fadeIn"
           onClick={() => {
             setSelectedModal(null);
-            setActiveTab('home');
           }}
         >
           <div
@@ -1156,7 +1031,6 @@ export default function HomePage() {
                 type="button"
                 onClick={() => {
                   setSelectedModal(null);
-                  setActiveTab('home');
                 }}
                 className="w-8 h-8 bg-[#f8ca16] border-[2px] border-[#0f0f0f] font-comic-display text-[18px] flex items-center justify-center cursor-pointer hover:bg-red-500 hover:text-white transition-colors"
               >
