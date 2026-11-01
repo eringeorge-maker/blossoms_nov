@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { PublicHeader } from '@/components/layout/PublicHeader'
+import { EVENTS } from '@/lib/data/eventsData'
+import type { Event } from '@/types'
 import { ComicPanel, ComicPanelConfig } from './ComicPanel'
 import {
   BoundingRectBox,
@@ -8,6 +10,44 @@ import {
 } from './ExpandedCategoryFrame'
 
 const TRANSITION_DURATION_MS = 650
+
+const ORDER_MAP: Record<string, number> = {
+  // Arts
+  'Digital Poster Making': 1,
+  'Greeting Card': 2,
+  'Pot Art': 3,
+  'Pencil Sketching': 4,
+  'Reel Making': 5,
+  'Collage': 6,
+  'Mehendi Design': 7,
+  'Rangoli Design': 8,
+  'Painting': 9,
+  'Photography': 10,
+  // Literature
+  'Quiz': 1,
+  'Pot Pourri': 2,
+  'Extempore': 3,
+  'Dumb Charades': 4,
+  'Air Crash / Ship-Wreck': 5,
+  'Debate': 6,
+  'Jam': 7,
+  'Creative Writing': 8,
+  // Stage
+  'Indian Dance Classical (Group)': 1,
+  'Non Theme': 2,
+  'BOB (W)': 3,
+  'BOB (I)': 4,
+  'Indian Folk and Film Singing (Solo)': 5,
+  'Western Singing (Solo)': 6,
+  'Western Acapella': 7,
+  'Duet Dance': 8,
+  // Theatre
+  'Mono Act': 1,
+  'Proscenium': 2,
+  'Street Play': 3,
+  'Short Film Making': 4,
+  'Mime': 5,
+}
 
 const DESKTOP_COMIC_PANELS: ComicPanelConfig[] = [
   {
@@ -153,10 +193,17 @@ const MOBILE_COMIC_PANELS: ComicPanelConfig[] = [
 
 interface DesktopEventsShowcaseProps {
   onSelectCategory?: (category: string) => void
+  onSelectEvent?: (eventId: string) => void
+  eventsByCategory?: Record<string, Event[]>
   hideHeader?: boolean
 }
 
-export default function DesktopEventsShowcase({ onSelectCategory, hideHeader = false }: DesktopEventsShowcaseProps) {
+export default function DesktopEventsShowcase({
+  onSelectCategory,
+  onSelectEvent,
+  eventsByCategory,
+  hideHeader = false,
+}: DesktopEventsShowcaseProps) {
   const [isMobileViewport, setIsMobileViewport] = useState<boolean>(() =>
     typeof window !== 'undefined' ? window.innerWidth <= 768 : false
   )
@@ -236,6 +283,20 @@ export default function DesktopEventsShowcase({ onSelectCategory, hideHeader = f
 
   const activePanels = isMobileViewport ? MOBILE_COMIC_PANELS : DESKTOP_COMIC_PANELS
 
+  const activeCategoryEvents = useMemo(() => {
+    if (!activeExpandedPanel) return []
+    const key = activeExpandedPanel.categoryKey
+    const fromProps = eventsByCategory?.[key]
+    if (fromProps && fromProps.length > 0) {
+      return fromProps
+    }
+    return EVENTS.filter((ev) => ev.category?.slug === key).sort((a, b) => {
+      const orderA = ORDER_MAP[a.title] ?? 99
+      const orderB = ORDER_MAP[b.title] ?? 99
+      return orderA - orderB
+    })
+  }, [activeExpandedPanel, eventsByCategory])
+
   return (
     <div
       className="events-showcase-page"
@@ -284,7 +345,9 @@ export default function DesktopEventsShowcase({ onSelectCategory, hideHeader = f
           panel={activeExpandedPanel}
           phase={expansionPhase}
           originRect={originRect}
+          events={activeCategoryEvents}
           onBack={handleBackToShowcase}
+          onSelectEvent={onSelectEvent}
         />
       )}
     </div>

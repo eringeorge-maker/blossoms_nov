@@ -165,7 +165,7 @@ export default function EventsPage() {
   const eventSheet = selectedEvent && (
     <div
       onClick={() => setSelectedEventId(null)}
-      className="fixed inset-x-0 bottom-0 md:top-0 z-50 p-3 sm:p-6 flex items-end md:items-center justify-center pointer-events-none md:pointer-events-auto md:bg-black/60 animate-in fade-in slide-in-from-bottom md:slide-in-from-bottom-0 duration-200"
+      className="fixed inset-x-0 bottom-0 md:top-0 z-[120] p-3 sm:p-6 flex items-end md:items-center justify-center pointer-events-none md:pointer-events-auto md:bg-black/60 animate-in fade-in slide-in-from-bottom md:slide-in-from-bottom-0 duration-200"
     >
       <div
         role="dialog"
@@ -301,7 +301,11 @@ export default function EventsPage() {
       {eventSheet}
 
       {/* ── Desktop & Mobile 4-Panel Comic Events Category Showcase ── */}
-      <DesktopEventsShowcase hideHeader />
+      <DesktopEventsShowcase
+        hideHeader
+        eventsByCategory={eventsByCategory}
+        onSelectEvent={setSelectedEventId}
+      />
 
       {/* ── Legacy Events Catalogue View (hidden while 4-panel showcase is active) ── */}
       <div className="hidden mx-auto max-w-[1240px] px-3 sm:px-4 py-6">
