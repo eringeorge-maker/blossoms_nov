@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 import { Menu, X, User, LogOut, ShieldAlert } from 'lucide-react'
 import { FloatingPillNavigation, type NavItem } from '@/components/navigation/FloatingPillNavigation'
 import { getActiveStudent, logoutStudent, isDeveloperAdmin, logoutDeveloperAdmin, type StudentProfile } from '@/lib/auth/authStore'
+import docLogoUrl from '@/assets/doc_logo.png'
+import blossomsLogoUrl from '@/assets/blossoms_2026_logo.png'
 
 const NAV_LINKS: NavItem[] = [
   { label: 'Home',         href: '/' },
@@ -71,7 +73,7 @@ export function PublicHeader() {
         >
           <Link to="/" className="flex items-center focus:outline-none" aria-label="Department of Commerce">
             <img
-              src="/assets/doc_logo.png"
+              src={docLogoUrl}
               alt="Department of Commerce"
               className="w-[85px] h-[28px] md:w-[105px] md:h-[34px] object-contain"
               loading="eager"
@@ -86,7 +88,7 @@ export function PublicHeader() {
 
           <Link to="/" className="flex items-center focus:outline-none" aria-label="Blossoms 2026 Home">
             <img
-              src="/assets/blossoms_2026_logo.png"
+              src={blossomsLogoUrl}
               alt="Blossoms 2026"
               className="w-[80px] h-[32px] md:w-[100px] md:h-[38px] object-contain"
               loading="eager"

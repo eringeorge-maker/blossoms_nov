@@ -2,6 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { PublicHeader } from '@/components/layout/PublicHeader'
 import { EVENTS } from '@/lib/data/eventsData'
 import type { Event } from '@/types'
+import panel1Url from '@/assets/panel-1.png'
+import panel2Url from '@/assets/panel-2.png'
+import panel3Url from '@/assets/panel-3.png'
+import panel4Url from '@/assets/panel-4.png'
+import mobilePanel1Url from '@/assets/mobile-panel-1.png'
+import mobilePanel2Url from '@/assets/mobile-panel-2.png'
+import mobilePanel3Url from '@/assets/mobile-panel-3.png'
+import mobilePanel4Url from '@/assets/mobile-panel-4.png'
 import { ComicPanel, type ComicPanelConfig } from './ComicPanel'
 import {
   type BoundingRectBox,
@@ -55,7 +63,7 @@ const DESKTOP_COMIC_PANELS: ComicPanelConfig[] = [
     categoryKey: 'arts',
     expandedFrameName: 'Arts Expanded',
     ariaLabel: 'Arts events category panel',
-    imageSrc: '/assets/panel-1.png',
+    imageSrc: panel1Url,
     accentColor: '#E52B27',
     isExpansionEnabled: true,
     styleBox: {
@@ -72,7 +80,7 @@ const DESKTOP_COMIC_PANELS: ComicPanelConfig[] = [
     categoryKey: 'literature',
     expandedFrameName: 'Literature Expanded',
     ariaLabel: 'Literature events category panel',
-    imageSrc: '/assets/panel-2.png',
+    imageSrc: panel2Url,
     accentColor: '#F28A24',
     isExpansionEnabled: true,
     styleBox: {
@@ -89,7 +97,7 @@ const DESKTOP_COMIC_PANELS: ComicPanelConfig[] = [
     categoryKey: 'stage',
     expandedFrameName: 'Stage Expanded',
     ariaLabel: 'Stage events category panel',
-    imageSrc: '/assets/panel-3.png',
+    imageSrc: panel3Url,
     accentColor: '#087BC4',
     isExpansionEnabled: true,
     styleBox: {
@@ -106,7 +114,7 @@ const DESKTOP_COMIC_PANELS: ComicPanelConfig[] = [
     categoryKey: 'theatre',
     expandedFrameName: 'Theatre Expanded',
     ariaLabel: 'Theatre events category panel',
-    imageSrc: '/assets/panel-4.png',
+    imageSrc: panel4Url,
     accentColor: '#F5C51B',
     isExpansionEnabled: true,
     styleBox: {
@@ -126,7 +134,7 @@ const MOBILE_COMIC_PANELS: ComicPanelConfig[] = [
     categoryKey: 'arts',
     expandedFrameName: 'Arts Expanded',
     ariaLabel: 'Arts events category panel',
-    imageSrc: '/assets/mobile-panel-1.png',
+    imageSrc: mobilePanel1Url,
     accentColor: '#E52B27',
     isExpansionEnabled: true,
     styleBox: {
@@ -143,7 +151,7 @@ const MOBILE_COMIC_PANELS: ComicPanelConfig[] = [
     categoryKey: 'literature',
     expandedFrameName: 'Literature Expanded',
     ariaLabel: 'Literature events category panel',
-    imageSrc: '/assets/mobile-panel-2.png',
+    imageSrc: mobilePanel2Url,
     accentColor: '#F28A24',
     isExpansionEnabled: true,
     styleBox: {
@@ -160,7 +168,7 @@ const MOBILE_COMIC_PANELS: ComicPanelConfig[] = [
     categoryKey: 'stage',
     expandedFrameName: 'Stage Expanded',
     ariaLabel: 'Stage events category panel',
-    imageSrc: '/assets/mobile-panel-3.png',
+    imageSrc: mobilePanel3Url,
     accentColor: '#087BC4',
     isExpansionEnabled: true,
     styleBox: {
@@ -177,7 +185,7 @@ const MOBILE_COMIC_PANELS: ComicPanelConfig[] = [
     categoryKey: 'theatre',
     expandedFrameName: 'Theatre Expanded',
     ariaLabel: 'Theatre events category panel',
-    imageSrc: '/assets/mobile-panel-4.png',
+    imageSrc: mobilePanel4Url,
     accentColor: '#F5C51B',
     isExpansionEnabled: true,
     styleBox: {
