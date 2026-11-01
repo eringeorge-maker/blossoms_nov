@@ -736,6 +736,8 @@ body {
   object-fit: fill;
   display: block;
   pointer-events: none;
+  image-rendering: -webkit-optimize-contrast;
+  backface-visibility: hidden;
 }
 
 .comic-panel-inner-clip {
@@ -752,6 +754,8 @@ body {
   height: 100%;
   object-fit: fill;
   display: block;
+  image-rendering: -webkit-optimize-contrast;
+  backface-visibility: hidden;
   transform: scale(1);
   filter: contrast(1);
   transition:
