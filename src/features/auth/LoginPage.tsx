@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowRight, UserCheck, ShieldAlert, Sparkles, AlertCircle } from 'lucide-react'
-import { DisplayText, ComicPanel, ComicCaptionBox, SpeechBubble } from '@/components/comic/ComicPrimitives'
+import { DisplayText, ComicPanel } from '@/components/comic/ComicPrimitives'
 import { Button } from '@/components/ui/Button'
 import { loginStudent, loginDeveloperAdmin, isValidRollNumber, SEEDED_STUDENT_ROSTER } from '@/lib/auth/authStore'
 import { cn } from '@/lib/utils'
@@ -67,19 +67,10 @@ export default function LoginPage() {
       <div className="w-full max-w-xl">
         {/* Top Comic Dialogue Header */}
         <div className="flex items-center justify-between mb-4">
-          <ComicCaptionBox>
-            GATEWAY 01 · IDENTITY CHECK
-          </ComicCaptionBox>
           <span className="text-xs font-mono font-bold text-ink/60 uppercase">
             ★ CHRIST UNIVERSITY ★
           </span>
         </div>
-
-        <SpeechBubble className="mb-6">
-          {role === 'student'
-            ? '🎓 Students: Simply enter your 6-digit roll number to step into the registration arena! No password required.'
-            : '🛠️ Developers & Organisers: Access the administration panel to manage schedules, slots, and entries.'}
-        </SpeechBubble>
 
         {/* ── ROLE SWITCHER TABS ────────────────────────────────── */}
         <div className="grid grid-cols-2 gap-3 mb-6 p-1.5 bg-[#FFF8E8] border-2 border-ink rounded-2xl shadow-[3px_3px_0px_#151515]">
@@ -124,10 +115,6 @@ export default function LoginPage() {
                   NO PASSWORD NEEDED
                 </span>
               </div>
-
-              <p className="text-sm text-ink/70 mb-6 font-medium">
-                Enter your <strong>6-digit roll number</strong> to access your personal dashboard, browse competition panels, and register for events.
-              </p>
 
               <form onSubmit={handleStudentLogin} className="space-y-5" noValidate>
                 <div>
@@ -195,9 +182,6 @@ export default function LoginPage() {
               </form>
 
               <div className="mt-6 pt-5 border-t border-ink/10 text-center">
-                <p className="text-xs text-ink/50 font-medium">
-                  All enrolled students are eligible across departments. Your roll number instantly connects you to your event roster.
-                </p>
               </div>
             </div>
           ) : (

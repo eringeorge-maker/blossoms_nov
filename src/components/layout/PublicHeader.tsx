@@ -50,14 +50,15 @@ export function PublicHeader() {
   }
 
   return (
-    <header
-      className={`sticky top-0 z-50 w-full px-4 sm:px-6 md:px-8 py-2 flex items-center justify-between select-none transition-all ${
-        isEventsPage
-          ? 'bg-[#080808] border-b border-white/10 lg:bg-transparent lg:border-none'
-          : 'bg-[#F7F3E9]/90 backdrop-blur-md border-b border-black/5'
-      }`}
-      style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" }}
-    >
+    <>
+      <header
+        className={`sticky top-0 z-50 w-full px-4 sm:px-6 md:px-8 py-2 flex items-center justify-between select-none transition-all ${
+          isEventsPage
+            ? 'bg-[#080808] border-b border-white/10 lg:bg-transparent lg:border-none'
+            : 'bg-[#F7F3E9] border-b border-black/5'
+        }`}
+        style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" }}
+      >
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#FFD400] focus:text-[#111111] focus:rounded-lg focus:font-semibold">
         Skip to main content
       </a>
@@ -186,12 +187,14 @@ export function PublicHeader() {
           {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
+      </header>
 
       {/* ── Mobile Drawer Navigation ─────────────────────────────────── */}
       {menuOpen && (
         <div
           id="mobile-nav-drawer"
-          className="lg:hidden fixed inset-0 top-[65px] z-50 bg-[#F7F3E9]/98 border-t border-black/5 flex flex-col p-6 animate-fadeIn overflow-y-auto"
+          style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" }}
+          className="lg:hidden fixed inset-x-0 top-[56px] bottom-0 z-[100] bg-[#F7F3E9] border-t border-black/5 flex flex-col p-6 animate-fadeIn overflow-y-auto"
         >
           <nav aria-label="Mobile Navigation" className="flex flex-col gap-2">
             {NAV_LINKS.map((link) => {
@@ -266,7 +269,7 @@ export function PublicHeader() {
           </div>
         </div>
       )}
-    </header>
+    </>
   )
 }
 export default PublicHeader
