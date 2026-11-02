@@ -61,6 +61,7 @@ const DESKTOP_COMIC_PANELS: ComicPanelConfig[] = [
   {
     id: 'panel-1-arts',
     categoryKey: 'arts',
+    title: 'ARTS',
     expandedFrameName: 'Arts Expanded',
     ariaLabel: 'Arts events category panel',
     imageSrc: panel1Url,
@@ -74,10 +75,12 @@ const DESKTOP_COMIC_PANELS: ComicPanelConfig[] = [
     },
     outerClipPath: 'polygon(0% 0%, 68.044% 0%, 100% 100%, 0% 100%)',
     innerClipPath: 'polygon(1.93% 0.99%, 66.12% 0.99%, 97.74% 99.01%, 1.93% 99.01%)',
+    headingPosition: { top: '28%', left: '21%', transform: 'rotate(-2deg)' },
   },
   {
     id: 'panel-2-literature',
     categoryKey: 'literature',
+    title: 'LITERATURE',
     expandedFrameName: 'Literature Expanded',
     ariaLabel: 'Literature events category panel',
     imageSrc: panel2Url,
@@ -91,10 +94,12 @@ const DESKTOP_COMIC_PANELS: ComicPanelConfig[] = [
     },
     outerClipPath: 'polygon(0% 0%, 100% 0%, 80.639% 100%, 10.714% 89.286%)',
     innerClipPath: 'polygon(1.54% 1.79%, 98.35% 1.79%, 79.66% 98.06%, 11.84% 87.68%)',
+    headingPosition: { top: '24%', left: '9%', transform: 'rotate(-2.5deg)' },
   },
   {
     id: 'panel-3-stage',
     categoryKey: 'stage',
+    title: 'STAGE',
     expandedFrameName: 'Stage Expanded',
     ariaLabel: 'Stage events category panel',
     imageSrc: panel3Url,
@@ -108,10 +113,12 @@ const DESKTOP_COMIC_PANELS: ComicPanelConfig[] = [
     },
     outerClipPath: 'polygon(24.939% 0%, 100% 0%, 100% 100%, 0% 89.545%)',
     innerClipPath: 'polygon(26.25% 1.59%, 98.31% 1.59%, 98.31% 98.23%, 2.11% 88.14%)',
+    headingPosition: { top: '24%', left: '27%', transform: 'rotate(-1.5deg)' },
   },
   {
     id: 'panel-4-theatre',
     categoryKey: 'theatre',
+    title: 'THEATRE',
     expandedFrameName: 'Theatre Expanded',
     ariaLabel: 'Theatre events category panel',
     imageSrc: panel4Url,
@@ -125,6 +132,7 @@ const DESKTOP_COMIC_PANELS: ComicPanelConfig[] = [
     },
     outerClipPath: 'polygon(0% 0%, 100% 26.549%, 100% 100%, 6.892% 100%)',
     innerClipPath: 'polygon(1.04% 2.33%, 99.12% 28.38%, 99.12% 97.94%, 7.64% 97.94%)',
+    headingPosition: { top: '25%', left: '11%', transform: 'rotate(1.5deg)' },
   },
 ]
 
@@ -132,6 +140,7 @@ const MOBILE_COMIC_PANELS: ComicPanelConfig[] = [
   {
     id: 'mobile-panel-1-arts',
     categoryKey: 'arts',
+    title: 'ARTS',
     expandedFrameName: 'Arts Expanded',
     ariaLabel: 'Arts events category panel',
     imageSrc: mobilePanel1Url,
@@ -145,10 +154,12 @@ const MOBILE_COMIC_PANELS: ComicPanelConfig[] = [
     },
     outerClipPath: 'polygon(0% 0%, 100% 0%, 76.383% 100%, 0% 95.3425%)',
     innerClipPath: 'polygon(1.70% 1.10%, 98.09% 1.10%, 74.89% 98.77%, 1.70% 94.25%)',
+    headingPosition: { top: '4%', left: '8%', transform: 'rotate(-1deg)' },
   },
   {
     id: 'mobile-panel-2-literature',
     categoryKey: 'literature',
+    title: 'LITERATURE',
     expandedFrameName: 'Literature Expanded',
     ariaLabel: 'Literature events category panel',
     imageSrc: mobilePanel2Url,
@@ -162,10 +173,12 @@ const MOBILE_COMIC_PANELS: ComicPanelConfig[] = [
     },
     outerClipPath: 'polygon(23.7687% 0%, 100% 0%, 100% 100%, 0% 94.3299%)',
     innerClipPath: 'polygon(25.27% 1.03%, 98.29% 1.03%, 98.29% 98.84%, 1.93% 93.30%)',
+    headingPosition: { top: '4%', left: '28%', transform: 'rotate(-2deg)' },
   },
   {
     id: 'mobile-panel-3-stage',
     categoryKey: 'stage',
+    title: 'STAGE',
     expandedFrameName: 'Stage Expanded',
     ariaLabel: 'Stage events category panel',
     imageSrc: mobilePanel3Url,
@@ -179,10 +192,12 @@ const MOBILE_COMIC_PANELS: ComicPanelConfig[] = [
     },
     outerClipPath: 'polygon(0% 0%, 100% 16.5975%, 100% 100%, 0% 78.8382%)',
     innerClipPath: 'polygon(0.95% 1.87%, 99.05% 18.26%, 99.05% 98.13%, 0.95% 77.18%)',
+    headingPosition: { top: '6%', left: '6%', transform: 'rotate(-1deg)' },
   },
   {
     id: 'mobile-panel-4-theatre',
     categoryKey: 'theatre',
+    title: 'THEATRE',
     expandedFrameName: 'Theatre Expanded',
     ariaLabel: 'Theatre events category panel',
     imageSrc: mobilePanel4Url,
@@ -196,6 +211,7 @@ const MOBILE_COMIC_PANELS: ComicPanelConfig[] = [
     },
     outerClipPath: 'polygon(0% 0%, 100% 22.6872%, 100% 100%, 0% 100%)',
     innerClipPath: 'polygon(0.95% 1.98%, 99.05% 24.45%, 99.05% 98.24%, 0.95% 98.24%)',
+    headingPosition: { top: '8%', left: '6%', transform: 'rotate(1deg)' },
   },
 ]
 

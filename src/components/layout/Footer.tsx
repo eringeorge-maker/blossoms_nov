@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { Sparkles } from 'lucide-react'
 
 export function Footer() {
   return (
@@ -24,11 +23,6 @@ export function Footer() {
           <p className="text-sm text-[#FFF8E8]/80 max-w-md leading-relaxed">
             The official digital anthology of the annual cultural festival at CHRIST (Deemed to be University), Central Campus. Organised and curated by the Department of Cultures (DOC).
           </p>
-
-          <div className="inline-flex items-center gap-2 bg-[#1C1C1C] border border-white/20 px-3 py-1.5 rounded-lg text-xs font-mono text-[#FFD43B]">
-            <Sparkles className="w-3.5 h-3.5 text-[#F04438]" />
-            <span>APPROVED BY DOC COMICS GROUP · VOL. 2025</span>
-          </div>
         </div>
 
         {/* Quick Links */}
@@ -54,40 +48,14 @@ export function Footer() {
           </ul>
         </nav>
 
-        {/* Contact & Barcode */}
+        {/* Contact */}
         <div className="space-y-4">
           <h3 className="font-display text-xl text-[#FFD43B] mb-3 tracking-wider uppercase flex items-center gap-1.5">
             <span>★</span> Festival Office
           </h3>
-          <p className="text-sm text-[#FFF8E8]/75 leading-relaxed">
-            Department of Cultures (DOC)<br />
-            CHRIST (Deemed to be University)<br />
-            Hosur Road, Bengaluru – 560029
-          </p>
           <p className="text-xs text-[#FFD43B] font-mono">
             doc@christuniversity.in
           </p>
-
-          {/* Comic Barcode Stamp */}
-          <div className="pt-2">
-            <div className="bg-white text-black p-2 border border-black inline-block font-mono text-[9px] tracking-widest text-center shadow-[2px_2px_0px_#F04438]">
-              <div className="flex items-center justify-center gap-[2px] h-6 mb-1">
-                <span className="w-[2px] h-full bg-black"></span>
-                <span className="w-[1px] h-full bg-black"></span>
-                <span className="w-[3px] h-full bg-black"></span>
-                <span className="w-[1px] h-full bg-black"></span>
-                <span className="w-[2px] h-full bg-black"></span>
-                <span className="w-[4px] h-full bg-black"></span>
-                <span className="w-[1px] h-full bg-black"></span>
-                <span className="w-[3px] h-full bg-black"></span>
-                <span className="w-[2px] h-full bg-black"></span>
-                <span className="w-[1px] h-full bg-black"></span>
-                <span className="w-[3px] h-full bg-black"></span>
-                <span className="w-[2px] h-full bg-black"></span>
-              </div>
-              BLOSSOMS-2025-DOC
-            </div>
-          </div>
         </div>
       </div>
 

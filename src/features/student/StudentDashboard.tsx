@@ -27,16 +27,6 @@ export default function StudentDashboard() {
 
   return (
     <div className="mx-auto max-w-[1240px] px-4 py-6 space-y-6">
-      {/* Top Banner */}
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <ComicCaptionBox>
-          STUDENT DOSSIER · 2025 EDITION
-        </ComicCaptionBox>
-        <span className="text-xs font-mono font-bold text-ink/50 uppercase">
-          CHRIST CENTRAL CAMPUS
-        </span>
-      </div>
-
       {/* Greeting */}
       <div className="bg-white p-5 rounded-2xl border-2 border-ink shadow-[3px_3px_0px_#151515] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>

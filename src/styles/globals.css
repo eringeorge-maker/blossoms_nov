@@ -769,6 +769,58 @@ body {
   filter: contrast(1.04);
 }
 
+/* ── Authentic Comic Artwork Heading (Directly on comic panel matching reference image) ── */
+.comic-panel-headline {
+  font-family: var(--font-display, "Bangers", "Impact", system-ui, sans-serif);
+  font-style: italic;
+  font-weight: 900;
+  color: #FFFFFF;
+  letter-spacing: 0.05em;
+  line-height: 0.95;
+  text-transform: uppercase;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  font-size: clamp(28px, 3.8vw, 54px);
+  -webkit-text-stroke: 1.8px #000000;
+  paint-order: stroke fill;
+  text-shadow:
+    -2px -2px 0px #000000,
+     0px -2px 0px #000000,
+     2px -2px 0px #000000,
+    -2px  0px 0px #000000,
+     2px  0px 0px #000000,
+    -2px  2px 0px #000000,
+     0px  2px 0px #000000,
+     2px  2px 0px #000000,
+     3px  3px 0px #000000,
+     4px  4px 0px #000000,
+     5px  5px 0px #000000,
+     6px  6px 0px #000000;
+  filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.45));
+  transition: transform 200ms ease;
+}
+
+.comic-panel-button:hover .comic-panel-headline {
+  transform: scale(1.05);
+}
+
+.comic-layout-mobile .comic-panel-headline {
+  font-size: clamp(19px, 5.2vw, 32px);
+  -webkit-text-stroke: 1.3px #000000;
+  text-shadow:
+    -1.5px -1.5px 0px #000000,
+     1.5px -1.5px 0px #000000,
+    -1.5px  1.5px 0px #000000,
+     1.5px  1.5px 0px #000000,
+     2px    2px   0px #000000,
+     3px    3px   0px #000000,
+     4px    4px   0px #000000;
+}
+
 /* 650ms ease-in-out Smart Animate Panel Expansion */
 .expanded-category-frame {
   position: fixed;

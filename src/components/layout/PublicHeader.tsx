@@ -2,9 +2,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Menu, X, User, LogOut, ShieldAlert } from 'lucide-react'
 import { FloatingPillNavigation, type NavItem } from '@/components/navigation/FloatingPillNavigation'
+import { isRouteActive } from '@/lib/utils'
 import { getActiveStudent, logoutStudent, isDeveloperAdmin, logoutDeveloperAdmin, type StudentProfile } from '@/lib/auth/authStore'
-import docLogoUrl from '@/assets/doc_logo.png'
-import blossomsLogoUrl from '@/assets/blossoms_2026_logo.png'
 
 const NAV_LINKS: NavItem[] = [
   { label: 'Home',         href: '/' },
@@ -42,11 +41,7 @@ export function PublicHeader() {
   }
 
   function isLinkActive(href: string): boolean {
-    if (href === '/') return location.pathname === '/'
-    if (href === '/events') return location.pathname.startsWith('/events')
-    if (href === '/winners') return location.pathname.startsWith('/winners') || location.pathname.startsWith('/results')
-    if (href === '/announcements') return location.pathname.startsWith('/announcements') || location.pathname.startsWith('/notice-board')
-    return location.pathname.startsWith(href)
+    return isRouteActive(href, location.pathname)
   }
 
   return (
@@ -63,52 +58,20 @@ export function PublicHeader() {
         Skip to main content
       </a>
 
-      {/* ── Left Section: Brand Identity ─────────────────────────────── */}
-      <div className="flex items-center shrink-0">
-        <div
-          className={`flex items-center py-1 ${
-            isEventsPage
-              ? 'px-1 bg-transparent'
-              : 'bg-[#1D1D1F] px-3 rounded-full shadow-xs'
-          }`}
-        >
-          <Link to="/" className="flex items-center focus:outline-none" aria-label="Department of Commerce">
-            <img
-              src={docLogoUrl}
-              alt="Department of Commerce"
-              className="w-[78px] h-[24px] md:w-[90px] md:h-[28px] object-contain"
-              loading="eager"
-            />
-          </Link>
+      {/* ── Left Section ─────────────────────────────── */}
+      <div className="flex items-center shrink-0" />
 
-          <div
-            className="w-[1px] h-[18px] md:h-[20px] bg-white/20 mx-2"
-            role="separator"
-            aria-orientation="vertical"
-          />
-
-          <Link to="/" className="flex items-center focus:outline-none" aria-label="Blossoms 2026 Home">
-            <img
-              src={blossomsLogoUrl}
-              alt="Blossoms 2026"
-              className="w-[74px] h-[28px] md:w-[86px] md:h-[32px] object-contain"
-              loading="eager"
-            />
-          </Link>
-        </div>
-      </div>
-
-      {/* ── Center Section: Framer-Style Floating Pill Navigation ─────── */}
-      <div className="hidden lg:flex items-center justify-center flex-1 mx-4">
+      {/* ── Center Section: Framer-Style Floating Pill Navigation (with MacBook Dock Magnification) ── */}
+      <div className="hidden lg:flex items-center justify-center flex-1 mx-4 overflow-visible py-1.5">
         <FloatingPillNavigation
           items={NAV_LINKS}
           backgroundColor="#E8E8ED"
           textColor="#000000"
           activeBackgroundColor="#1D1D1F"
           activeTextColor="#FFFFFF"
-          padding={4}
-          gap={2}
-          linkPadding="6px 16px"
+          padding={5}
+          gap={3}
+          linkPadding="7px 18px"
         />
       </div>
 
