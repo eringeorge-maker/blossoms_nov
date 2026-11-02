@@ -1204,7 +1204,9 @@ button:disabled {
   align-items: center;
   justify-content: center;
   perspective: 1700px;
-  background: var(--color-primary);
+  background-color: var(--color-primary);
+  background-size: cover;
+  background-position: center;
 }
 
 .comic-opening--leaving {

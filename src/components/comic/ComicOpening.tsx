@@ -6,6 +6,7 @@ import cover3Url from '@/assets/covers/cover-3.jpg'
 import cover4Url from '@/assets/covers/cover-4.jpg'
 import cover5Url from '@/assets/covers/cover-5.jpg'
 import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.png'
+import backdropUrl from '@/assets/brand/opening-backdrop.webp'
 
 const COVERS = [cover1Url, cover2Url, cover3Url, cover4Url, cover5Url]
 const SEEN_KEY = 'blossoms-opening-seen'
@@ -49,7 +50,7 @@ export function ComicOpening({ onDone }: { onDone: () => void }) {
     }
     const limit = window.setTimeout(start, PRELOAD_LIMIT_MS)
     Promise.all(
-      COVERS.map(
+      [backdropUrl, ...COVERS].map(
         (src) =>
           new Promise((resolve) => {
             const image = new Image()
@@ -79,7 +80,10 @@ export function ComicOpening({ onDone }: { onDone: () => void }) {
   }, [leaving])
 
   return (
-    <div className={cn('comic-opening', running && 'comic-opening--running', leaving && 'comic-opening--leaving')}>
+    <div
+      className={cn('comic-opening', running && 'comic-opening--running', leaving && 'comic-opening--leaving')}
+      style={{ backgroundImage: `url(${backdropUrl})` }}
+    >
       <div className="comic-opening-book" aria-hidden="true">
         <div className="comic-opening-page comic-opening-page--last">
           <img src={blossomsLogoUrl} alt="" />
