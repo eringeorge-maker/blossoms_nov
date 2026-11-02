@@ -1,14 +1,8 @@
-import { CampusHeritageDome } from '@/components/comic/CategoryIllustrations';
-import { CategoryArt } from '@/components/comic/CategoryArt';
-import { AnnouncementsMegaphoneIllustration, ScheduleCalendarIllustration } from '@/components/comic/ComicArtwork';
 import { CalendarDays, MapPin, Trophy, Users } from 'lucide-react';
-import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.png';
-import purpleBurstUrl from '@/assets/brand/bg-purple-burst.png';
 import { ComicOpening, shouldPlayOpening } from '@/components/comic/ComicOpening';
-import DesktopHome from '@/features/public/DesktopHome';
+import DesktopHome, { MobileHomeGrid } from '@/features/public/DesktopHome';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 export type CategoryKey = 'arts' | 'literature' | 'stage' | 'theatre' | 'special';
@@ -646,34 +640,7 @@ const PANEL_DETAILS: Record<string, DetailModal> = {
   },
 };
 
-function ComicArrowButton({ onClick }: { onClick?: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={(e) => {
-        if (onClick) {
-          e.stopPropagation();
-          onClick();
-        }
-      }}
-      aria-label="Open category"
-      className="w-[32px] h-[32px] rounded-full bg-[#fdfaf0] border-[2.5px] border-[#0f0f0f] flex items-center justify-center active:scale-95 transition-transform cursor-pointer z-20 hover:scale-105"
-    >
-      <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-        <path
-          d="M3 8H13M13 8L8.8 3.8M13 8L8.8 12.2"
-          stroke="#0f0f0f"
-          strokeWidth="2.3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </button>
-  );
-}
-
 export default function HomePage() {
-  const navigate = useNavigate();
 
   const [playedOpening] = useState(shouldPlayOpening);
   const [openingDone, setOpeningDone] = useState(false);
@@ -745,157 +712,16 @@ export default function HomePage() {
       {/* =========================================================================
           MOBILE VIEWPORT (Figma Interface, Screen Width < 768px, Zero Shadows)
          ========================================================================= */}
-      <div className="flex md:hidden flex-col min-h-screen w-full bg-[#793f98] halftone-dots-light items-center">
-        <div className="w-full max-w-[430px] min-h-screen flex flex-col relative bg-[#793f98] halftone-dots-light overflow-x-hidden">
+      <div className="flex md:hidden flex-col min-h-screen w-full bg-[#0f0f0f]">
+        <div className="w-full min-h-screen flex flex-col relative bg-[#0f0f0f] overflow-x-hidden">
           {/* Unified Top Mobile Bar with Top-Right Navigation Drawer */}
           <PublicHeader />
 
-          {/* Mobile Main Panels Stack */}
-          <div className="flex-1 w-full px-3 py-2.5 flex flex-col gap-2.5">
-            {/* ROW 0: Blossoms Hero */}
-            <div
-              style={{ backgroundImage: `url(${purpleBurstUrl})` }}
-              className="relative w-full h-[148px] bg-cover bg-center border-[3.2px] border-[#0f0f0f] rounded-[14px] flex items-center justify-between gap-1.5 overflow-hidden p-1.5"
-            >
-              <div className="relative flex-1 min-w-0 z-10 flex flex-col items-center justify-center text-center">
-                <h1 className="m-0">
-                  <img src={blossomsLogoUrl} alt="Blossoms: Be the best, 2026–27" className="w-[200px] max-w-none h-auto" />
-                </h1>
-                <p className="mt-2 bg-white border-[2px] border-[#0f0f0f] px-2 py-0.5 rotate-1 font-comic-sub text-[13px] text-[#0f0f0f] leading-tight">
-                  YOUR CAMPUS. YOUR STORY.
-                </p>
-              </div>
-              <div className="relative w-[33%] h-[92%] shrink-0 bg-[#0088e8] border-[3px] border-[#0f0f0f] rounded-[8px] overflow-hidden p-1 flex items-center justify-center">
-                <CampusHeritageDome className="w-full h-full max-h-[110px]" />
-              </div>
-            </div>
-
-            {/* ROW 1: Arts & Literature */}
-            <div className="relative w-full h-[162px] flex">
-              <div
-                onClick={() => navigate('/events?category=arts')}
-                style={{ clipPath: 'polygon(0% 0%, 93% 3%, 100% 100%, 0% 96%)' }}
-                className="relative w-[53.5%] h-full bg-[#ed1e79] cursor-pointer overflow-hidden select-none group"
-              >
-                <div className="relative z-20 pt-2.5 pl-3">
-                  <h2 className="font-comic-display comic-title-white text-[42px] leading-[0.88] -rotate-[3deg] tracking-wide">
-                    ARTS
-                  </h2>
-                  <div className="mt-1 inline-block bg-[#f9d423] border-[2.4px] border-[#0f0f0f] px-2.5 py-1 -rotate-[5deg]">
-                    <p className="font-comic-sub text-[11px] leading-[1.05] text-[#0f0f0f] font-black text-center">
-                      PAINT. DESIGN.<br />EXPRESS.
-                    </p>
-                  </div>
-                </div>
-                <CategoryArt category="arts" wide />
-                <div className="absolute right-3.5 bottom-3.5 z-20">
-                  <ComicArrowButton onClick={() => navigate('/events?category=arts')} />
-                </div>
-              </div>
-
-              <div
-                onClick={() => navigate('/events?category=literature')}
-                style={{ clipPath: 'polygon(0% 3%, 100% 7%, 100% 100%, 7% 96%)' }}
-                className="relative w-[50.5%] -ml-[4%] h-full bg-[#0088e8] cursor-pointer overflow-hidden select-none group"
-              >
-                <div className="relative z-20 pt-2.5 pl-4 pr-1">
-                  <h2 className="font-comic-display comic-title-white text-[34px] leading-[0.9] -rotate-[3deg] tracking-wide">
-                    LITERATURE
-                  </h2>
-                  <div className="mt-1 inline-block bg-[#f9d423] border-[2.4px] border-[#0f0f0f] px-2 py-0.5 -rotate-[4deg]">
-                    <p className="font-comic-sub text-[10.5px] leading-[1.05] text-[#0f0f0f] font-black text-center">
-                      SPEAK. WRITE.<br />THINK.
-                    </p>
-                  </div>
-                </div>
-                <CategoryArt category="literature" wide />
-                <div className="absolute right-3.5 bottom-3.5 z-20">
-                  <ComicArrowButton onClick={() => navigate('/events?category=literature')} />
-                </div>
-              </div>
-            </div>
-
-            {/* ROW 2: Stage & Theatre */}
-            <div className="relative w-full h-[162px] flex">
-              <div
-                onClick={() => navigate('/events?category=stage')}
-                style={{ clipPath: 'polygon(0% 0%, 94% 4%, 100% 100%, 0% 96%)' }}
-                className="relative w-[52.5%] h-full bg-[#fdb813] cursor-pointer overflow-hidden select-none group"
-              >
-                <div className="relative z-20 pt-3 pl-3">
-                  <h2 className="font-comic-display comic-title-white text-[42px] leading-[0.88] -rotate-[4deg] tracking-wide">
-                    STAGE
-                  </h2>
-                  <div className="mt-1 inline-block bg-[#fdfaf0] border-[2.4px] border-[#0f0f0f] px-2.5 py-0.5 -rotate-[3deg]">
-                    <p className="font-comic-sub text-[11px] leading-[1.05] text-[#0f0f0f] text-center">
-                      PERFORM.<br />INSPIRE.
-                    </p>
-                  </div>
-                </div>
-                <CategoryArt category="stage" wide />
-                <div className="absolute right-3.5 bottom-3.5 z-20">
-                  <ComicArrowButton onClick={() => navigate('/events?category=stage')} />
-                </div>
-              </div>
-
-              <div
-                onClick={() => navigate('/events?category=theatre')}
-                style={{ clipPath: 'polygon(0% 4%, 100% 9%, 100% 100%, 6% 96%)' }}
-                className="relative w-[51.5%] -ml-[4%] h-full bg-[#861ec2] cursor-pointer overflow-hidden select-none group"
-              >
-                <div className="relative z-20 pt-3.5 pl-4 pr-2">
-                  <h2 className="font-comic-display comic-title-white text-[36px] leading-[0.88] -rotate-[3deg] tracking-wide">
-                    THEATRE
-                  </h2>
-                  <div className="mt-1 inline-block bg-[#f9d423] border-[2.4px] border-[#0f0f0f] px-2 py-0.5 -rotate-[4deg]">
-                    <p className="font-comic-sub text-[10.5px] leading-[1.05] text-[#0f0f0f] text-center">
-                      ACT. IMAGINE.<br />BRING STORIES ALIVE.
-                    </p>
-                  </div>
-                </div>
-                <CategoryArt category="theatre" wide />
-                <div className="absolute right-3.5 bottom-3.5 z-20">
-                  <ComicArrowButton onClick={() => navigate('/events?category=theatre')} />
-                </div>
-              </div>
-            </div>
-
-            {/* ROW 3: EVENT SCHEDULE BANNER */}
-            <div
-              onClick={() => setSelectedModal(PANEL_DETAILS.schedule)}
-              className="relative w-full h-[62px] bg-[#df1b23] border-[3.2px] border-[#0f0f0f] px-3 flex items-center justify-between cursor-pointer active:scale-95"
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-9 h-9 p-0.5 rounded bg-[#fdfaf0] border-[2px] border-[#0f0f0f] flex items-center justify-center shrink-0">
-                  <ScheduleCalendarIllustration className="w-full h-full" />
-                </div>
-                <div>
-                  <h3 className="font-comic-display text-white text-[24px] leading-none">EVENT SCHEDULE</h3>
-                  <p className="font-comic-sub text-[11px] text-white">DATES, TIMINGS & VENUES</p>
-                </div>
-              </div>
-              <div className="bg-[#f8ca16] border-[2px] border-[#0f0f0f] px-2 py-0.5 font-comic-sub font-black text-[11px] rotate-1">
-                CHECK NOW!
-              </div>
-            </div>
-
-            {/* ROW 4: ANNOUNCEMENTS BANNER */}
-            <div
-              onClick={() => setSelectedModal(PANEL_DETAILS.announcements)}
-              className="relative w-full h-[60px] bg-[#00966b] border-[3.2px] border-[#0f0f0f] px-3 flex items-center justify-between cursor-pointer active:scale-95"
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-9 h-9 p-0.5 rounded bg-[#fdfaf0] border-[2px] border-[#0f0f0f] flex items-center justify-center shrink-0">
-                  <AnnouncementsMegaphoneIllustration className="w-full h-full" />
-                </div>
-                <div>
-                  <h3 className="font-comic-display text-white text-[23px] leading-none">ANNOUNCEMENTS</h3>
-                  <p className="font-comic-sub text-[11px] text-white">LIVE FEST UPDATES</p>
-                </div>
-              </div>
-              <ComicArrowButton onClick={() => setSelectedModal(PANEL_DETAILS.announcements)} />
-            </div>
-          </div>
+          <MobileHomeGrid
+            animateIn={playedOpening && openingDone}
+            onOpenSchedule={() => setSelectedModal(PANEL_DETAILS.schedule)}
+            onOpenAnnouncements={() => setSelectedModal(PANEL_DETAILS.announcements)}
+          />
 
           {/* MOBILE EXPANDED CATEGORY OVERLAY */}
           {selectedCategory && (

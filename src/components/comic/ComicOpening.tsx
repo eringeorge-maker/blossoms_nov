@@ -9,29 +9,19 @@ import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.png'
 import backdropUrl from '@/assets/brand/opening-backdrop.webp'
 
 const COVERS = [cover1Url, cover2Url, cover3Url, cover4Url, cover5Url]
-const SEEN_KEY = 'blossoms-opening-seen'
 const FIRST_TURN_MS = 500
 const TURN_GAP_MS = 300
 const LEAVE_AT_MS = FIRST_TURN_MS + TURN_GAP_MS * COVERS.length + 200
 const LEAVE_MS = 300
 const PRELOAD_LIMIT_MS = 2000
 
-/** Plays once per browser session, and never for people who ask for less motion. */
+// Resets on every full page load, so in-app navigation back to home doesn't replay it.
+let playedThisLoad = false
+
+/** Plays once per page load, and never for people who ask for less motion. */
 export function shouldPlayOpening(): boolean {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false
-  try {
-    return window.sessionStorage.getItem(SEEN_KEY) === null
-  } catch {
-    return true
-  }
-}
-
-function rememberOpening() {
-  try {
-    window.sessionStorage.setItem(SEEN_KEY, '1')
-  } catch {
-    // Without storage the opening just plays again next time.
-  }
+  return !playedThisLoad
 }
 
 export function ComicOpening({ onDone }: { onDone: () => void }) {
@@ -74,7 +64,7 @@ export function ComicOpening({ onDone }: { onDone: () => void }) {
 
   useEffect(() => {
     if (!leaving) return
-    rememberOpening()
+    playedThisLoad = true
     const timer = window.setTimeout(() => onDoneRef.current(), LEAVE_MS)
     return () => window.clearTimeout(timer)
   }, [leaving])

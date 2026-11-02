@@ -1288,6 +1288,36 @@ button:disabled {
   overflow: hidden;
 }
 
+.home-page--portrait {
+  min-height: max(600px, calc(100dvh - 64px));
+  background: #0f0f0f;
+}
+
+.home-page--portrait .home-hero-logo {
+  width: min(78cqw, 340px);
+}
+
+.home-page--portrait .home-hero-line {
+  font-size: 16px;
+}
+
+.home-page--portrait .home-title {
+  font-size: clamp(26px, 8cqw, 44px);
+}
+
+.home-page--portrait .home-tagline {
+  font-size: clamp(11px, 3cqw, 15px);
+  border-width: 2px;
+}
+
+.home-page--portrait .home-banner-title {
+  font-size: clamp(28px, 9cqw, 44px);
+}
+
+.home-page--portrait .home-banner-subtitle {
+  font-size: clamp(13px, 3.6cqw, 18px);
+}
+
 .home-panel {
   position: absolute;
   inset: 0;
@@ -1357,25 +1387,16 @@ button:disabled {
 }
 
 .home-category:hover .home-art,
+.home-category:active .home-art,
 .home-category:focus-visible .home-art {
   background: #ffffff;
 }
 
 .home-category:hover .home-art img,
+.home-category:active .home-art img,
 .home-category:focus-visible .home-art img {
   filter: none;
   mix-blend-mode: normal;
-}
-
-@media (hover: none) {
-  .home-art {
-    background: #ffffff;
-  }
-
-  .home-art img {
-    filter: none;
-    mix-blend-mode: normal;
-  }
 }
 
 .home-wording {

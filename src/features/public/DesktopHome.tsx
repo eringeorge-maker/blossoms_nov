@@ -74,6 +74,40 @@ const HOME_PANELS: HomePanel[] = [
   },
 ]
 
+// Portrait version of the same page: same even gutter, stacked for phones.
+const MOBILE_PANELS: HomePanel[] = [
+  {
+    ...HOME_PANELS[0],
+    clipPath: 'polygon(1.6% 22.8%, 52% 21.76%, 47% 45.94%, 1.6% 45%)',
+    box: { left: '1.6%', top: '21.76%', width: '50.4%', height: '24.18%' },
+    wording: { left: '4%', top: '23.6%' },
+    arrow: { left: '35%', top: '38.6%' },
+  },
+  {
+    ...HOME_PANELS[1],
+    clipPath: 'polygon(53.6% 21.72%, 98.4% 20.8%, 98.4% 47%, 48.6% 45.97%)',
+    box: { left: '48.6%', top: '20.8%', width: '49.8%', height: '26.2%' },
+    wording: { left: '55%', top: '22.6%' },
+    arrow: { left: '86%', top: '40%' },
+  },
+  {
+    ...HOME_PANELS[2],
+    artStyle: { objectPosition: '100% 0', transform: 'scale(1.38)', transformOrigin: 'right top' },
+    clipPath: 'polygon(1.6% 45.8%, 46% 46.72%, 52% 69.96%, 1.6% 71%)',
+    box: { left: '1.6%', top: '45.8%', width: '50.4%', height: '25.2%' },
+    wording: { left: '4%', top: '47.4%' },
+    arrow: { left: '37%', top: '63%' },
+  },
+  {
+    ...HOME_PANELS[3],
+    artStyle: { objectPosition: '72% 100%', transform: 'scale(1.32)', transformOrigin: 'center bottom' },
+    clipPath: 'polygon(47.6% 46.75%, 98.4% 47.8%, 98.4% 69%, 53.6% 69.93%)',
+    box: { left: '47.6%', top: '46.75%', width: '50.8%', height: '23.18%' },
+    wording: { left: '51%', top: '48.6%', maxWidth: '44%' },
+    arrow: { left: '86%', top: '62%' },
+  },
+]
+
 function ArrowChip({ style }: { style: CSSProperties }) {
   return (
     <span aria-hidden="true" className="home-arrow" style={style}>
@@ -90,11 +124,39 @@ function ArrowChip({ style }: { style: CSSProperties }) {
   )
 }
 
+function CategoryPanels({ panels }: { panels: HomePanel[] }) {
+  return (
+    <nav aria-label="Event categories">
+      {panels.map(({ slug, title, tagline, captionHex, art, artStyle, clipPath, box, wording, arrow }, index) => (
+        <Link
+          key={slug}
+          to={`/events?category=${slug}`}
+          aria-label={`${title} events: ${tagline}`}
+          className="home-panel home-category"
+          style={{ clipPath, animationDelay: `${0.12 * (index + 1)}s` }}
+        >
+          <span className="home-art" style={box}>
+            <img src={art} alt="" style={artStyle} />
+          </span>
+          <span className="home-wording" style={wording}>
+            <span className="font-comic-display comic-title-white home-title">{title}</span>
+            <span className="font-comic-sub home-tagline" style={{ backgroundColor: captionHex }}>
+              {tagline}
+            </span>
+          </span>
+          <ArrowChip style={arrow} />
+        </Link>
+      ))}
+    </nav>
+  )
+}
+
 function FeatureBanner({
   title,
   subtitle,
   clipPath,
   textLeft,
+  textTop = '86%',
   origin,
   delay,
   onClick,
@@ -103,6 +165,7 @@ function FeatureBanner({
   subtitle: string
   clipPath: string
   textLeft: string
+  textTop?: string
   origin: string
   delay: string
   onClick: () => void
@@ -115,7 +178,7 @@ function FeatureBanner({
         className="home-panel home-banner"
         style={{ clipPath, animationDelay: delay }}
       >
-        <span className="home-banner-text" style={{ left: textLeft }}>
+        <span className="home-banner-text" style={{ left: textLeft, top: textTop }}>
           <span className="font-comic-display home-banner-title">{title}</span>
           <span className="font-comic-sub home-banner-subtitle">{subtitle}</span>
         </span>
@@ -128,6 +191,51 @@ interface DesktopHomeProps {
   animateIn: boolean
   onOpenSchedule: () => void
   onOpenAnnouncements: () => void
+}
+
+/** The phone home page: the same comic page, stacked to fit a portrait screen. */
+export function MobileHomeGrid({ animateIn, onOpenSchedule, onOpenAnnouncements }: DesktopHomeProps) {
+  return (
+    <div className={cn('home-page home-page--portrait', animateIn && 'home-page--slam')}>
+      <div
+        className="home-panel home-hero"
+        style={{
+          backgroundImage: `url(${purpleBurstUrl})`,
+          clipPath: 'polygon(1.6% 0.8%, 98.4% 0.8%, 98.4% 20%, 1.6% 22%)',
+        }}
+      >
+        <div className="home-hero-content" style={{ left: '1.6%', top: '0.8%', width: '96.8%', height: '19%' }}>
+          <h1 className="m-0">
+            <img src={blossomsLogoUrl} alt="Blossoms: Be the best, 2026–27" className="home-hero-logo" />
+          </h1>
+          <p className="home-hero-line font-comic-sub">YOUR CAMPUS. YOUR STORY.</p>
+        </div>
+      </div>
+
+      <CategoryPanels panels={MOBILE_PANELS} />
+
+      <FeatureBanner
+        title="EVENT SCHEDULE"
+        subtitle="DATES, TIMINGS & VENUES"
+        clipPath="polygon(1.6% 71.8%, 98.4% 69.8%, 98.4% 84%, 1.6% 84%)"
+        textLeft="6%"
+        textTop="73.5%"
+        origin="50% 84%"
+        delay="0.6s"
+        onClick={onOpenSchedule}
+      />
+      <FeatureBanner
+        title="ANNOUNCEMENTS"
+        subtitle="LIVE FEST UPDATES"
+        clipPath="polygon(1.6% 84.8%, 98.4% 84.8%, 98.4% 99.2%, 1.6% 99.2%)"
+        textLeft="6%"
+        textTop="87%"
+        origin="50% 99%"
+        delay="0.7s"
+        onClick={onOpenAnnouncements}
+      />
+    </div>
+  )
 }
 
 /** The wide-screen home page: one full comic page split by an even ink gutter. */
@@ -152,28 +260,7 @@ export default function DesktopHome({ animateIn, onOpenSchedule, onOpenAnnouncem
           </div>
         </div>
 
-        <nav aria-label="Event categories">
-          {HOME_PANELS.map(({ slug, title, tagline, captionHex, art, artStyle, clipPath, box, wording, arrow }, index) => (
-            <Link
-              key={slug}
-              to={`/events?category=${slug}`}
-              aria-label={`${title} events: ${tagline}`}
-              className="home-panel home-category"
-              style={{ clipPath, animationDelay: `${0.12 * (index + 1)}s` }}
-            >
-              <span className="home-art" style={box}>
-                <img src={art} alt="" style={artStyle} />
-              </span>
-              <span className="home-wording" style={wording}>
-                <span className="font-comic-display comic-title-white home-title">{title}</span>
-                <span className="font-comic-sub home-tagline" style={{ backgroundColor: captionHex }}>
-                  {tagline}
-                </span>
-              </span>
-              <ArrowChip style={arrow} />
-            </Link>
-          ))}
-        </nav>
+        <CategoryPanels panels={HOME_PANELS} />
 
         <FeatureBanner
           title="EVENT SCHEDULE"
