@@ -32,7 +32,7 @@ export default function StudentDashboard() {
         <ComicCaptionBox>
           STUDENT DOSSIER · 2025 EDITION
         </ComicCaptionBox>
-        <span className="text-xs font-mono font-bold text-ink/50 uppercase">
+        <span className="text-xs tabular-nums font-bold text-ink/50 uppercase">
           CHRIST CENTRAL CAMPUS
         </span>
       </div>
@@ -41,7 +41,7 @@ export default function StudentDashboard() {
       <div className="bg-white p-5 rounded-2xl border-2 border-ink shadow-[3px_3px_0px_#151515] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <DisplayText as="h1" className="text-4xl text-ink">
-            Hey, {student.name.split(' ')[0]}! 👋
+            Hey, {student.name.split(' ')[0]}!
           </DisplayText>
           <p className="text-ink/70 mt-1 font-medium text-sm">
             {student.className ? `${student.className} · ` : ''}Roll #{student.rollNumber}
@@ -55,11 +55,11 @@ export default function StudentDashboard() {
       {/* Summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div className="comic-card p-5 text-center bg-white">
-          <p className="font-display text-xs text-[#F04438] uppercase tracking-wider font-bold mb-1">
+          <p className="font-display text-xs text-[#793f98] uppercase tracking-wider font-bold mb-1">
             Registered
           </p>
-          <p className="font-display text-5xl text-[#F04438]">{activeRegistrations.length}</p>
-          <p className="text-[11px] font-semibold text-ink/50 mt-1 uppercase font-mono">Total Panels</p>
+          <p className="font-display text-5xl text-[#793f98]">{activeRegistrations.length}</p>
+          <p className="text-[11px] font-semibold text-ink/50 mt-1 uppercase tabular-nums">Total Panels</p>
         </div>
 
         <div className="comic-card p-5 text-center bg-white">
@@ -67,14 +67,14 @@ export default function StudentDashboard() {
             Confirmed
           </p>
           <p className="font-display text-5xl text-[#26A69A]">{confirmed.length}</p>
-          <p className="text-[11px] font-semibold text-ink/50 mt-1 uppercase font-mono">Roster Verified</p>
+          <p className="text-[11px] font-semibold text-ink/50 mt-1 uppercase tabular-nums">Roster Verified</p>
         </div>
 
         <div className="comic-card p-5 col-span-2 sm:col-span-1 bg-[#FFF8E8] flex flex-col justify-center items-center text-center">
           <p className="font-display text-base text-ink mb-2">Want to join more?</p>
           <Button size="sm" variant="outline" className="w-full text-sm font-display tracking-wider uppercase gap-1" asChild>
             <Link to="/app/events">
-              <Compass className="w-4 h-4 text-[#F04438]" /> Explore Panels →
+              <Compass className="w-4 h-4 text-[#793f98]" /> Explore Panels →
             </Link>
           </Button>
         </div>
@@ -101,7 +101,7 @@ export default function StudentDashboard() {
                 </DisplayText>
                 {nextEvent.event.schedule_slots?.[0] && (
                   <p className="text-sm text-ink/80 mt-2 flex items-center gap-2 font-semibold">
-                    <Clock className="w-4 h-4 text-[#F04438]" />
+                    <Clock className="w-4 h-4 text-[#793f98]" />
                     {formatSlot(nextEvent.event.schedule_slots[0].starts_at, nextEvent.event.schedule_slots[0].ends_at)}
                   </p>
                 )}
@@ -142,7 +142,7 @@ export default function StudentDashboard() {
           </DisplayText>
           <Link
             to="/app/my-events"
-            className="font-display text-sm uppercase tracking-wider text-[#F04438] hover:underline flex items-center gap-1 font-bold"
+            className="font-display text-sm uppercase tracking-wider text-[#793f98] hover:underline flex items-center gap-1 font-bold"
           >
             See all <ArrowRight className="w-4 h-4" />
           </Link>

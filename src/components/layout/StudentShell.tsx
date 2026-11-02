@@ -2,6 +2,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Home, Compass, CalendarDays, BookMarked, User, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.png'
 import { getActiveStudent, logoutStudent, type StudentProfile } from '@/lib/auth/authStore'
 
 const STUDENT_NAV = [
@@ -40,28 +41,19 @@ export function StudentShell() {
   return (
     <div className="min-h-screen flex flex-col bg-[#FFF8E8]">
       {/* Compact comic student header */}
-      <header className="sticky top-0 z-50 bg-[#FFF8E8] border-b-[2.5px] border-ink shadow-[0_2px_0_0_rgba(21,21,21,0.06)]">
+      <header className="sticky top-0 z-50 bg-primary border-b-[2.5px] border-ink">
         <div className="mx-auto max-w-[1240px] px-4 flex items-center justify-between h-14">
           <Link
             to="/app"
             className="flex items-center gap-2 group"
           >
-            <div className="w-8 h-8 rounded-lg bg-[#F04438] border-2 border-ink flex items-center justify-center text-white font-display text-lg shadow-[1.5px_1.5px_0px_#151515]">
-              B
-            </div>
-            <div className="flex flex-col">
-              <span className="font-display text-xl text-ink uppercase tracking-wide leading-none group-hover:text-[#F04438] transition-colors">
-                Registration Portal
-              </span>
-              <span className="text-[10px] font-mono text-ink/60 font-bold leading-tight">
-                CHRIST CENTRAL CAMPUS
-              </span>
-            </div>
+            <img src={blossomsLogoUrl} alt="Blossoms 2026–27" className="w-[200px] h-auto" />
+            <span className="sr-only">Registration Portal</span>
           </Link>
 
           <div className="flex items-center gap-2.5">
             {student && (
-              <div className="comic-caption-box text-[11px] py-1 px-3 bg-[#FFD43B] text-ink font-mono font-bold flex items-center gap-1.5 shadow-[2px_2px_0px_#151515]">
+              <div className="hidden sm:flex comic-caption-box text-[11px] py-1 px-3 bg-[#FFD43B] text-ink tabular-nums font-bold flex items-center gap-1.5 shadow-[2px_2px_0px_#151515]">
                 <span>ROLL #{student.rollNumber}</span>
               </div>
             )}
@@ -79,7 +71,7 @@ export function StudentShell() {
               type="button"
               onClick={handleLogout}
               title="Logout roll number"
-              className="flex items-center justify-center w-8 h-8 rounded-xl border-2 border-ink bg-white hover:bg-red-50 text-ink hover:text-[#F04438] shadow-[1.5px_1.5px_0px_#151515] transition-colors"
+              className="flex items-center justify-center w-8 h-8 rounded-xl border-2 border-ink bg-white hover:bg-red-50 text-ink hover:text-[#793f98] shadow-[1.5px_1.5px_0px_#151515] transition-colors"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -111,13 +103,13 @@ export function StudentShell() {
                     'flex flex-col items-center justify-center gap-1 py-2 px-1 min-h-[58px]',
                     'font-display text-xs tracking-wider uppercase transition-all',
                     isActive
-                      ? 'text-[#F04438] font-bold border-t-4 border-[#F04438] -mt-[3px] bg-[#FFF8E8]'
+                      ? 'text-[#793f98] font-bold border-t-4 border-[#793f98] -mt-[3px] bg-[#FFF8E8]'
                       : 'text-ink/60 hover:text-ink'
                   )}
                   aria-current={isActive ? 'page' : undefined}
                 >
                   <Icon
-                    className={cn('w-5 h-5', isActive ? 'stroke-[#F04438]' : 'stroke-current')}
+                    className={cn('w-5 h-5', isActive ? 'stroke-[#793f98]' : 'stroke-current')}
                     aria-hidden="true"
                   />
                   <span>{label}</span>

@@ -148,7 +148,7 @@ export default function EventsPage() {
       const result = await registerIndividualEvent(event.id)
       if (result.success) {
         toast.success(`Registered #${currentStudent.rollNumber} for ${event.title}!`, {
-          icon: '🎉',
+          
           duration: 4000,
         })
       } else {
@@ -204,30 +204,30 @@ export default function EventsPage() {
             selectedEvent.schedule_slots.map((slot) => (
               <div key={slot.id} className="space-y-1">
                 <div className="flex items-center gap-1.5 font-bold text-[#151515]">
-                  <Calendar className="w-4 h-4 text-[#DC2626]" />
+                  <Calendar className="w-4 h-4 text-[#793f98]" />
                   <span>{formatSlot(slot.starts_at, slot.ends_at)}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-ink/70">
-                  <MapPin className="w-4 h-4 text-[#DC2626]" />
+                  <MapPin className="w-4 h-4 text-[#793f98]" />
                   <span>{slot.venue?.name || 'Central Campus Grounds'} ({slot.venue?.room || slot.venue?.building || 'Main Block'})</span>
                 </div>
               </div>
             ))
           ) : (
             <div className="flex items-center gap-1.5 text-ink/70">
-              <Calendar className="w-4 h-4 text-[#DC2626]" />
+              <Calendar className="w-4 h-4 text-[#793f98]" />
               <span>Schedule timings &amp; venue: To Be Decided (TBD)</span>
             </div>
           )}
 
           <div className="flex items-center gap-1.5 text-ink/70 pt-1 border-t border-ink/10">
-            <Users className="w-4 h-4 text-[#00A8FF]" />
+            <Users className="w-4 h-4 text-[#3478F6]" />
             <span className="capitalize">{selectedEvent.event_format} Participation · Capacity: {selectedEvent.capacity || 'Open'}</span>
           </div>
         </div>
 
         {/* Quick 1-Tap 6-Digit Registration Flow */}
-        <div className="bg-[#FFEB99]/60 border-2 border-[#151515] rounded-xl p-3 shadow-[2px_2px_0px_#151515] mb-3">
+        <div className="bg-[#FCE881]/60 border-2 border-[#151515] rounded-xl p-3 shadow-[2px_2px_0px_#151515] mb-3">
           {student ? (
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
@@ -243,15 +243,15 @@ export default function EventsPage() {
                 variant="primary"
                 size="sm"
                 onClick={() => handleQuickRegister(selectedEvent)}
-                className="font-display tracking-wider uppercase text-xs sm:text-sm bg-[#DC2626] hover:bg-[#b91c1c] text-white border-2 border-[#151515] shadow-[2px_2px_0px_#151515]"
+                className="font-display tracking-wider uppercase text-xs sm:text-sm bg-[#793f98] hover:bg-[#151515] text-white border-2 border-[#151515] shadow-[2px_2px_0px_#151515]"
               >
-                ⚡ Register with #{student.rollNumber}
+                Register with #{student.rollNumber}
               </Button>
             </div>
           ) : (
             <div className="space-y-2">
               <div className="flex items-center gap-1 text-xs font-bold text-[#151515]">
-                <Info className="w-3.5 h-3.5 text-[#DC2626]" />
+                <Info className="w-3.5 h-3.5 text-[#793f98]" />
                 <span>Quick Student Registration (6-digit roll number only)</span>
               </div>
               <div className="flex gap-2">
@@ -263,13 +263,13 @@ export default function EventsPage() {
                   placeholder="e.g. 241201"
                   value={rollInput}
                   onChange={(e) => setRollInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  className="flex-1 bg-white border-2 border-[#151515] rounded-lg px-3 py-1.5 font-mono text-sm font-bold text-center shadow-[1.5px_1.5px_0px_#151515] focus:outline-none focus:border-[#DC2626]"
+                  className="flex-1 bg-white border-2 border-[#151515] rounded-lg px-3 py-1.5 tabular-nums text-sm font-bold text-center shadow-[1.5px_1.5px_0px_#151515] focus:outline-none focus:border-[#793f98]"
                 />
                 <Button
                   variant="primary"
                   size="sm"
                   onClick={() => handleQuickRegister(selectedEvent)}
-                  className="font-display tracking-wider uppercase text-xs bg-[#DC2626] hover:bg-[#b91c1c] text-white border-2 border-[#151515] shadow-[2px_2px_0px_#151515]"
+                  className="font-display tracking-wider uppercase text-xs bg-[#793f98] hover:bg-[#151515] text-white border-2 border-[#151515] shadow-[2px_2px_0px_#151515]"
                 >
                   Register Now
                 </Button>
@@ -281,7 +281,7 @@ export default function EventsPage() {
         <div className="flex justify-between items-center text-xs">
           <Link
             to={`/events/${selectedEvent.slug}`}
-            className="text-[#DC2626] font-bold underline hover:text-[#b91c1c] flex items-center gap-1"
+            className="text-[#793f98] font-bold underline hover:text-[#151515] flex items-center gap-1"
           >
             <span>Full Rules &amp; Regulations Page →</span>
           </Link>
@@ -339,7 +339,7 @@ export default function EventsPage() {
                 : 'text-ink hover:bg-[#FFF8E8]'
             )}
           >
-            ⚡ Arena Matrix
+            Arena Matrix
           </button>
           <button
             onClick={() => setViewMode('cards')}
@@ -350,7 +350,7 @@ export default function EventsPage() {
                 : 'text-ink hover:bg-[#FFF8E8]'
             )}
           >
-            📖 Comic Cards
+            Comic Cards
           </button>
         </div>
       </div>
@@ -363,7 +363,7 @@ export default function EventsPage() {
           placeholder="Search greeting card, dumb charades, duet dance, mono act, quiz…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-xl border-2 border-ink bg-white pl-10 pr-4 py-2.5 sm:py-3 text-sm sm:text-base text-ink placeholder:text-ink/40 focus:outline-none focus:border-[#F04438] shadow-[2px_2px_0px_#151515]"
+          className="w-full rounded-xl border-2 border-ink bg-white pl-10 pr-4 py-2.5 sm:py-3 text-sm sm:text-base text-ink placeholder:text-ink/40 focus:outline-none focus:border-[#793f98] shadow-[2px_2px_0px_#151515]"
           aria-label="Search events"
         />
       </div>
@@ -394,7 +394,7 @@ export default function EventsPage() {
               className={cn(
                 'flex-shrink-0 snap-start px-4 sm:px-5 py-2 rounded-xl border-2 border-ink font-display text-xs sm:text-sm tracking-wider uppercase transition-all shadow-[2px_2px_0px_#151515]',
                 isActive
-                  ? 'bg-[#DC2626] text-white'
+                  ? 'bg-[#793f98] text-white'
                   : 'bg-white text-ink hover:bg-[#FFF8E8]'
               )}
             >
@@ -440,7 +440,7 @@ export default function EventsPage() {
                       <h2 className="text-2xl sm:text-3xl font-display uppercase tracking-widest text-[#F5B82E] font-black drop-shadow-[0_2px_8px_rgba(245,184,46,0.2)]">
                         {categoryTitle}
                       </h2>
-                      <span className="text-xs font-mono text-white/40 tracking-wider">
+                      <span className="text-xs tabular-nums text-white/40 tracking-wider">
                         {catEvents.length} COMPETITIONS
                       </span>
                     </div>
@@ -499,7 +499,7 @@ export default function EventsPage() {
                       <h2 className="text-2xl sm:text-3xl font-display uppercase tracking-widest text-[#F5B82E] font-black">
                         SPECIAL CEREMONIES
                       </h2>
-                      <span className="text-xs font-mono text-white/40 tracking-wider">
+                      <span className="text-xs tabular-nums text-white/40 tracking-wider">
                         {eventsByCategory['special-events'].length} SESSIONS
                       </span>
                     </div>
@@ -550,7 +550,7 @@ export default function EventsPage() {
                     <span className="comic-caption-box text-[11px] py-0 px-2 bg-[#FFD43B]">
                       {event.category?.name?.toUpperCase() || 'GENERAL'}
                     </span>
-                    <span className="text-[10px] font-mono font-bold text-ink/40">
+                    <span className="text-[10px] tabular-nums font-bold text-ink/40">
                       NO. {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
                     </span>
                   </div>
@@ -564,7 +564,7 @@ export default function EventsPage() {
                     </Badge>
                   </div>
 
-                  <DisplayText as="h2" className="text-2xl sm:text-3xl text-ink leading-tight mb-2 group-hover:text-[#F04438] transition-colors">
+                  <DisplayText as="h2" className="text-2xl sm:text-3xl text-ink leading-tight mb-2 group-hover:text-[#793f98] transition-colors">
                     {event.title}
                   </DisplayText>
                   <p className="text-sm text-ink/70 line-clamp-2 leading-relaxed mb-4">
@@ -573,11 +573,11 @@ export default function EventsPage() {
 
                   <div className="bg-[#FFF8E8] border border-ink/20 p-2.5 rounded-lg text-xs space-y-1 mb-4 font-medium">
                     <p className="text-ink flex items-center gap-1">
-                      <span>📅</span>
+                      <span aria-hidden="true">★</span>
                       <span>{firstSlot ? formatSlot(firstSlot.starts_at, firstSlot.ends_at) : 'Slot TBA'}</span>
                     </p>
                     <p className="text-ink/70 flex items-center gap-1">
-                      <span>📍</span>
+                      <span aria-hidden="true">★</span>
                       <span>{firstSlot?.venue?.name || 'Central Campus Grounds'}</span>
                     </p>
                   </div>

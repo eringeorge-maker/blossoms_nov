@@ -4,7 +4,7 @@ import { BarChart2, Users, List, CheckCircle } from "lucide-react"
 const STATS = [
   { label: "Published Events",        value: 12,   icon: List,        color: "text-blossoms-blue"   },
   { label: "Confirmed Registrations", value: 248,  icon: CheckCircle, color: "text-blossoms-green"  },
-  { label: "Registered Students",     value: 183,  icon: Users,       color: "text-blossoms-red"    },
+  { label: "Registered Students",     value: 183,  icon: Users,       color: "text-primary"    },
   { label: "Open Registrations",      value: 8,    icon: BarChart2,   color: "text-blossoms-yellow" },
 ]
 

@@ -21,12 +21,12 @@ export default function DesignSystemPage() {
         <DisplayText as="h2" className="text-3xl">Color Palette &amp; Tokens</DisplayText>
         <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
           {[
-            { name: "paper", hex: "#FFFDF4", label: "Paper / Primary Surface" },
-            { name: "ink", hex: "#1A1A1A", label: "Ink / Outlines & Text" },
-            { name: "blossoms-red", hex: "#E8192C", label: "Comic Red / Action" },
-            { name: "blossoms-yellow", hex: "#FFD600", label: "Yellow / Bursts" },
-            { name: "blossoms-blue", hex: "#1565C0", label: "Blue / Secondary" },
-            { name: "blossoms-green", hex: "#2E7D32", label: "Green / Confirmed" },
+            { name: "paper", hex: "#FFF8E8", label: "Paper / Primary Surface" },
+            { name: "ink", hex: "#151515", label: "Ink / Outlines & Text" },
+            { name: "blossoms-purple", hex: "#793F98", label: "Blossoms Purple / Main" },
+            { name: "blossoms-yellow", hex: "#FFD43B", label: "Yellow / Bursts" },
+            { name: "blossoms-blue", hex: "#3478F6", label: "Blue / Secondary" },
+            { name: "blossoms-green", hex: "#26A69A", label: "Green / Confirmed" },
           ].map((c) => (
             <div key={c.name} className="comic-card p-3 text-center space-y-2">
               <div

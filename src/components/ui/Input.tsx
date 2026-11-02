@@ -21,7 +21,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         >
           {label}
           {props.required && (
-            <span className="ml-1 text-blossoms-red" aria-hidden="true">*</span>
+            <span className="ml-1 text-primary" aria-hidden="true">*</span>
           )}
         </label>
         {hint && (
@@ -35,9 +35,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className={cn(
             'w-full rounded-xl border-2 border-ink bg-paper px-4 py-2.5',
             'text-base text-ink placeholder:text-ink/40',
-            'focus:outline-none focus:border-blossoms-red',
+            'focus:outline-none focus:border-primary',
             'disabled:opacity-50 disabled:cursor-not-allowed',
-            error && 'border-blossoms-red focus:border-blossoms-red',
+            error && 'border-comic-red-deep focus:border-comic-red-deep',
             className
           )}
           aria-describedby={[hint ? hintId : null, error ? errorId : null].filter(Boolean).join(' ') || undefined}
@@ -45,7 +45,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {error && (
-          <p id={errorId} role="alert" className="text-xs text-blossoms-red font-medium">
+          <p id={errorId} role="alert" className="text-xs text-comic-red-deep font-medium">
             {error}
           </p>
         )}

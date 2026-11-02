@@ -143,7 +143,7 @@ export default function SchedulePage() {
               placeholder="Search by event, venue (e.g. KE doc, 911, Birds park, Classroom, Panel Room)…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 bg-[#FFF8E8] border-[1.5px] border-ink rounded-lg text-xs font-medium placeholder:text-ink/40 focus:outline-none focus:ring-2 focus:ring-[#F04438]"
+              className="w-full pl-8 pr-3 py-1.5 bg-[#FFF8E8] border-[1.5px] border-ink rounded-lg text-xs font-medium placeholder:text-ink/40 focus:outline-none focus:ring-2 focus:ring-[#793f98]"
             />
           </div>
 
@@ -154,7 +154,7 @@ export default function SchedulePage() {
               className={cn(
                 'px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase font-bold transition-all',
                 monthFilter === 'all'
-                  ? 'bg-[#F04438] text-white shadow-[1px_1px_0px_#151515]'
+                  ? 'bg-[#793f98] text-white shadow-[1px_1px_0px_#151515]'
                   : 'text-ink/70 hover:text-ink'
               )}
             >
@@ -165,7 +165,7 @@ export default function SchedulePage() {
               className={cn(
                 'px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase font-bold transition-all',
                 monthFilter === 'nov'
-                  ? 'bg-[#F04438] text-white shadow-[1px_1px_0px_#151515]'
+                  ? 'bg-[#793f98] text-white shadow-[1px_1px_0px_#151515]'
                   : 'text-ink/70 hover:text-ink'
               )}
             >
@@ -176,7 +176,7 @@ export default function SchedulePage() {
               className={cn(
                 'px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase font-bold transition-all',
                 monthFilter === 'dec'
-                  ? 'bg-[#F04438] text-white shadow-[1px_1px_0px_#151515]'
+                  ? 'bg-[#793f98] text-white shadow-[1px_1px_0px_#151515]'
                   : 'text-ink/70 hover:text-ink'
               )}
             >
@@ -200,12 +200,12 @@ export default function SchedulePage() {
         {monthFilter !== 'tbd' && (
           <div className="border-t border-ink/15 pt-2">
             <div className="flex items-center gap-1.5 mb-1.5 text-[11px] font-display text-ink/70 uppercase font-bold">
-              <CalendarDays className="w-3 h-3 text-[#F04438]" />
+              <CalendarDays className="w-3 h-3 text-[#793f98]" />
               <span>Select Exact Day ({chronologicalDates.length} Days)</span>
               {selectedDate !== 'all' && (
                 <button
                   onClick={() => setSelectedDate('all')}
-                  className="text-[11px] text-[#F04438] underline ml-auto font-sans font-bold"
+                  className="text-[11px] text-[#793f98] underline ml-auto font-sans font-bold"
                 >
                   Clear day filter
                 </button>
@@ -244,15 +244,15 @@ export default function SchedulePage() {
                       className={cn(
                         'flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-lg border-[1.5px] border-ink text-[11px] font-display tracking-wider uppercase transition-all shadow-[1.5px_1.5px_0px_#151515]',
                         isSelected
-                          ? 'bg-[#F04438] text-white'
+                          ? 'bg-[#793f98] text-white'
                           : 'bg-white text-ink hover:bg-[#FFF8E8]'
                       )}
                     >
                       <span className="font-sans font-black text-[11px]">{dayName}</span>
                       <span className="font-bold">{dayNum} {monthName}</span>
                       <span className={cn(
-                        'w-4 h-4 rounded-full text-[9px] font-mono font-bold flex items-center justify-center border',
-                        isSelected ? 'bg-white text-[#F04438] border-white' : 'bg-[#FFF8E8] text-ink border-ink'
+                        'w-4 h-4 rounded-full text-[9px] tabular-nums font-bold flex items-center justify-center border',
+                        isSelected ? 'bg-white text-[#793f98] border-white' : 'bg-[#FFF8E8] text-ink border-ink'
                       )}>
                         {d.count}
                       </span>
@@ -285,13 +285,13 @@ export default function SchedulePage() {
               {/* Day Header Banner */}
               <div className="flex items-center gap-2.5 mb-2.5">
                 <div className="bg-[#151515] text-[#FFD43B] px-3 py-1 rounded-lg border-[1.5px] border-ink shadow-[1.5px_1.5px_0px_#151515] flex items-center gap-1.5">
-                  <CalendarDays className="w-3.5 h-3.5 text-[#F04438]" aria-hidden="true" />
+                  <CalendarDays className="w-3.5 h-3.5 text-[#793f98]" aria-hidden="true" />
                   <span id={`date-header-${dateHeader}`} className="font-display text-xs tracking-wider uppercase font-bold">
                     {dateHeader}
                   </span>
                 </div>
                 <div className="h-0.5 flex-1 bg-ink/20" />
-                <span className="text-[10px] font-mono font-bold text-ink/60 bg-white px-2 py-0.5 rounded border border-ink">
+                <span className="text-[10px] tabular-nums font-bold text-ink/60 bg-white px-2 py-0.5 rounded border border-ink">
                   {slots.length} {slots.length === 1 ? 'EVENT' : 'EVENTS'}
                 </span>
               </div>
@@ -306,7 +306,7 @@ export default function SchedulePage() {
                     <li key={slot.id} className="h-full">
                       <Link
                         to={`/events/${slot.event.slug}`}
-                        className="comic-card group h-full p-3 flex flex-col justify-center bg-white hover:border-[#F04438] transition-all relative overflow-hidden rounded-xl shadow-[2.5px_2.5px_0px_#151515]"
+                        className="comic-card group h-full p-3 flex flex-col justify-center bg-white hover:border-[#793f98] transition-all relative overflow-hidden rounded-xl shadow-[2.5px_2.5px_0px_#151515]"
                       >
                         <HalftoneAccent color="yellow" className="opacity-0 group-hover:opacity-20 transition-opacity" />
 
@@ -320,7 +320,7 @@ export default function SchedulePage() {
                               ? 'bg-[#3478F6]/15'
                               : 'bg-[#FFF8E8]'
                           )}>
-                            <Clock className="w-3.5 h-3.5 text-[#F04438] mx-auto mb-0.5" aria-hidden="true" />
+                            <Clock className="w-3.5 h-3.5 text-[#793f98] mx-auto mb-0.5" aria-hidden="true" />
                             <p className="font-display text-xs tracking-wider text-ink font-bold leading-tight">
                               {isTbd ? 'TIME TBD' : isOnline ? 'ONLINE' : formatISTTime(slot.starts_at)}
                             </p>
@@ -350,7 +350,7 @@ export default function SchedulePage() {
                                 )}
                               </div>
 
-                              <span className="font-display text-xs uppercase tracking-wider text-[#F04438] flex items-center gap-0.5 font-bold shrink-0 group-hover:translate-x-0.5 transition-transform">
+                              <span className="font-display text-xs uppercase tracking-wider text-[#793f98] flex items-center gap-0.5 font-bold shrink-0 group-hover:translate-x-0.5 transition-transform">
                                 <Sparkles className="w-3 h-3" />
                                 Rules &amp; Entry →
                               </span>
@@ -358,13 +358,13 @@ export default function SchedulePage() {
 
                             <DisplayText
                               as="h2"
-                              className="text-base sm:text-lg text-ink leading-tight break-words group-hover:text-[#F04438] transition-colors"
+                              className="text-base sm:text-lg text-ink leading-tight break-words group-hover:text-[#793f98] transition-colors"
                             >
                               {slot.event.title}
                             </DisplayText>
 
                             <p className="text-[11px] text-ink/80 flex flex-wrap items-center gap-1 mt-1 font-medium break-words">
-                              <MapPin className="w-3 h-3 text-[#F04438] flex-shrink-0" aria-hidden="true" />
+                              <MapPin className="w-3 h-3 text-[#793f98] flex-shrink-0" aria-hidden="true" />
                               <span className="font-bold text-ink">
                                 {slot.venue?.name || 'Central Campus (TBA)'}
                               </span>

@@ -46,7 +46,7 @@ export function MobileBottomNav() {
                     aria-hidden="true"
                   />
                   {isActive && (
-                    <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#F04438] animate-pulse" />
+                    <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#793f98] animate-pulse" />
                   )}
                 </div>
 

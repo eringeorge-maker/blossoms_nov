@@ -21,9 +21,9 @@ interface FloatingPillNavigationProps {
 
 export function FloatingPillNavigation({
   items,
-  backgroundColor = '#E8E8ED',
+  backgroundColor = '#F5EBD4',
   textColor = '#000000',
-  activeBackgroundColor = '#1D1D1F',
+  activeBackgroundColor = '#151515',
   activeTextColor = '#FFFFFF',
   padding = 6,
   gap = 2,
@@ -55,7 +55,7 @@ export function FloatingPillNavigation({
   return (
     <nav
       aria-label="Floating Pill Navigation"
-      className={`inline-flex items-center select-none shadow-xs ${className}`}
+      className={`inline-flex items-center select-none border-2 border-[#0f0f0f] shadow-comic-sm ${className}`}
       style={{
         backgroundColor,
         borderRadius: 9999,
@@ -63,7 +63,6 @@ export function FloatingPillNavigation({
         gap: `${gap}px`,
         position: 'relative',
         width: 'max-content',
-        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif",
       }}
     >
       {items.map((item) => {
@@ -73,7 +72,7 @@ export function FloatingPillNavigation({
             key={item.label}
             to={item.href}
             onClick={() => setActiveItem(item.label)}
-            className="relative transition-colors duration-200 focus:outline-none"
+            className="relative transition-colors duration-200"
             style={{
               padding: linkPadding,
               textDecoration: 'none',
@@ -91,7 +90,7 @@ export function FloatingPillNavigation({
             {isActive && (
               <motion.div
                 layoutId="floatingPillActiveIndicator"
-                className="absolute inset-0 shadow-sm"
+                className="absolute inset-0"
                 style={{
                   backgroundColor: activeBackgroundColor,
                   borderRadius: 9999,

@@ -118,10 +118,10 @@ export default function App() {
         position="top-right"
         toastOptions={{
           style: {
-            border: '2px solid #1A1A1A',
+            border: '2px solid #151515',
             borderRadius: '12px',
             fontFamily: 'var(--font-body)',
-            boxShadow: '3px 3px 0px 0px #1A1A1A',
+            boxShadow: '3px 3px 0px 0px #151515',
           },
         }}
       />

@@ -12,7 +12,7 @@ const buttonVariants = cva(
     'transition-all duration-100',
     'cursor-pointer select-none',
     'min-h-[44px] px-5 py-2',
-    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blossoms-red',
+    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
     'disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none',
     'active:translate-x-[1px] active:translate-y-[1px]',
   ],
@@ -20,7 +20,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary: [
-          'bg-blossoms-red text-white',
+          'bg-primary text-white',
           'hover:opacity-90 active:scale-95',
         ],
         secondary: [
@@ -37,7 +37,7 @@ const buttonVariants = cva(
           'hover:bg-gutter',
         ],
         danger: [
-          'bg-blossoms-red text-white',
+          'bg-comic-red-deep text-white',
           'hover:opacity-90 active:scale-95',
         ],
       },

@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { ArrowRight, UserCheck, ShieldAlert, Sparkles, AlertCircle } from 'lucide-react'
+import { ArrowRight, UserCheck, ShieldAlert, AlertCircle } from 'lucide-react'
 import { DisplayText, ComicPanel } from '@/components/comic/ComicPrimitives'
 import { Button } from '@/components/ui/Button'
 import { loginStudent, loginDeveloperAdmin, isValidRollNumber, SEEDED_STUDENT_ROSTER } from '@/lib/auth/authStore'
 import { cn } from '@/lib/utils'
+import purpleBurstUrl from '@/assets/brand/bg-purple-burst.png'
 
 type LoginRole = 'student' | 'admin'
 
@@ -63,11 +64,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
+    <div style={{ backgroundImage: `url(${purpleBurstUrl})` }} className="min-h-[85vh] bg-cover bg-center flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-xl">
         {/* Top Comic Dialogue Header */}
         <div className="flex items-center justify-between mb-4">
-          <span className="text-xs font-mono font-bold text-ink/60 uppercase">
+          <span className="text-xs font-bold text-white uppercase">
             ★ CHRIST UNIVERSITY ★
           </span>
         </div>
@@ -80,7 +81,7 @@ export default function LoginPage() {
             className={cn(
               'flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-display text-sm md:text-base tracking-wider uppercase font-bold transition-all',
               role === 'student'
-                ? 'bg-[#F04438] text-white shadow-[2px_2px_0px_#151515] -translate-y-0.5'
+                ? 'bg-[#793f98] text-white shadow-[2px_2px_0px_#151515] -translate-y-0.5'
                 : 'text-ink/70 hover:text-ink hover:bg-white/60'
             )}
           >
@@ -111,7 +112,7 @@ export default function LoginPage() {
                 <DisplayText as="h1" className="text-3xl sm:text-4xl text-ink">
                   Student Sign In
                 </DisplayText>
-                <span className="bg-[#FFD43B] text-ink text-[11px] font-mono font-bold px-2 py-0.5 border border-ink rounded">
+                <span className="bg-[#FFD43B] text-ink text-[11px] tabular-nums font-bold px-2 py-0.5 border border-ink rounded">
                   NO PASSWORD NEEDED
                 </span>
               </div>
@@ -133,17 +134,17 @@ export default function LoginPage() {
                       value={rollNumber}
                       onChange={(e) => handleRollChange(e.target.value)}
                       className={cn(
-                        'w-full px-4 py-3.5 bg-[#FFF8E8] border-2 border-ink rounded-xl font-mono text-2xl tracking-[0.25em] text-center font-bold text-ink placeholder:text-ink/30 focus:outline-none focus:ring-2 focus:ring-[#F04438] transition-all',
-                        error ? 'border-[#F04438] bg-red-50' : 'border-ink'
+                        'w-full px-4 py-3.5 bg-[#FFF8E8] border-2 border-ink rounded-xl tabular-nums text-2xl tracking-[0.25em] text-center font-bold text-ink placeholder:text-ink/30 focus:outline-none focus:ring-2 focus:ring-[#793f98] transition-all',
+                        error ? 'border-[#df1b23] bg-red-50' : 'border-ink'
                       )}
                     />
-                    <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-ink/40">
+                    <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs tabular-nums font-bold text-ink/40">
                       {rollNumber.length}/6
                     </div>
                   </div>
 
                   {error && (
-                    <p className="flex items-center gap-1.5 text-xs text-[#F04438] font-bold mt-2">
+                    <p className="flex items-center gap-1.5 text-xs text-[#df1b23] font-bold mt-2">
                       <AlertCircle className="w-4 h-4 flex-shrink-0" />
                       {error}
                     </p>
@@ -152,7 +153,7 @@ export default function LoginPage() {
 
                 {/* Sample roll numbers helper */}
                 <div className="bg-[#FFF8E8] p-3 rounded-xl border border-ink/20">
-                  <p className="text-[11px] font-mono font-bold text-ink/60 uppercase mb-1.5">
+                  <p className="text-[11px] tabular-nums font-bold text-ink/60 uppercase mb-1.5">
                     ★ Click any test roll number to autofill:
                   </p>
                   <div className="flex flex-wrap gap-1.5">
@@ -161,7 +162,7 @@ export default function LoginPage() {
                         key={roll}
                         type="button"
                         onClick={() => { setRollNumber(roll); setError(null) }}
-                        className="text-[11px] font-mono bg-white px-2 py-1 rounded border border-ink/30 hover:border-ink hover:bg-[#FFD43B] transition-colors"
+                        className="text-[11px] tabular-nums bg-white px-2 py-1 rounded border border-ink/30 hover:border-ink hover:bg-[#FFD43B] transition-colors"
                       >
                         <strong>{roll}</strong> ({info.name.split(' ')[0]})
                       </button>
@@ -176,8 +177,7 @@ export default function LoginPage() {
                   className="w-full text-lg gap-2 shadow-[4px_4px_0px_#151515]"
                   isLoading={loading}
                 >
-                  <Sparkles className="w-5 h-5 fill-current" />
-                  Enter Registration Portal <ArrowRight className="w-5 h-5" />
+                                    Enter Registration Portal <ArrowRight className="w-5 h-5" />
                 </Button>
               </form>
 
@@ -190,7 +190,7 @@ export default function LoginPage() {
                 <DisplayText as="h1" className="text-3xl sm:text-4xl text-ink">
                   Admin &amp; Dev Portal
                 </DisplayText>
-                <span className="bg-[#151515] text-[#FFD43B] text-[11px] font-mono font-bold px-2 py-0.5 border border-ink rounded">
+                <span className="bg-[#151515] text-[#FFD43B] text-[11px] tabular-nums font-bold px-2 py-0.5 border border-ink rounded">
                   DEVELOPER CONSOLE
                 </span>
               </div>
@@ -213,7 +213,7 @@ export default function LoginPage() {
                     className="w-full px-4 py-3 bg-[#FFF8E8] border-2 border-ink rounded-xl text-sm font-medium text-ink placeholder:text-ink/40 focus:outline-none focus:ring-2 focus:ring-[#151515]"
                   />
                   <p className="text-[11px] text-ink/50 mt-1.5 font-medium">
-                    ⚡ Developer bypass is enabled for local and campus testing.
+                    Developer bypass is enabled for local and campus testing.
                   </p>
                 </div>
 
@@ -233,11 +233,11 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setRole('student')}
-                  className="text-xs font-display text-[#F04438] hover:underline uppercase font-bold"
+                  className="text-xs font-display text-[#793f98] hover:underline uppercase font-bold"
                 >
                   ← Back to Student Login
                 </button>
-                <span className="text-xs font-mono text-ink/50">Admin v1.0</span>
+                <span className="text-xs tabular-nums text-ink/50">Admin v1.0</span>
               </div>
             </div>
           )}

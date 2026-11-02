@@ -8,7 +8,7 @@ export function PublicShell() {
   const isEvents = location.pathname.startsWith('/events')
 
   return (
-    <div className={`min-h-screen flex flex-col ${isEvents ? 'bg-[#000000]' : 'bg-[#FFF8E8]'}`}>
+    <div className={`min-h-screen flex flex-col ${isEvents ? 'bg-primary' : 'bg-paper'}`}>
       <PublicHeader />
       <main id="main-content" className="flex-1">
         <Outlet />

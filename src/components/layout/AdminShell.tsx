@@ -78,7 +78,7 @@ export function AdminShell() {
               <Menu className="w-5 h-5" />
             </button>
             <span className="font-display text-xl text-ink uppercase tracking-wide">Developer &amp; Admin Console</span>
-            <span className="hidden sm:inline-block bg-[#151515] text-[#FFD43B] text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-ink">
+            <span className="hidden sm:inline-block bg-[#151515] text-[#FFD43B] text-[10px] tabular-nums font-bold px-2 py-0.5 rounded border border-ink">
               ADMIN MODE
             </span>
           </div>
@@ -92,7 +92,7 @@ export function AdminShell() {
             </Link>
             <Link
               to="/login?role=student"
-              className="text-xs font-display uppercase tracking-wider text-[#F04438] hover:text-[#F04438]/80 font-bold px-3 py-1.5 rounded-lg border border-[#F04438] bg-white"
+              className="text-xs font-display uppercase tracking-wider text-[#793f98] hover:text-[#793f98]/80 font-bold px-3 py-1.5 rounded-lg border border-[#793f98] bg-white"
             >
               Student Login
             </Link>
@@ -129,7 +129,7 @@ function NavList({
                 className={cn(
                   'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors',
                   isActive
-                    ? 'bg-blossoms-red text-white'
+                    ? 'bg-primary text-white'
                     : 'text-paper/70 hover:bg-paper/10 hover:text-paper'
                 )}
                 aria-current={isActive ? 'page' : undefined}

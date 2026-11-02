@@ -84,7 +84,7 @@ export function ActionBurst({
 }: ActionBurstProps) {
   const bgStyles = {
     yellow: 'bg-[#FFD43B] text-[#151515]',
-    red:    'bg-[#F04438] text-white',
+    red:    'bg-[#793f98] text-white',
     blue:   'bg-[#3478F6] text-white',
     teal:   'bg-[#26A69A] text-white',
   }
@@ -179,7 +179,7 @@ export function ComicCaptionBox({
 }) {
   return (
     <div className={cn('comic-caption-box', className)}>
-      <span className="text-blossoms-red font-black" aria-hidden="true">★</span>
+      <span className="text-primary font-black" aria-hidden="true">★</span>
       {children}
     </div>
   )
@@ -199,10 +199,10 @@ export function ComicCornerBox({
 }) {
   return (
     <div className={cn('comic-corner-box inline-block', className)}>
-      <div className="text-[10px] tracking-wider text-ink/70 font-mono font-bold border-b border-ink/40 pb-0.5">
+      <div className="text-[10px] tracking-wider text-ink/70 tabular-nums font-bold border-b border-ink/40 pb-0.5">
         BLOSSOMS DOC
       </div>
-      <div className="text-sm font-black text-[#F04438] my-0.5 leading-none">
+      <div className="text-sm font-black text-[#793f98] my-0.5 leading-none">
         {issueNo}
       </div>
       <div className="text-[9px] uppercase tracking-tighter text-ink font-semibold border-b border-ink/40 pb-0.5">

@@ -1,74 +1,83 @@
 import { Link } from 'react-router-dom'
-import type { ComponentType, ReactNode } from 'react'
-import {
-  ArtsIllustration,
-  CampusHeritageDome,
-  LiteratureIllustration,
-  StageIllustration,
-  TheatreIllustration,
-} from '@/components/comic/CategoryIllustrations'
-import {
-  AnnouncementsMegaphoneIllustration,
-  ScheduleCalendarIllustration,
-} from '@/components/comic/ComicArtwork'
+import type { CSSProperties } from 'react'
+import { cn } from '@/lib/utils'
 import { PublicHeader } from '@/components/layout/PublicHeader'
+import artsUrl from '@/assets/brand/panel-arts.png'
+import literatureUrl from '@/assets/brand/panel-literature.png'
+import stageUrl from '@/assets/brand/panel-stage.png'
+import theatreUrl from '@/assets/brand/panel-theatre.png'
+import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.png'
+import purpleBurstUrl from '@/assets/brand/bg-purple-burst.png'
 
 interface HomePanel {
-  slug: string
+  slug: 'arts' | 'literature' | 'stage' | 'theatre'
   title: string
   tagline: string
-  bgHex: string
   captionHex: string
+  art: string
+  artStyle: CSSProperties
   clipPath: string
-  Illustration: ComponentType<{ className?: string }>
+  box: CSSProperties
+  wording: CSSProperties
+  arrow: CSSProperties
 }
 
+// All panels share one page-wide coordinate system, so neighbouring edges stay one even gutter apart.
 const HOME_PANELS: HomePanel[] = [
   {
     slug: 'arts',
     title: 'ARTS',
     tagline: 'PAINT. DESIGN. EXPRESS.',
-    bgHex: '#ed1e79',
     captionHex: '#f9d423',
-    clipPath: 'polygon(0% 0%, 93% 1.5%, 100% 100%, 0% 98%)',
-    Illustration: ArtsIllustration,
+    art: artsUrl,
+    artStyle: { objectPosition: '0 64%', transform: 'scale(1.3)', transformOrigin: 'left center' },
+    clipPath: 'polygon(52.81% 1.11%, 77.34% 1.11%, 75.39% 39.17%, 50.63% 37.78%)',
+    box: { left: '50.63%', top: '1.11%', width: '26.72%', height: '38.06%' },
+    wording: { left: '53.75%', top: '2.8%' },
+    arrow: { left: '70.3%', top: '30%' },
   },
   {
     slug: 'literature',
     title: 'LITERATURE',
     tagline: 'SPEAK. WRITE. THINK.',
-    bgHex: '#0088e8',
     captionHex: '#f9d423',
-    clipPath: 'polygon(0% 1.5%, 93% 3.5%, 100% 98%, 7% 100%)',
-    Illustration: LiteratureIllustration,
+    art: literatureUrl,
+    artStyle: { objectPosition: '70% 0', transform: 'scale(1.08)', transformOrigin: 'center top' },
+    clipPath: 'polygon(77.97% 1.11%, 99.38% 1.11%, 99.38% 40.56%, 76.02% 39.17%)',
+    box: { left: '76.02%', top: '1.11%', width: '23.36%', height: '39.44%' },
+    wording: { left: '78.6%', top: '2.8%' },
+    arrow: { left: '94.7%', top: '31.7%' },
   },
   {
     slug: 'stage',
     title: 'STAGE',
     tagline: 'PERFORM. INSPIRE.',
-    bgHex: '#fdb813',
     captionHex: '#fdfaf0',
-    clipPath: 'polygon(0% 3.5%, 93% 0%, 100% 100%, 7% 98%)',
-    Illustration: StageIllustration,
+    art: stageUrl,
+    artStyle: { objectPosition: '100% 0', transform: 'scale(1.4)', transformOrigin: 'right top' },
+    clipPath: 'polygon(0.63% 36.11%, 40.63% 38.33%, 37.5% 83.33%, 0.63% 83.33%)',
+    box: { left: '0.63%', top: '36.11%', width: '40%', height: '47.22%' },
+    wording: { left: '2%', top: '38.9%' },
+    arrow: { left: '32.3%', top: '75%' },
   },
   {
     slug: 'theatre',
     title: 'THEATRE',
     tagline: 'ACT. IMAGINE. BRING STORIES ALIVE.',
-    bgHex: '#861ec2',
     captionHex: '#f9d423',
-    clipPath: 'polygon(0% 0%, 100% 2.5%, 100% 100%, 7% 100%)',
-    Illustration: TheatreIllustration,
+    art: theatreUrl,
+    artStyle: { objectPosition: '100% 100%', transform: 'scale(1.12)', transformOrigin: 'right bottom' },
+    clipPath: 'polygon(41.25% 38.33%, 99.38% 41.67%, 99.38% 83.33%, 38.13% 83.33%)',
+    box: { left: '38.13%', top: '38.33%', width: '61.25%', height: '45%' },
+    wording: { left: '42.8%', top: '41.1%' },
+    arrow: { left: '94.7%', top: '75%' },
   },
 ]
 
-function ArrowChip() {
+function ArrowChip({ style }: { style: CSSProperties }) {
   return (
-    <span
-      aria-hidden="true"
-      className="w-[48px] h-[48px] rounded-full bg-[#fdfaf0] border-[3px] border-[#0f0f0f] flex items-center justify-center shrink-0"
-    >
-      <svg width="22" height="22" viewBox="0 0 16 16" fill="none">
+    <span aria-hidden="true" className="home-arrow" style={style}>
+      <svg viewBox="0 0 16 16" fill="none">
         <path
           d="M3 8H13M13 8L8.8 3.8M13 8L8.8 12.2"
           stroke="#0f0f0f"
@@ -84,135 +93,106 @@ function ArrowChip() {
 function FeatureBanner({
   title,
   subtitle,
-  bgHex,
-  icon,
-  trailing,
+  clipPath,
+  textLeft,
+  origin,
+  delay,
   onClick,
 }: {
   title: string
   subtitle: string
-  bgHex: string
-  icon: ReactNode
-  trailing: ReactNode
+  clipPath: string
+  textLeft: string
+  origin: string
+  delay: string
   onClick: () => void
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      style={{ backgroundColor: bgHex }}
-      className="w-full min-h-[88px] border-[4px] border-[#0f0f0f] px-5 py-2 flex items-center justify-between gap-4 text-left cursor-pointer active:scale-[0.99] focus-visible:outline-[4px] focus-visible:outline-offset-2 focus-visible:outline-[#0f0f0f]"
-    >
-      <span className="flex items-center gap-4 min-w-0">
-        <span className="w-[56px] h-[56px] p-1 rounded-md bg-[#fdfaf0] border-[3px] border-[#0f0f0f] flex items-center justify-center shrink-0">
-          {icon}
+    <div className="home-pop" style={{ transformOrigin: origin }}>
+      <button
+        type="button"
+        onClick={onClick}
+        className="home-panel home-banner"
+        style={{ clipPath, animationDelay: delay }}
+      >
+        <span className="home-banner-text" style={{ left: textLeft }}>
+          <span className="font-comic-display home-banner-title">{title}</span>
+          <span className="font-comic-sub home-banner-subtitle">{subtitle}</span>
         </span>
-        <span className="min-w-0">
-          <span className="block font-comic-display text-white text-[clamp(26px,3vw,40px)] leading-none">
-            {title}
-          </span>
-          <span className="block font-comic-sub text-white text-[clamp(13px,1.2vw,17px)] mt-1">
-            {subtitle}
-          </span>
-        </span>
-      </span>
-      {trailing}
-    </button>
+      </button>
+    </div>
   )
 }
 
 interface DesktopHomeProps {
+  animateIn: boolean
   onOpenSchedule: () => void
   onOpenAnnouncements: () => void
 }
 
-/** The mobile home page's comic stack, re-flowed to fill one wide viewport. */
-export default function DesktopHome({ onOpenSchedule, onOpenAnnouncements }: DesktopHomeProps) {
+/** The wide-screen home page: one full comic page split by an even ink gutter. */
+export default function DesktopHome({ animateIn, onOpenSchedule, onOpenAnnouncements }: DesktopHomeProps) {
   return (
-    <div className="hidden md:flex flex-col min-h-screen w-full bg-[#f8ca16] halftone-dots">
+    <div className="hidden md:flex flex-col min-h-screen w-full bg-[#0f0f0f]">
       <PublicHeader />
 
-      <main
-        id="main-content"
-        className="flex-1 w-full max-w-[1640px] mx-auto px-6 lg:px-10 py-5 grid gap-4 grid-rows-[auto_minmax(560px,1fr)_auto] lg:grid-rows-[minmax(190px,0.62fr)_minmax(340px,1fr)_auto]"
-      >
-        {/* Masthead */}
-        <section className="relative bg-[#fdfaf0] border-[4px] border-[#0f0f0f] rounded-[20px] flex items-stretch justify-between gap-6 overflow-hidden p-4">
-          <div className="flex-1 min-w-0 flex flex-col items-center justify-center">
-            <h1 className="font-comic-display text-[#df1b23] leading-[0.82] tracking-wider text-[clamp(84px,min(13vw,21vh),210px)]">
-              BLOSSOMS
+      <main id="main-content" className={cn('home-page', animateIn && 'home-page--slam')}>
+        <div
+          className="home-panel home-hero"
+          style={{
+            backgroundImage: `url(${purpleBurstUrl})`,
+            clipPath: 'polygon(0.63% 1.11%, 52.19% 1.11%, 50% 37.78%, 0.63% 35%)',
+          }}
+        >
+          <div className="home-hero-content">
+            <h1 className="m-0">
+              <img src={blossomsLogoUrl} alt="Blossoms: Be the best, 2026–27" className="home-hero-logo" />
             </h1>
-            <div className="flex items-center gap-4 mt-3">
-              <span className="bg-[#f8ca16] border-[3px] border-[#0f0f0f] px-4 py-0.5 -rotate-2 font-comic-display text-[#0f0f0f] text-[clamp(26px,3vw,42px)] leading-tight">
-                2026
-              </span>
-              <p className="bg-white border-[3px] border-[#0f0f0f] px-4 py-1.5 rotate-1 font-comic-sub text-[#0f0f0f] text-[clamp(15px,1.7vw,24px)] leading-none">
-                SAME STAGE. DIFFERENT HEROES!
-              </p>
-            </div>
+            <p className="home-hero-line font-comic-sub">YOUR CAMPUS. YOUR STORY.</p>
           </div>
+        </div>
 
-          <div className="relative w-[27%] min-w-[190px] max-w-[420px] bg-[#0088e8] border-[4px] border-[#0f0f0f] rounded-[12px] overflow-hidden flex items-end justify-center">
-            <span className="absolute top-2.5 left-2.5 z-10 bg-[#fdfaf0] border-[2.5px] border-[#0f0f0f] px-2.5 py-0.5 font-comic-sub text-[15px] -rotate-2">
-              CAMPUS HERITAGE
-            </span>
-            <CampusHeritageDome className="w-[92%] h-[86%] pointer-events-none" />
-          </div>
-        </section>
-
-        {/* Category panels */}
-        <nav aria-label="Event categories" className="grid grid-cols-2 lg:grid-cols-4 gap-2 min-h-0">
-          {HOME_PANELS.map(({ slug, title, tagline, bgHex, captionHex, clipPath, Illustration }, index) => (
+        <nav aria-label="Event categories">
+          {HOME_PANELS.map(({ slug, title, tagline, captionHex, art, artStyle, clipPath, box, wording, arrow }, index) => (
             <Link
               key={slug}
               to={`/events?category=${slug}`}
-              style={{ backgroundColor: bgHex, clipPath }}
-              className={`group relative block h-full min-h-[270px] overflow-hidden halftone-dots-dense select-none focus-visible:outline-[5px] focus-visible:-outline-offset-[12px] focus-visible:outline-[#0f0f0f] ${
-                index === 0 ? '' : 'lg:-ml-[7%]'
-              } ${index === 2 ? 'max-lg:ml-0' : ''} ${index % 2 === 1 ? 'max-lg:-ml-[7%]' : ''}`}
+              aria-label={`${title} events: ${tagline}`}
+              className="home-panel home-category"
+              style={{ clipPath, animationDelay: `${0.12 * (index + 1)}s` }}
             >
-              <div className={`relative z-20 pt-5 pr-4 ${index === 0 || index === 2 ? 'pl-5' : 'pl-[13%]'}`}>
-                <h2 className="font-comic-display comic-title-white leading-[0.9] tracking-wide -rotate-3 origin-left text-[clamp(44px,5vw,74px)]">
-                  {title}
-                </h2>
-                <p
-                  style={{ backgroundColor: captionHex }}
-                  className="mt-2 inline-block max-w-[230px] border-[3px] border-[#0f0f0f] px-3 py-1 -rotate-3 font-comic-sub text-[#0f0f0f] text-[clamp(14px,1.35vw,19px)] leading-[1.05] text-center"
-                >
-                  {tagline}
-                </p>
-              </div>
-              <Illustration className="absolute bottom-0 left-[3%] w-[82%] h-[58%] z-10 pointer-events-none transition-transform duration-200 group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100" />
-              <span className="absolute right-[9%] bottom-5 z-20">
-                <ArrowChip />
+              <span className="home-art" style={box}>
+                <img src={art} alt="" style={artStyle} />
               </span>
+              <span className="home-wording" style={wording}>
+                <span className="font-comic-display comic-title-white home-title">{title}</span>
+                <span className="font-comic-sub home-tagline" style={{ backgroundColor: captionHex }}>
+                  {tagline}
+                </span>
+              </span>
+              <ArrowChip style={arrow} />
             </Link>
           ))}
         </nav>
 
-        {/* Schedule & announcements */}
-        <section className="grid grid-cols-2 gap-4">
-          <FeatureBanner
-            title="EVENT SCHEDULE"
-            subtitle="DATES, TIMINGS & VENUES"
-            bgHex="#df1b23"
-            onClick={onOpenSchedule}
-            icon={<ScheduleCalendarIllustration className="w-full h-full" />}
-            trailing={
-              <span className="bg-[#f8ca16] border-[3px] border-[#0f0f0f] px-3 py-1 font-comic-sub text-[17px] rotate-1 shrink-0 hidden xl:inline-block">
-                CHECK NOW!
-              </span>
-            }
-          />
-          <FeatureBanner
-            title="ANNOUNCEMENTS"
-            subtitle="LIVE FEST UPDATES"
-            bgHex="#00966b"
-            onClick={onOpenAnnouncements}
-            icon={<AnnouncementsMegaphoneIllustration className="w-full h-full" />}
-            trailing={<ArrowChip />}
-          />
-        </section>
+        <FeatureBanner
+          title="EVENT SCHEDULE"
+          subtitle="DATES, TIMINGS & VENUES"
+          clipPath="polygon(0.63% 84.44%, 49.38% 84.44%, 48.75% 98.89%, 0.63% 98.89%)"
+          textLeft="2.3%"
+          origin="25% 99%"
+          delay="0.6s"
+          onClick={onOpenSchedule}
+        />
+        <FeatureBanner
+          title="ANNOUNCEMENTS"
+          subtitle="LIVE FEST UPDATES"
+          clipPath="polygon(50% 84.44%, 99.38% 84.44%, 99.38% 98.89%, 49.38% 98.89%)"
+          textLeft="51.7%"
+          origin="75% 99%"
+          delay="0.7s"
+          onClick={onOpenAnnouncements}
+        />
       </main>
     </div>
   )

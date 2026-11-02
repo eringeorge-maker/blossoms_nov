@@ -69,7 +69,7 @@ export default function StudentSchedulePage() {
 
       {conflictCount > 0 && (
         <div className="comic-card p-4 border-2 border-blossoms-yellow bg-paper flex items-start gap-3" role="alert">
-          <AlertTriangle className="w-5 h-5 text-blossoms-red flex-shrink-0 mt-0.5" aria-hidden="true" />
+          <AlertTriangle className="w-5 h-5 text-comic-red-deep flex-shrink-0 mt-0.5" aria-hidden="true" />
           <div className="text-sm">
             <p className="font-bold text-ink">Schedule Overlap Advisory</p>
             <p className="text-ink/70 mt-0.5">
@@ -96,11 +96,11 @@ export default function StudentSchedulePage() {
           {items.map((slot) => (
             <li
               key={`${slot.event_id}-${slot.id}`}
-              className="comic-card p-4 flex gap-4 items-start hover:shadow-[3px_3px_0px_0px_#1A1A1A] transition-all"
+              className="comic-card p-4 flex gap-4 items-start hover:shadow-[3px_3px_0px_0px_#151515] transition-all"
             >
               {/* Time */}
               <div className="flex-shrink-0 text-center w-28 bg-gutter p-2 rounded-lg border border-ink/10">
-                <Clock className="w-4 h-4 text-blossoms-red mx-auto mb-1" aria-hidden="true" />
+                <Clock className="w-4 h-4 text-primary mx-auto mb-1" aria-hidden="true" />
                 <p className="text-xs font-bold text-ink">{formatISTTime(slot.starts_at)}</p>
                 <p className="text-[11px] text-ink/50">to {formatISTTime(slot.ends_at)}</p>
                 <p className="text-[10px] text-ink/70 font-semibold mt-1">{formatISTDate(slot.starts_at)}</p>
@@ -112,14 +112,14 @@ export default function StudentSchedulePage() {
                   <Badge variant="outline">{slot.event.category?.name || 'Category'}</Badge>
                   {slot.slot_title && <Badge variant="blue">{slot.slot_title}</Badge>}
                   {slot.hasConflict && (
-                    <Badge variant="yellow" className="text-blossoms-red font-bold">
+                    <Badge variant="yellow" className="text-primary font-bold">
                       ⚠ Conflict
                     </Badge>
                   )}
                 </div>
                 <h2 className="font-display text-2xl text-ink leading-tight">{slot.event.title}</h2>
                 <p className="text-xs text-ink/60 flex items-center gap-1 mt-1 font-medium">
-                  <MapPin className="w-3.5 h-3.5 text-blossoms-red" aria-hidden="true" />
+                  <MapPin className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
                   {slot.venue?.name || 'Central Campus'}
                   {slot.venue?.room && ` (${slot.venue.room})`}
                 </p>

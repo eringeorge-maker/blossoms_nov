@@ -76,7 +76,7 @@ export default function EventDetailPage() {
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <Link
           to="/events"
-          className="inline-flex items-center gap-2 text-sm font-display tracking-wider uppercase text-ink hover:text-[#F04438] transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-display tracking-wider uppercase text-ink hover:text-[#793f98] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Back to Directory
         </Link>
@@ -141,7 +141,7 @@ export default function EventDetailPage() {
               <ul className="space-y-3">
                 {event.schedule_slots.map((slot) => (
                   <li key={slot.id} className="flex items-start gap-3 p-3.5 bg-[#FFF8E8] rounded-xl border-2 border-ink">
-                    <Clock className="w-5 h-5 mt-0.5 flex-shrink-0 text-[#F04438]" aria-hidden="true" />
+                    <Clock className="w-5 h-5 mt-0.5 flex-shrink-0 text-[#793f98]" aria-hidden="true" />
                     <div>
                       <p className="font-bold text-sm text-ink">
                         {slot.slot_title && <span className="text-[#3478F6] mr-2">[{slot.slot_title}]</span>}
@@ -149,7 +149,7 @@ export default function EventDetailPage() {
                         {slot.starts_at && `, ${formatISTTime(slot.starts_at)} – ${slot.ends_at ? formatISTTime(slot.ends_at) : ''}`}
                       </p>
                       <p className="text-xs text-ink/70 flex items-center gap-1 mt-1 font-medium">
-                        <MapPin className="w-3.5 h-3.5 text-[#F04438]" aria-hidden="true" />
+                        <MapPin className="w-3.5 h-3.5 text-[#793f98]" aria-hidden="true" />
                         {slot.venue?.name || 'Venue TBA'}
                         {slot.venue?.room && ` (${slot.venue.room})`}
                       </p>
@@ -190,7 +190,7 @@ export default function EventDetailPage() {
 
             <dl className="space-y-3.5 text-sm">
               <div className="border-b border-ink/10 pb-2">
-                <dt className="text-ink/60 font-medium text-xs uppercase tracking-wider font-mono">Registration Cutoff</dt>
+                <dt className="text-ink/60 font-medium text-xs uppercase tracking-wider tabular-nums">Registration Cutoff</dt>
                 <dd className="font-bold text-ink mt-0.5">
                   {event.registration_closes_at ? formatIST(event.registration_closes_at) : 'To be announced'}
                 </dd>
@@ -198,7 +198,7 @@ export default function EventDetailPage() {
 
               {event.event_format !== 'individual' && (
                 <div className="border-b border-ink/10 pb-2">
-                  <dt className="text-ink/60 font-medium text-xs uppercase tracking-wider font-mono">Required Team Size</dt>
+                  <dt className="text-ink/60 font-medium text-xs uppercase tracking-wider tabular-nums">Required Team Size</dt>
                   <dd className="font-bold text-ink flex items-center gap-1.5 mt-0.5">
                     <Users className="w-4 h-4 text-[#3478F6]" aria-hidden="true" />
                     {event.min_team_size} to {event.max_team_size} performers
@@ -207,18 +207,18 @@ export default function EventDetailPage() {
               )}
 
               <div className="border-b border-ink/10 pb-2">
-                <dt className="text-ink/60 font-medium text-xs uppercase tracking-wider font-mono">Capacity Limit</dt>
+                <dt className="text-ink/60 font-medium text-xs uppercase tracking-wider tabular-nums">Capacity Limit</dt>
                 <dd className="font-bold text-ink mt-0.5">{event.capacity ? `${event.capacity} total seats` : 'Open enrollment'}</dd>
               </div>
 
               <div className="border-b border-ink/10 pb-2">
-                <dt className="text-ink/60 font-medium text-xs uppercase tracking-wider font-mono">Waitlist Status</dt>
+                <dt className="text-ink/60 font-medium text-xs uppercase tracking-wider tabular-nums">Waitlist Status</dt>
                 <dd className="font-bold text-ink mt-0.5">{event.waitlist_enabled ? 'Available if seats fill' : 'Direct cut-off'}</dd>
               </div>
 
               <div>
-                <dt className="text-ink/60 font-medium text-xs uppercase tracking-wider font-mono">Organiser Contact</dt>
-                <dd className="font-bold text-ink break-all mt-0.5 font-mono text-xs text-[#3478F6]">
+                <dt className="text-ink/60 font-medium text-xs uppercase tracking-wider tabular-nums">Organiser Contact</dt>
+                <dd className="font-bold text-ink break-all mt-0.5 tabular-nums text-xs text-[#3478F6]">
                   {event.organiser_contact || 'doc@christuniversity.in'}
                 </dd>
               </div>

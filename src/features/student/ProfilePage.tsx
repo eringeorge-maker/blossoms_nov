@@ -25,12 +25,12 @@ export default function ProfilePage() {
 
       <ComicPanel>
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-16 h-16 rounded-full bg-blossoms-red border-2 border-ink flex items-center justify-center text-paper font-display text-3xl">
+          <div className="w-16 h-16 rounded-full bg-primary border-2 border-ink flex items-center justify-center text-paper font-display text-3xl">
             {student.name.charAt(0)}
           </div>
           <div>
             <h2 className="font-display text-2xl">{student.name}</h2>
-            <p className="text-sm text-ink/60 font-mono font-bold">Roll #{student.rollNumber}</p>
+            <p className="text-sm text-ink/60 tabular-nums font-bold">Roll #{student.rollNumber}</p>
           </div>
         </div>
 

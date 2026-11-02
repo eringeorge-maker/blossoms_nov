@@ -100,12 +100,12 @@ export default function MyEventsPage() {
                     </h2>
                     {firstSlot && (
                       <p className="text-sm text-ink/70 mt-1">
-                        📅 {formatSlot(firstSlot.starts_at, firstSlot.ends_at)}
+                        {formatSlot(firstSlot.starts_at, firstSlot.ends_at)}
                       </p>
                     )}
                     {firstSlot?.venue && (
                       <p className="text-sm text-ink/70">
-                        📍 {firstSlot.venue.name}
+                        {firstSlot.venue.name}
                       </p>
                     )}
                     <p className="text-xs text-ink/40 mt-1">

@@ -21,7 +21,7 @@ export default function AdminEventEditor() {
           <Input label="Event Title" placeholder="e.g. Battle of Bands" required />
           <div className="flex flex-col gap-1">
             <label className="text-sm font-semibold text-ink">Category</label>
-            <select className="w-full rounded-xl border-2 border-ink bg-paper px-4 py-2.5 text-base focus:outline-none focus:border-blossoms-red">
+            <select className="w-full rounded-xl border-2 border-ink bg-paper px-4 py-2.5 text-base focus:outline-none focus:border-primary">
               <option>Arts</option>
               <option>Literature</option>
               <option>Stage</option>
@@ -34,7 +34,7 @@ export default function AdminEventEditor() {
             <textarea
               rows={4}
               placeholder="Event description…"
-              className="w-full rounded-xl border-2 border-ink bg-paper px-4 py-2.5 text-base focus:outline-none focus:border-blossoms-red resize-y"
+              className="w-full rounded-xl border-2 border-ink bg-paper px-4 py-2.5 text-base focus:outline-none focus:border-primary resize-y"
             />
           </div>
         </section>
@@ -44,7 +44,7 @@ export default function AdminEventEditor() {
           <h2 className="font-display text-2xl">Format</h2>
           <div className="flex flex-col gap-1">
             <label className="text-sm font-semibold text-ink">Event Format</label>
-            <select className="w-full rounded-xl border-2 border-ink bg-paper px-4 py-2.5 text-base focus:outline-none focus:border-blossoms-red">
+            <select className="w-full rounded-xl border-2 border-ink bg-paper px-4 py-2.5 text-base focus:outline-none focus:border-primary">
               <option value="individual">Individual</option>
               <option value="team">Team</option>
               <option value="either">Either</option>

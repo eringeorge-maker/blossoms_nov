@@ -140,7 +140,7 @@ export default function DesktopEventsArena({
   )
 
   return (
-    <div className="hidden md:block w-full min-h-[calc(100vh-95px)] bg-[#f8ca16] halftone-dots">
+    <div className="hidden md:block w-full min-h-[calc(100vh-95px)] bg-[#793f98] halftone-dots-light">
       <div className="max-w-[1640px] mx-auto px-6 lg:px-10 py-5">
         <h1 className="sr-only">Blossoms 2026 events</h1>
 

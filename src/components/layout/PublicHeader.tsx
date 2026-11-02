@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react'
 import { Menu, X, User, LogOut, ShieldAlert } from 'lucide-react'
 import { FloatingPillNavigation, type NavItem } from '@/components/navigation/FloatingPillNavigation'
 import { getActiveStudent, logoutStudent, isDeveloperAdmin, logoutDeveloperAdmin, type StudentProfile } from '@/lib/auth/authStore'
-import docLogoUrl from '@/assets/doc_logo.png'
-import blossomsLogoUrl from '@/assets/blossoms_2026_logo.png'
+import docLogoUrl from '@/assets/brand/doc-mark-white.png'
+import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.png'
 
 const NAV_LINKS: NavItem[] = [
   { label: 'Home',         href: '/' },
@@ -22,7 +22,6 @@ export function PublicHeader() {
   const [admin, setAdmin] = useState<boolean>(isDeveloperAdmin())
   const location = useLocation()
   const navigate = useNavigate()
-  const isEventsPage = location.pathname.startsWith('/events')
 
   useEffect(() => {
     function syncAuth() {
@@ -52,60 +51,38 @@ export function PublicHeader() {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 w-full px-4 sm:px-6 md:px-8 py-2 flex items-center justify-between select-none transition-all ${
-          isEventsPage
-            ? 'bg-[#080808] border-b border-white/10 lg:bg-transparent lg:border-none'
-            : 'bg-[#F7F3E9] border-b border-black/5'
-        }`}
-        style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" }}
+        className="sticky top-0 z-50 w-full h-16 px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 select-none bg-primary border-b-[2.5px] border-[#0f0f0f]"
       >
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#FFD400] focus:text-[#111111] focus:rounded-lg focus:font-semibold">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#FFD43B] focus:text-[#151515] focus:rounded-lg focus:font-semibold">
         Skip to main content
       </a>
 
       {/* ── Left Section: Brand Identity ─────────────────────────────── */}
-      <div className="flex items-center shrink-0">
-        <div
-          className={`flex items-center py-1 ${
-            isEventsPage
-              ? 'px-1 bg-transparent'
-              : 'bg-[#1D1D1F] px-3 rounded-full shadow-xs'
-          }`}
-        >
-          <Link to="/" className="flex items-center focus:outline-none" aria-label="Department of Commerce">
-            <img
-              src={docLogoUrl}
-              alt="Department of Commerce"
-              className="w-[78px] h-[24px] md:w-[90px] md:h-[28px] object-contain"
-              loading="eager"
-            />
-          </Link>
-
-          <div
-            className="w-[1px] h-[18px] md:h-[20px] bg-white/20 mx-2"
-            role="separator"
-            aria-orientation="vertical"
+      <div className="flex items-center gap-6 shrink-0">
+        <Link to="/" className="flex items-center" aria-label="Blossoms 2026–27 home">
+          <img
+            src={blossomsLogoUrl}
+            alt="Blossoms: Be the best, 2026–27"
+            className="w-[200px] h-auto"
+            loading="eager"
           />
-
-          <Link to="/" className="flex items-center focus:outline-none" aria-label="Blossoms 2026 Home">
-            <img
-              src={blossomsLogoUrl}
-              alt="Blossoms 2026"
-              className="w-[74px] h-[28px] md:w-[86px] md:h-[32px] object-contain"
-              loading="eager"
-            />
-          </Link>
-        </div>
+        </Link>
+        <img
+          src={docLogoUrl}
+          alt="Department of Commerce"
+          className="hidden xl:block h-[30px] w-auto object-contain"
+          loading="eager"
+        />
       </div>
 
       {/* ── Center Section: Framer-Style Floating Pill Navigation ─────── */}
       <div className="hidden lg:flex items-center justify-center flex-1 mx-4">
         <FloatingPillNavigation
           items={NAV_LINKS}
-          backgroundColor="#E8E8ED"
-          textColor="#000000"
-          activeBackgroundColor="#1D1D1F"
-          activeTextColor="#FFFFFF"
+          backgroundColor="#FFF8E8"
+          textColor="#151515"
+          activeBackgroundColor="#FFD43B"
+          activeTextColor="#151515"
           padding={4}
           gap={2}
           linkPadding="6px 16px"
@@ -118,7 +95,7 @@ export function PublicHeader() {
           <div className="flex items-center gap-2">
             <Link
               to="/app"
-              className="h-[44px] px-4 rounded-full bg-[#FFD400] hover:bg-[#fed61a] active:scale-95 text-[#111111] font-semibold text-[14px] flex items-center gap-2 cursor-pointer transition-all duration-150 focus:outline-none shadow-xs"
+              className="h-[44px] px-4 rounded-[18px] border-2 border-[#0f0f0f] shadow-comic-sm bg-[#FFD43B] hover:bg-[#FFE066] active:scale-95 text-[#151515] font-semibold text-[14px] flex items-center gap-2 cursor-pointer transition-all duration-150 focus-visible:outline-[#FFD43B] shadow-xs"
             >
               <User className="w-[17px] h-[17px] stroke-[2.4]" />
               <span>Roll #{student.rollNumber}</span>
@@ -127,7 +104,7 @@ export function PublicHeader() {
               type="button"
               onClick={handleLogout}
               title="Log out"
-              className="h-[44px] w-[44px] rounded-full bg-[#E8E8ED] hover:bg-[#d8d8dd] text-[#1D1D1F] flex items-center justify-center transition-colors cursor-pointer focus:outline-none"
+              className="h-[44px] w-[44px] rounded-full border-2 border-[#0f0f0f] bg-[#FFF8E8] hover:bg-[#FFD43B] text-[#151515] flex items-center justify-center transition-colors cursor-pointer focus-visible:outline-[#FFD43B]"
               aria-label="Log out"
             >
               <LogOut className="w-[17px] h-[17px]" />
@@ -137,16 +114,16 @@ export function PublicHeader() {
           <div className="flex items-center gap-2">
             <Link
               to="/admin"
-              className="h-[44px] px-4 rounded-full bg-[#1D1D1F] hover:bg-black active:scale-95 text-white font-semibold text-[14px] flex items-center gap-2 cursor-pointer transition-all duration-150 focus:outline-none shadow-xs"
+              className="h-[44px] px-4 rounded-full bg-[#151515] hover:bg-black active:scale-95 text-white font-semibold text-[14px] flex items-center gap-2 cursor-pointer transition-all duration-150 focus-visible:outline-[#FFD43B] shadow-xs"
             >
-              <ShieldAlert className="w-[17px] h-[17px] text-[#FFD400] stroke-[2.4]" />
+              <ShieldAlert className="w-[17px] h-[17px] text-[#FFD43B] stroke-[2.4]" />
               <span>Dev Console</span>
             </Link>
             <button
               type="button"
               onClick={handleLogout}
               title="Log out"
-              className="h-[44px] w-[44px] rounded-full bg-[#E8E8ED] hover:bg-[#d8d8dd] text-[#1D1D1F] flex items-center justify-center transition-colors cursor-pointer focus:outline-none"
+              className="h-[44px] w-[44px] rounded-full border-2 border-[#0f0f0f] bg-[#FFF8E8] hover:bg-[#FFD43B] text-[#151515] flex items-center justify-center transition-colors cursor-pointer focus-visible:outline-[#FFD43B]"
               aria-label="Log out"
             >
               <LogOut className="w-[17px] h-[17px]" />
@@ -156,7 +133,7 @@ export function PublicHeader() {
           <button
             type="button"
             onClick={() => navigate('/login')}
-            className="h-[36px] px-4 rounded-full bg-[#FFD400] hover:bg-[#fed61a] active:scale-95 text-[#111111] font-semibold text-[13.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-all duration-150 focus:outline-none shadow-xs"
+            className="h-[36px] px-4 rounded-[18px] border-2 border-[#0f0f0f] shadow-comic-sm bg-[#FFD43B] hover:bg-[#FFE066] active:scale-95 text-[#151515] font-semibold text-[13.5px] flex items-center justify-center gap-1.5 cursor-pointer transition-all duration-150 focus-visible:outline-[#FFD43B] shadow-xs"
             aria-label="User Login"
           >
             <span>Login</span>
@@ -171,14 +148,15 @@ export function PublicHeader() {
           <button
             type="button"
             onClick={() => navigate('/login')}
-            className="h-[36px] px-3 rounded-full bg-[#FFD400] text-[#111111] font-semibold text-[13px] flex items-center gap-1.5 cursor-pointer"
+            className="h-[36px] px-3 rounded-[18px] border-2 border-[#0f0f0f] bg-[#FFD43B] text-[#151515] font-semibold text-[13px] flex items-center gap-1.5 cursor-pointer"
+            aria-label="User Login"
           >
-            <span>Login</span>
-            <User className="w-3.5 h-3.5" />
+            <span className="hidden min-[400px]:inline">Login</span>
+            <User className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
         )}
         <button
-          className="flex items-center justify-center w-10 h-10 rounded-full bg-[#E8E8ED] text-[#1D1D1F] hover:bg-[#d8d8dd] transition-colors focus:outline-none"
+          className="flex items-center justify-center w-10 h-10 shrink-0 rounded-full border-2 border-[#0f0f0f] bg-[#FFF8E8] text-[#151515] hover:bg-[#FFD43B] transition-colors focus-visible:outline-[#FFD43B]"
           onClick={() => setMenuOpen((o) => !o)}
           aria-expanded={menuOpen}
           aria-controls="mobile-nav-drawer"
@@ -193,8 +171,7 @@ export function PublicHeader() {
       {menuOpen && (
         <div
           id="mobile-nav-drawer"
-          style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif" }}
-          className="lg:hidden fixed inset-x-0 top-[56px] bottom-0 z-[100] bg-[#F7F3E9] border-t border-black/5 flex flex-col p-6 animate-fadeIn overflow-y-auto"
+          className="lg:hidden fixed inset-x-0 top-16 bottom-0 z-[100] bg-[#FFF8E8] flex flex-col p-6 animate-fadeIn overflow-y-auto"
         >
           <nav aria-label="Mobile Navigation" className="flex flex-col gap-2">
             {NAV_LINKS.map((link) => {
@@ -204,10 +181,10 @@ export function PublicHeader() {
                   key={link.label}
                   to={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className={`flex items-center justify-between px-5 py-3 rounded-full text-[17px] font-[500] transition-colors ${
+                  className={`flex items-center justify-between px-5 py-3 rounded-[18px] border-2 border-[#0f0f0f] text-[17px] font-[500] transition-colors ${
                     active
-                      ? 'bg-[#1D1D1F] text-white font-semibold'
-                      : 'bg-[#E8E8ED] text-[#000000] hover:bg-[#dfdfdd]'
+                      ? 'bg-primary text-white font-semibold'
+                      : 'bg-white text-[#151515] hover:bg-[#FFD43B]'
                   }`}
                 >
                   <span>{link.label}</span>
@@ -223,7 +200,7 @@ export function PublicHeader() {
                 <Link
                   to="/app"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full h-[46px] rounded-full bg-[#FFD400] text-[#111111] font-semibold flex items-center justify-center gap-2"
+                  className="w-full h-[46px] rounded-full bg-[#FFD43B] text-[#151515] font-semibold flex items-center justify-center gap-2"
                 >
                   <User className="w-4 h-4" />
                   <span>Student Portal (Roll #{student.rollNumber})</span>
@@ -231,7 +208,7 @@ export function PublicHeader() {
                 <button
                   type="button"
                   onClick={() => { handleLogout(); setMenuOpen(false); }}
-                  className="w-full h-[42px] rounded-full bg-[#E8E8ED] text-[#1D1D1F] font-medium flex items-center justify-center gap-2 hover:bg-red-50 hover:text-red-600"
+                  className="w-full h-[42px] rounded-full bg-[#F5EBD4] text-[#151515] font-medium flex items-center justify-center gap-2 hover:bg-red-50 hover:text-red-600"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Log out</span>
@@ -242,15 +219,15 @@ export function PublicHeader() {
                 <Link
                   to="/admin"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full h-[46px] rounded-full bg-[#1D1D1F] text-white font-semibold flex items-center justify-center gap-2"
+                  className="w-full h-[46px] rounded-full bg-[#151515] text-white font-semibold flex items-center justify-center gap-2"
                 >
-                  <ShieldAlert className="w-4 h-4 text-[#FFD400]" />
+                  <ShieldAlert className="w-4 h-4 text-[#FFD43B]" />
                   <span>Developer Admin Console</span>
                 </Link>
                 <button
                   type="button"
                   onClick={() => { handleLogout(); setMenuOpen(false); }}
-                  className="w-full h-[42px] rounded-full bg-[#E8E8ED] text-[#1D1D1F] font-medium flex items-center justify-center gap-2 hover:bg-red-50 hover:text-red-600"
+                  className="w-full h-[42px] rounded-full bg-[#F5EBD4] text-[#151515] font-medium flex items-center justify-center gap-2 hover:bg-red-50 hover:text-red-600"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Log out</span>
@@ -260,7 +237,7 @@ export function PublicHeader() {
               <button
                 type="button"
                 onClick={() => { navigate('/login'); setMenuOpen(false); }}
-                className="w-full h-[46px] rounded-full bg-[#FFD400] text-[#111111] font-semibold flex items-center justify-center gap-2"
+                className="w-full h-[46px] rounded-full bg-[#FFD43B] text-[#151515] font-semibold flex items-center justify-center gap-2"
               >
                 <User className="w-4 h-4" />
                 <span>Login</span>

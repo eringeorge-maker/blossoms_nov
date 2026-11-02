@@ -1,10 +1,10 @@
-import {
-  ArtsIllustration,
-  CampusHeritageDome,
-  LiteratureIllustration,
-  StageIllustration,
-  TheatreIllustration,
-} from '@/components/comic/CategoryIllustrations';
+import { CampusHeritageDome } from '@/components/comic/CategoryIllustrations';
+import { CategoryArt } from '@/components/comic/CategoryArt';
+import { AnnouncementsMegaphoneIllustration, ScheduleCalendarIllustration } from '@/components/comic/ComicArtwork';
+import { CalendarDays, MapPin, Trophy, Users } from 'lucide-react';
+import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.png';
+import purpleBurstUrl from '@/assets/brand/bg-purple-burst.png';
+import { ComicOpening, shouldPlayOpening } from '@/components/comic/ComicOpening';
 import DesktopHome from '@/features/public/DesktopHome';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { useState } from 'react';
@@ -87,7 +87,7 @@ export const CATEGORY_DATA: Record<CategoryKey, CategoryConfig> = {
         venue: 'Classroom',
         teamSize: 'Solo',
         prize: '₹5,000',
-        badgeColor: '#facc15',
+        badgeColor: '#FFD43B',
       },
       {
         id: 'pot-art',
@@ -254,7 +254,7 @@ export const CATEGORY_DATA: Record<CategoryKey, CategoryConfig> = {
         venue: 'Seminar Hall',
         teamSize: 'Duo',
         prize: '₹7,000',
-        badgeColor: '#facc15',
+        badgeColor: '#FFD43B',
       },
       {
         id: 'jam',
@@ -344,7 +344,7 @@ export const CATEGORY_DATA: Record<CategoryKey, CategoryConfig> = {
         venue: 'Room 911',
         teamSize: 'Solo',
         prize: '₹8,000',
-        badgeColor: '#facc15',
+        badgeColor: '#FFD43B',
       },
       {
         id: 'western-solo',
@@ -412,7 +412,7 @@ export const CATEGORY_DATA: Record<CategoryKey, CategoryConfig> = {
         venue: 'KE (doc)',
         teamSize: '8–15 Members',
         prize: '₹20,000',
-        badgeColor: '#facc15',
+        badgeColor: '#FFD43B',
       },
       {
         id: 'street-play',
@@ -491,7 +491,7 @@ export const CATEGORY_DATA: Record<CategoryKey, CategoryConfig> = {
         venue: 'KE (doc) Auditorium',
         teamSize: '6–12 Members',
         prize: '₹15,000',
-        badgeColor: '#facc15',
+        badgeColor: '#FFD43B',
       },
       {
         id: 'valedictory',
@@ -675,6 +675,8 @@ function ComicArrowButton({ onClick }: { onClick?: () => void }) {
 export default function HomePage() {
   const navigate = useNavigate();
 
+  const [playedOpening] = useState(shouldPlayOpening);
+  const [openingDone, setOpeningDone] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey | null>(null);
   const [selectedModal, setSelectedModal] = useState<DetailModal | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('ALL');
@@ -699,7 +701,6 @@ export default function HomePage() {
       }
       if (next.includes(id)) {
         toast.success(`Registered for ${title}!`, {
-          icon: '🎟️',
           style: {
             background: '#fdfaf0',
             border: '2.5px solid #0f0f0f',
@@ -710,7 +711,6 @@ export default function HomePage() {
         });
       } else {
         toast(`Cancelled registration for ${title}`, {
-          icon: '↩️',
           style: {
             background: '#fdfaf0',
             border: '2.5px solid #0f0f0f',
@@ -739,38 +739,33 @@ export default function HomePage() {
     : [];
 
   return (
-    <div className="min-h-screen w-full bg-[#f8ca16] text-[#0f0f0f] relative selection:bg-black selection:text-white">
+    <div className="min-h-screen w-full bg-[#793f98] text-[#0f0f0f] relative selection:bg-black selection:text-white">
+      {playedOpening && !openingDone && <ComicOpening onDone={() => setOpeningDone(true)} />}
+
       {/* =========================================================================
           MOBILE VIEWPORT (Figma Interface, Screen Width < 768px, Zero Shadows)
          ========================================================================= */}
-      <div className="flex md:hidden flex-col min-h-screen w-full bg-[#f8ca16] halftone-dots items-center">
-        <div className="w-full max-w-[430px] min-h-screen flex flex-col relative bg-[#f8ca16] overflow-x-hidden">
+      <div className="flex md:hidden flex-col min-h-screen w-full bg-[#793f98] halftone-dots-light items-center">
+        <div className="w-full max-w-[430px] min-h-screen flex flex-col relative bg-[#793f98] halftone-dots-light overflow-x-hidden">
           {/* Unified Top Mobile Bar with Top-Right Navigation Drawer */}
           <PublicHeader />
 
           {/* Mobile Main Panels Stack */}
           <div className="flex-1 w-full px-3 py-2.5 flex flex-col gap-2.5">
             {/* ROW 0: Blossoms Hero */}
-            <div className="relative w-full h-[148px] bg-[#fdfaf0] border-[3.2px] border-[#0f0f0f] rounded-[14px] flex items-center justify-between overflow-hidden p-1.5">
-              <div className="relative w-[56%] h-full flex items-center justify-center">
-                <div className="relative z-10 text-center">
-                  <h1 className="font-comic-display text-[46px] text-[#df1b23] comic-title-stroke tracking-wider leading-[0.85]">
-                    BLOSSOMS
-                  </h1>
-                  <div className="bg-[#f8ca16] border-[2.2px] border-[#0f0f0f] px-2 py-0.5 inline-block -rotate-2 mt-1">
-                    <span className="font-comic-display text-[22px] text-[#0f0f0f]">2026</span>
-                  </div>
-                  <div className="mt-1 bg-white border-[2px] border-[#0f0f0f] px-2 py-0.5 rotate-1">
-                    <p className="font-comic-sub font-black text-[9.5px] text-[#0f0f0f] uppercase tracking-wide">
-                      SAME STAGE. DIFFERENT HEROES!
-                    </p>
-                  </div>
-                </div>
+            <div
+              style={{ backgroundImage: `url(${purpleBurstUrl})` }}
+              className="relative w-full h-[148px] bg-cover bg-center border-[3.2px] border-[#0f0f0f] rounded-[14px] flex items-center justify-between gap-1.5 overflow-hidden p-1.5"
+            >
+              <div className="relative flex-1 min-w-0 z-10 flex flex-col items-center justify-center text-center">
+                <h1 className="m-0">
+                  <img src={blossomsLogoUrl} alt="Blossoms: Be the best, 2026–27" className="w-[200px] max-w-none h-auto" />
+                </h1>
+                <p className="mt-2 bg-white border-[2px] border-[#0f0f0f] px-2 py-0.5 rotate-1 font-comic-sub text-[13px] text-[#0f0f0f] leading-tight">
+                  YOUR CAMPUS. YOUR STORY.
+                </p>
               </div>
-              <div className="relative w-[42%] h-[92%] bg-[#0088e8] border-[3px] border-[#0f0f0f] rounded-[8px] overflow-hidden p-1 flex items-center justify-center">
-                <div className="absolute top-1 left-1 bg-[#fdfaf0] border-[1.6px] border-[#0f0f0f] px-1.5 py-0.5 font-comic-sub font-bold text-[8.5px] uppercase -rotate-2 z-20">
-                  CAMPUS HERITAGE
-                </div>
+              <div className="relative w-[33%] h-[92%] shrink-0 bg-[#0088e8] border-[3px] border-[#0f0f0f] rounded-[8px] overflow-hidden p-1 flex items-center justify-center">
                 <CampusHeritageDome className="w-full h-full max-h-[110px]" />
               </div>
             </div>
@@ -780,7 +775,7 @@ export default function HomePage() {
               <div
                 onClick={() => navigate('/events?category=arts')}
                 style={{ clipPath: 'polygon(0% 0%, 93% 3%, 100% 100%, 0% 96%)' }}
-                className="relative w-[53.5%] h-full bg-[#ed1e79] halftone-dots-dense cursor-pointer overflow-hidden select-none group"
+                className="relative w-[53.5%] h-full bg-[#ed1e79] cursor-pointer overflow-hidden select-none group"
               >
                 <div className="relative z-20 pt-2.5 pl-3">
                   <h2 className="font-comic-display comic-title-white text-[42px] leading-[0.88] -rotate-[3deg] tracking-wide">
@@ -792,7 +787,7 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-                <ArtsIllustration className="absolute bottom-[-2px] left-0 w-full h-[105px] z-10 pointer-events-none" />
+                <CategoryArt category="arts" wide />
                 <div className="absolute right-3.5 bottom-3.5 z-20">
                   <ComicArrowButton onClick={() => navigate('/events?category=arts')} />
                 </div>
@@ -801,7 +796,7 @@ export default function HomePage() {
               <div
                 onClick={() => navigate('/events?category=literature')}
                 style={{ clipPath: 'polygon(0% 3%, 100% 7%, 100% 100%, 7% 96%)' }}
-                className="relative w-[50.5%] -ml-[4%] h-full bg-[#0088e8] halftone-dots-dense cursor-pointer overflow-hidden select-none group"
+                className="relative w-[50.5%] -ml-[4%] h-full bg-[#0088e8] cursor-pointer overflow-hidden select-none group"
               >
                 <div className="relative z-20 pt-2.5 pl-4 pr-1">
                   <h2 className="font-comic-display comic-title-white text-[34px] leading-[0.9] -rotate-[3deg] tracking-wide">
@@ -813,7 +808,7 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-                <LiteratureIllustration className="absolute bottom-[-2px] left-1 w-full h-[100px] z-10 pointer-events-none" />
+                <CategoryArt category="literature" wide />
                 <div className="absolute right-3.5 bottom-3.5 z-20">
                   <ComicArrowButton onClick={() => navigate('/events?category=literature')} />
                 </div>
@@ -825,7 +820,7 @@ export default function HomePage() {
               <div
                 onClick={() => navigate('/events?category=stage')}
                 style={{ clipPath: 'polygon(0% 0%, 94% 4%, 100% 100%, 0% 96%)' }}
-                className="relative w-[52.5%] h-full bg-[#fdb813] halftone-dots-dense cursor-pointer overflow-hidden select-none group"
+                className="relative w-[52.5%] h-full bg-[#fdb813] cursor-pointer overflow-hidden select-none group"
               >
                 <div className="relative z-20 pt-3 pl-3">
                   <h2 className="font-comic-display comic-title-white text-[42px] leading-[0.88] -rotate-[4deg] tracking-wide">
@@ -837,7 +832,7 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-                <StageIllustration className="absolute bottom-[-2px] left-0 w-full h-[120px] z-10 pointer-events-none" />
+                <CategoryArt category="stage" wide />
                 <div className="absolute right-3.5 bottom-3.5 z-20">
                   <ComicArrowButton onClick={() => navigate('/events?category=stage')} />
                 </div>
@@ -846,7 +841,7 @@ export default function HomePage() {
               <div
                 onClick={() => navigate('/events?category=theatre')}
                 style={{ clipPath: 'polygon(0% 4%, 100% 9%, 100% 100%, 6% 96%)' }}
-                className="relative w-[51.5%] -ml-[4%] h-full bg-[#861ec2] halftone-dots-dense cursor-pointer overflow-hidden select-none group"
+                className="relative w-[51.5%] -ml-[4%] h-full bg-[#861ec2] cursor-pointer overflow-hidden select-none group"
               >
                 <div className="relative z-20 pt-3.5 pl-4 pr-2">
                   <h2 className="font-comic-display comic-title-white text-[36px] leading-[0.88] -rotate-[3deg] tracking-wide">
@@ -858,7 +853,7 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-                <TheatreIllustration className="absolute bottom-[-2px] left-0 w-full h-[116px] z-10 pointer-events-none" />
+                <CategoryArt category="theatre" wide />
                 <div className="absolute right-3.5 bottom-3.5 z-20">
                   <ComicArrowButton onClick={() => navigate('/events?category=theatre')} />
                 </div>
@@ -871,8 +866,8 @@ export default function HomePage() {
               className="relative w-full h-[62px] bg-[#df1b23] border-[3.2px] border-[#0f0f0f] px-3 flex items-center justify-between cursor-pointer active:scale-95"
             >
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded bg-[#fdfaf0] border-[2px] border-[#0f0f0f] flex items-center justify-center font-bold text-[14px]">
-                  📅
+                <div className="w-9 h-9 p-0.5 rounded bg-[#fdfaf0] border-[2px] border-[#0f0f0f] flex items-center justify-center shrink-0">
+                  <ScheduleCalendarIllustration className="w-full h-full" />
                 </div>
                 <div>
                   <h3 className="font-comic-display text-white text-[24px] leading-none">EVENT SCHEDULE</h3>
@@ -890,8 +885,8 @@ export default function HomePage() {
               className="relative w-full h-[60px] bg-[#00966b] border-[3.2px] border-[#0f0f0f] px-3 flex items-center justify-between cursor-pointer active:scale-95"
             >
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded bg-[#fdfaf0] border-[2px] border-[#0f0f0f] flex items-center justify-center font-bold text-[14px]">
-                  📢
+                <div className="w-9 h-9 p-0.5 rounded bg-[#fdfaf0] border-[2px] border-[#0f0f0f] flex items-center justify-center shrink-0">
+                  <AnnouncementsMegaphoneIllustration className="w-full h-full" />
                 </div>
                 <div>
                   <h3 className="font-comic-display text-white text-[23px] leading-none">ANNOUNCEMENTS</h3>
@@ -958,23 +953,23 @@ export default function HomePage() {
                         >
                           {ev.subCategory}
                         </span>
-                        <span className="font-comic-sub font-bold text-[12px] text-[#df1b23]">
-                          🏆 {ev.prize}
+                        <span className="inline-flex items-center gap-1 font-comic-sub font-bold text-[12px] text-[#793f98]">
+                          <Trophy className="w-3.5 h-3.5" aria-hidden="true" /> {ev.prize}
                         </span>
                       </div>
                       <h4 className="font-comic-display text-[22px] text-[#0f0f0f] mt-1">{ev.title}</h4>
                       <p className="text-[12px] text-neutral-700 leading-snug">{ev.tagline}</p>
                       <div className="mt-2 flex items-center justify-between text-[11px] font-semibold text-neutral-600">
-                        <span>📅 {ev.time}</span>
-                        <span>📍 {ev.venue}</span>
+                        <span className="inline-flex items-center gap-1"><CalendarDays className="w-3.5 h-3.5" aria-hidden="true" /> {ev.time}</span>
+                        <span className="inline-flex items-center gap-1"><MapPin className="w-3.5 h-3.5" aria-hidden="true" /> {ev.venue}</span>
                       </div>
                       <div className="mt-2 pt-2 border-t border-neutral-200 flex items-center justify-between">
-                        <span className="text-[11px] font-bold">👥 {ev.teamSize}</span>
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold"><Users className="w-3.5 h-3.5" aria-hidden="true" /> {ev.teamSize}</span>
                         <button
                           type="button"
                           onClick={() => toggleRegister(ev.id, ev.title)}
                           className={`px-3 py-1 font-comic-sub text-[12px] font-black border-[2px] border-[#0f0f0f] cursor-pointer active:scale-95 ${
-                            isRegistered ? 'bg-[#22c55e] text-white' : 'bg-[#f8ca16] text-[#0f0f0f]'
+                            isRegistered ? 'bg-[#26A69A] text-white' : 'bg-[#793f98] text-white'
                           }`}
                         >
                           {isRegistered ? 'REGISTERED ✓' : 'REGISTER'}
@@ -993,6 +988,7 @@ export default function HomePage() {
           DESKTOP VIEWPORT: the mobile comic page re-flowed for wide screens
          ========================================================================= */}
       <DesktopHome
+        animateIn={playedOpening && openingDone}
         onOpenSchedule={() => setSelectedModal(PANEL_DETAILS.schedule)}
         onOpenAnnouncements={() => setSelectedModal(PANEL_DETAILS.announcements)}
       />
@@ -1047,7 +1043,7 @@ export default function HomePage() {
                 >
                   <div>
                     <p className="font-bold text-[13.5px] text-[#0f0f0f]">{item.name}</p>
-                    <p className="text-[11.5px] text-neutral-600 font-semibold">📍 {item.venue}</p>
+                    <p className="text-[11.5px] text-neutral-600 font-semibold inline-flex items-center gap-1"><MapPin className="w-3 h-3" aria-hidden="true" /> {item.venue}</p>
                   </div>
                   <span className="bg-[#f8ca16] border-[1.8px] border-[#0f0f0f] px-2 py-0.5 font-comic-sub font-bold text-[12px] shrink-0">
                     {item.time}

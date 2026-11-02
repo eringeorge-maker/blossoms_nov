@@ -35,7 +35,7 @@ export default function AnnouncementsPage() {
           {pinned.length > 0 && (
             <section aria-labelledby="pinned-heading" className="mb-8">
               <h2 id="pinned-heading" className="font-display text-2xl mb-4 flex items-center gap-2">
-                📌 Pinned Notices
+                ★ Pinned Notices
               </h2>
               <ul className="space-y-4">
                 {pinned.map((a) => {
