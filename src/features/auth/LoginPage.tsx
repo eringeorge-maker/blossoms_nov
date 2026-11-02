@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowRight, UserCheck, ShieldAlert, Sparkles, AlertCircle } from 'lucide-react'
 import { DisplayText, ComicPanel } from '@/components/comic/ComicPrimitives'
 import { Button } from '@/components/ui/Button'
-import { loginStudent, loginDeveloperAdmin, isValidRollNumber, SEEDED_STUDENT_ROSTER } from '@/lib/auth/authStore'
+import { loginStudent, loginDeveloperAdmin, isValidRollNumber, SAMPLE_STUDENTS } from '@/lib/auth/authStore'
 import { cn } from '@/lib/utils'
 
 type LoginRole = 'student' | 'admin'
@@ -21,7 +21,7 @@ export default function LoginPage() {
 
   function handleRollChange(val: string) {
     // Only accept numeric characters up to 6 digits
-    const cleaned = val.replace(/\D/g, '').slice(0, 6)
+    const cleaned = val.replace(/\D/g, '').slice(0, 7)
     setRollNumber(cleaned)
     if (error) setError(null)
   }
@@ -31,12 +31,12 @@ export default function LoginPage() {
     setError(null)
 
     if (!rollNumber) {
-      setError('Please enter your 6-digit roll number.')
+      setError('Please enter your 7-digit register number.')
       return
     }
 
     if (!isValidRollNumber(rollNumber)) {
-      setError('Roll number must be exactly 6 digits (e.g. 241201).')
+      setError('Register number must be 7 digits (e.g. 2610101).')
       return
     }
 
@@ -119,7 +119,7 @@ export default function LoginPage() {
               <form onSubmit={handleStudentLogin} className="space-y-5" noValidate>
                 <div>
                   <label htmlFor="rollNumber" className="block font-display text-sm uppercase tracking-wider text-ink mb-2 font-bold">
-                    6-Digit Roll Number
+                    7-Digit Register / Roll Number
                   </label>
                   <div className="relative">
                     <input
@@ -127,9 +127,9 @@ export default function LoginPage() {
                       type="text"
                       inputMode="numeric"
                       pattern="[0-9]*"
-                      maxLength={6}
+                      maxLength={7}
                       autoFocus
-                      placeholder="e.g. 241201"
+                      placeholder="e.g. 2610101"
                       value={rollNumber}
                       onChange={(e) => handleRollChange(e.target.value)}
                       className={cn(
@@ -138,7 +138,7 @@ export default function LoginPage() {
                       )}
                     />
                     <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-ink/40">
-                      {rollNumber.length}/6
+                      {rollNumber.length}/7
                     </div>
                   </div>
 
@@ -156,14 +156,14 @@ export default function LoginPage() {
                     ★ Click any test roll number to autofill:
                   </p>
                   <div className="flex flex-wrap gap-1.5">
-                    {Object.entries(SEEDED_STUDENT_ROSTER).slice(0, 4).map(([roll, info]) => (
+                    {SAMPLE_STUDENTS.map((item) => (
                       <button
-                        key={roll}
+                        key={item.roll}
                         type="button"
-                        onClick={() => { setRollNumber(roll); setError(null) }}
+                        onClick={() => { setRollNumber(item.roll); setError(null) }}
                         className="text-[11px] font-mono bg-white px-2 py-1 rounded border border-ink/30 hover:border-ink hover:bg-[#FFD43B] transition-colors"
                       >
-                        <strong>{roll}</strong> ({info.name.split(' ')[0]})
+                        <strong>{item.roll}</strong> ({item.name.split(' ')[0]} · {item.className})
                       </button>
                     ))}
                   </div>

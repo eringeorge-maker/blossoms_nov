@@ -1,7 +1,8 @@
-// ── Simple Roll-Number Authentication System for Blossoms ──────
+// ── Official Department of Commerce (DOC) Authentication System ──────
+import { findStudentByRegisterNo, SAMPLE_STUDENTS, STUDENT_ROSTER } from '@/lib/data/studentsRoster'
 
 export interface StudentProfile {
-  rollNumber: string // exactly 6 digits
+  rollNumber: string // 7-digit university register number (or roll number)
   name: string
   className?: string
   department?: string
@@ -11,19 +12,13 @@ export interface StudentProfile {
 const STORAGE_KEY_STUDENT = 'blossoms_student_session'
 const STORAGE_KEY_ADMIN = 'blossoms_admin_session'
 
-// Initial seed roster (will be updated when the user provides the official document)
-export const SEEDED_STUDENT_ROSTER: Record<string, { name: string; className: string; department: string }> = {
-  '241201': { name: 'Arjun Nair', className: '3 BBA A', department: 'Management' },
-  '241202': { name: 'Ananya Sharma', className: '2 BCA B', department: 'Computer Science' },
-  '241203': { name: 'Rohan Verma', className: '3 BA ENG', department: 'English' },
-  '241204': { name: 'Priya Iyer', className: '1 BCOM C', department: 'Commerce' },
-  '241205': { name: 'Kavya Menon', className: '2 BSC PSY', department: 'Psychology' },
-  '241206': { name: 'Siddharth Rao', className: '3 BTECH CS', department: 'Computer Science' },
-}
+// Re-export roster for compatibility with existing imports
+export const SEEDED_STUDENT_ROSTER = STUDENT_ROSTER
+export { SAMPLE_STUDENTS }
 
-/** Check if current roll number is valid 6 digits */
+/** Check if input is a valid 6-8 digit register / roll number (official CHRIST register numbers are 7 digits) */
 export function isValidRollNumber(roll: string): boolean {
-  return /^\d{6}$/.test(roll.trim())
+  return /^\d{6,8}$/.test(roll.trim())
 }
 
 /** Get active logged in student from localStorage */
@@ -37,21 +32,32 @@ export function getActiveStudent(): StudentProfile | null {
   }
 }
 
-/** Log in student by 6-digit roll number */
+/** Log in student by official register number */
 export function loginStudent(rollNumber: string): { success: boolean; student?: StudentProfile; error?: string } {
   const cleanRoll = rollNumber.trim()
-  if (!isValidRollNumber(cleanRoll)) {
-    return { success: false, error: 'Roll number must be exactly 6 digits (e.g. 241201).' }
+  if (!cleanRoll) {
+    return { success: false, error: 'Please enter your register number.' }
   }
 
-  // Lookup in seeded roster or create friendly profile
-  const match = SEEDED_STUDENT_ROSTER[cleanRoll]
+  if (!isValidRollNumber(cleanRoll)) {
+    return { success: false, error: 'Register number must be 7 digits (e.g. 2610101).' }
+  }
+
+  // Lookup in official student roster from Student List 2026-27.xlsx
+  const match = findStudentByRegisterNo(cleanRoll)
+  if (!match) {
+    return {
+      success: false,
+      error: `Register number "${cleanRoll}" not found in the official Department of Commerce student list. Please check your 7-digit register number.`,
+    }
+  }
+
   const profile: StudentProfile = {
     rollNumber: cleanRoll,
-    name: match?.name || `Student ${cleanRoll}`,
-    className: match?.className || 'CHRIST Student',
-    department: match?.department || 'Central Campus',
-    campus: 'Central Campus',
+    name: match.name,
+    className: match.className,
+    department: match.department,
+    campus: match.campus,
   }
 
   try {

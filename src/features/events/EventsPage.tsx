@@ -130,8 +130,8 @@ export default function EventsPage() {
   async function handleQuickRegister(event: Event) {
     let currentStudent = student
     if (!currentStudent) {
-      if (!rollInput || !/^\d{6}$/.test(rollInput.trim())) {
-        toast.error('Please enter your 6-digit roll number to register.')
+      if (!rollInput || !/^\d{6,8}$/.test(rollInput.trim())) {
+        toast.error('Please enter your 7-digit register number to register.')
         return
       }
       const res = loginStudent(rollInput)
@@ -259,10 +259,10 @@ export default function EventsPage() {
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  maxLength={6}
-                  placeholder="e.g. 241201"
+                  maxLength={7}
+                  placeholder="e.g. 2610101"
                   value={rollInput}
-                  onChange={(e) => setRollInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  onChange={(e) => setRollInput(e.target.value.replace(/\D/g, '').slice(0, 7))}
                   className="flex-1 bg-white border-2 border-[#151515] rounded-lg px-3 py-1.5 font-mono text-sm font-bold text-center shadow-[1.5px_1.5px_0px_#151515] focus:outline-none focus:border-[#DC2626]"
                 />
                 <Button

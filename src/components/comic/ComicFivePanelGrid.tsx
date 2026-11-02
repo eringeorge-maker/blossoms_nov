@@ -229,8 +229,8 @@ export function ComicFivePanelGrid({
   async function handleQuickRegister(ev: Event) {
     let currentStudent = student
     if (!currentStudent) {
-      if (!rollInput || !/^\d{6}$/.test(rollInput.trim())) {
-        toast.error('Enter your 6-digit roll number to register.')
+      if (!rollInput || !/^\d{6,8}$/.test(rollInput.trim())) {
+        toast.error('Enter your 7-digit register number to register.')
         return
       }
       const res = loginStudent(rollInput.trim())
@@ -514,10 +514,10 @@ export function ComicFivePanelGrid({
                       </span>
                       <input
                         type="text"
-                        maxLength={6}
-                        placeholder="6-digit roll #"
+                        maxLength={7}
+                        placeholder="7-digit reg #"
                         value={rollInput}
-                        onChange={(e) => setRollInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                        onChange={(e) => setRollInput(e.target.value.replace(/\D/g, '').slice(0, 7))}
                         className="w-36 bg-[#1A1B22] border border-[#F5B82E]/50 rounded-lg px-2.5 py-1.5 text-sm font-mono text-[#F5B82E] placeholder:text-white/30 focus:outline-none focus:border-[#F5B82E]"
                       />
                     </div>
