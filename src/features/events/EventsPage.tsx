@@ -130,8 +130,8 @@ export default function EventsPage() {
   async function handleQuickRegister(event: Event) {
     let currentStudent = student
     if (!currentStudent) {
-      if (!rollInput || !/^\d{6}$/.test(rollInput.trim())) {
-        toast.error('Please enter your 6-digit roll number to register.')
+      if (!rollInput || !/^\d{6,8}$/.test(rollInput.trim())) {
+        toast.error('Please enter your 7-digit register number to register.')
         return
       }
       const res = loginStudent(rollInput)
@@ -252,17 +252,17 @@ export default function EventsPage() {
             <div className="space-y-2">
               <div className="flex items-center gap-1 text-xs font-bold text-[#151515]">
                 <Info className="w-3.5 h-3.5 text-[#793f98]" />
-                <span>Quick Student Registration (6-digit roll number only)</span>
+                <span>Quick Student Registration (7-digit register number)</span>
               </div>
               <div className="flex gap-2">
                 <input
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  maxLength={6}
-                  placeholder="e.g. 241201"
+                  maxLength={7}
+                  placeholder="e.g. 2610101"
                   value={rollInput}
-                  onChange={(e) => setRollInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  onChange={(e) => setRollInput(e.target.value.replace(/\D/g, '').slice(0, 7))}
                   className="flex-1 bg-white border-2 border-[#151515] rounded-lg px-3 py-1.5 tabular-nums text-sm font-bold text-center shadow-[1.5px_1.5px_0px_#151515] focus:outline-none focus:border-[#793f98]"
                 />
                 <Button

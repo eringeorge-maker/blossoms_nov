@@ -1,0 +1,6 @@
+{
+  "name": "Blossoms Cultural Festival",
+  "description": "Official Blossoms Cultural Festival platform for CHRIST (Deemed to be University) Central Campus featuring comic-universe themed UI, event registration, schedule, and results.",
+  "permissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
