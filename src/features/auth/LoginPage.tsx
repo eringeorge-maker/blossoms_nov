@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowRight, UserCheck, ShieldAlert, Sparkles, AlertCircle } from 'lucide-react'
 import { DisplayText, ComicPanel } from '@/components/comic/ComicPrimitives'
 import { Button } from '@/components/ui/Button'
-import { loginStudent, loginDeveloperAdmin, isValidRollNumber } from '@/lib/auth/authStore'
+import { loginStudent, loginDeveloperAdmin, isValidRollNumber, SAMPLE_STUDENTS } from '@/lib/auth/authStore'
 import { cn } from '@/lib/utils'
 
 type LoginRole = 'student' | 'admin'
@@ -65,6 +65,13 @@ export default function LoginPage() {
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-xl">
+        {/* Top Comic Dialogue Header */}
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-xs font-mono font-bold text-ink/60 uppercase">
+            ★ CHRIST UNIVERSITY ★
+          </span>
+        </div>
+
         {/* ── ROLE SWITCHER TABS ────────────────────────────────── */}
         <div className="grid grid-cols-2 gap-3 mb-6 p-1.5 bg-[#FFF8E8] border-2 border-ink rounded-2xl shadow-[3px_3px_0px_#151515]">
           <button
@@ -100,6 +107,15 @@ export default function LoginPage() {
         <ComicPanel className="bg-white p-6 sm:p-8">
           {role === 'student' ? (
             <div>
+              <div className="flex items-center justify-between mb-2">
+                <DisplayText as="h1" className="text-3xl sm:text-4xl text-ink">
+                  Student Sign In
+                </DisplayText>
+                <span className="bg-[#FFD43B] text-ink text-[11px] font-mono font-bold px-2 py-0.5 border border-ink rounded">
+                  NO PASSWORD NEEDED
+                </span>
+              </div>
+
               <form onSubmit={handleStudentLogin} className="space-y-5" noValidate>
                 <div>
                   <label htmlFor="rollNumber" className="block font-display text-sm uppercase tracking-wider text-ink mb-2 font-bold">
@@ -132,6 +148,25 @@ export default function LoginPage() {
                       {error}
                     </p>
                   )}
+                </div>
+
+                {/* Sample roll numbers helper */}
+                <div className="bg-[#FFF8E8] p-3 rounded-xl border border-ink/20">
+                  <p className="text-[11px] font-mono font-bold text-ink/60 uppercase mb-1.5">
+                    ★ Click any test roll number to autofill:
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {SAMPLE_STUDENTS.map((item) => (
+                      <button
+                        key={item.roll}
+                        type="button"
+                        onClick={() => { setRollNumber(item.roll); setError(null) }}
+                        className="text-[11px] font-mono bg-white px-2 py-1 rounded border border-ink/30 hover:border-ink hover:bg-[#FFD43B] transition-colors"
+                      >
+                        <strong>{item.roll}</strong> ({item.name.split(' ')[0]} · {item.className})
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <Button

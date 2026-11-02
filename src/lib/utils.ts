@@ -49,36 +49,3 @@ export function truncate(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text
   return text.slice(0, maxLength - 1) + '…'
 }
-
-/**
- * Universal route matching helper.
- * Derives whether a link is currently active based on the URL pathname.
- */
-export function isRouteActive(href: string, pathname: string): boolean {
-  if (href === '/') {
-    return pathname === '/'
-  }
-  if (href === '/app') {
-    return pathname === '/app'
-  }
-  if (href === '/events') {
-    return pathname.startsWith('/events')
-  }
-  if (href === '/schedule') {
-    return pathname.startsWith('/schedule')
-  }
-  if (href === '/winners') {
-    return pathname.startsWith('/winners') || pathname.startsWith('/results')
-  }
-  if (href === '/gallery') {
-    return pathname.startsWith('/gallery')
-  }
-  if (href === '/announcements') {
-    return pathname.startsWith('/announcements') || pathname.startsWith('/notice-board')
-  }
-  if (href === '/about') {
-    return pathname.startsWith('/about')
-  }
-  return pathname === href || pathname.startsWith(href)
-}
-
