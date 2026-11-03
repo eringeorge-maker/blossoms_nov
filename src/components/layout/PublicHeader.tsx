@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react'
 import { Menu, X, User, LogOut, ShieldAlert } from 'lucide-react'
 import { FloatingPillNavigation, type NavItem } from '@/components/navigation/FloatingPillNavigation'
 import { getActiveStudent, logoutStudent, isDeveloperAdmin, logoutDeveloperAdmin, type StudentProfile } from '@/lib/auth/authStore'
-import docLogoUrl from '@/assets/brand/doc-mark-white.png'
-import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.png'
+import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.webp'
 
 const NAV_LINKS: NavItem[] = [
   { label: 'Home',         href: '/' },
@@ -13,6 +12,8 @@ const NAV_LINKS: NavItem[] = [
   { label: 'Results',      href: '/winners' },
   { label: 'Gallery',      href: '/gallery' },
   { label: 'Notice Board', href: '/announcements' },
+  { label: 'Meet the Team', href: '/team' },
+  { label: 'Contact Us',   href: '/contact' },
   { label: 'About',        href: '/about' },
 ]
 
@@ -22,6 +23,7 @@ export function PublicHeader() {
   const [admin, setAdmin] = useState<boolean>(isDeveloperAdmin())
   const location = useLocation()
   const navigate = useNavigate()
+  const onLoginPage = location.pathname === '/login'
 
   useEffect(() => {
     function syncAuth() {
@@ -67,16 +69,10 @@ export function PublicHeader() {
             loading="eager"
           />
         </Link>
-        <img
-          src={docLogoUrl}
-          alt="Department of Commerce"
-          className="hidden xl:block h-[30px] w-auto object-contain"
-          loading="eager"
-        />
       </div>
 
       {/* ── Center Section: Framer-Style Floating Pill Navigation ─────── */}
-      <div className="hidden lg:flex items-center justify-center flex-1 mx-4">
+      <div className="hidden min-[1200px]:flex items-center justify-center flex-1 mx-4">
         <FloatingPillNavigation
           items={NAV_LINKS}
           backgroundColor="#FFF8E8"
@@ -90,14 +86,14 @@ export function PublicHeader() {
       </div>
 
       {/* ── Right Section: Login / Profile Actions ───────────────────── */}
-      <div className="hidden lg:flex items-center shrink-0">
+      <div className="hidden min-[1200px]:flex items-center shrink-0">
         {student ? (
           <div className="flex items-center gap-2">
             <Link
               to="/app"
               className="h-[44px] px-4 rounded-[18px] border-2 border-[#0f0f0f] shadow-comic-sm bg-[#FFD43B] hover:bg-[#FFE066] active:scale-95 text-[#151515] font-semibold text-[14px] flex items-center gap-2 cursor-pointer transition-all duration-150 focus-visible:outline-[#FFD43B] shadow-xs"
             >
-              <User className="w-[17px] h-[17px] stroke-[2.4]" />
+              {!onLoginPage && <User className="w-[17px] h-[17px] stroke-[2.4]" />}
               <span>Roll #{student.rollNumber}</span>
             </Link>
             <button
@@ -137,13 +133,13 @@ export function PublicHeader() {
             aria-label="User Login"
           >
             <span>Login</span>
-            <User className="w-[15px] h-[15px] stroke-[2.4]" aria-hidden="true" />
+            {!onLoginPage && <User className="w-[15px] h-[15px] stroke-[2.4]" aria-hidden="true" />}
           </button>
         )}
       </div>
 
       {/* ── Mobile View: Hamburger and Login ─────────────────────────── */}
-      <div className="flex lg:hidden items-center gap-2">
+      <div className="flex min-[1200px]:hidden items-center gap-2">
         {!student && !admin && (
           <button
             type="button"
@@ -151,8 +147,8 @@ export function PublicHeader() {
             className="h-[36px] px-3 rounded-[18px] border-2 border-[#0f0f0f] bg-[#FFD43B] text-[#151515] font-semibold text-[13px] flex items-center gap-1.5 cursor-pointer"
             aria-label="User Login"
           >
-            <span className="hidden min-[400px]:inline">Login</span>
-            <User className="w-3.5 h-3.5" aria-hidden="true" />
+            <span className={onLoginPage ? undefined : 'hidden min-[400px]:inline'}>Login</span>
+            {!onLoginPage && <User className="w-3.5 h-3.5" aria-hidden="true" />}
           </button>
         )}
         <button
@@ -171,7 +167,7 @@ export function PublicHeader() {
       {menuOpen && (
         <div
           id="mobile-nav-drawer"
-          className="lg:hidden fixed inset-x-0 top-16 bottom-0 z-[100] bg-[#FFF8E8] flex flex-col p-6 overflow-y-auto"
+          className="min-[1200px]:hidden fixed inset-x-0 top-16 bottom-0 z-[100] bg-[#FFF8E8] flex flex-col p-6 overflow-y-auto"
         >
           <nav aria-label="Mobile Navigation" className="flex flex-col gap-2">
             {NAV_LINKS.map((link) => {
@@ -202,7 +198,7 @@ export function PublicHeader() {
                   onClick={() => setMenuOpen(false)}
                   className="w-full h-[46px] rounded-full bg-[#FFD43B] text-[#151515] font-semibold flex items-center justify-center gap-2"
                 >
-                  <User className="w-4 h-4" />
+                  {!onLoginPage && <User className="w-4 h-4" />}
                   <span>Student Portal (Roll #{student.rollNumber})</span>
                 </Link>
                 <button
@@ -239,7 +235,7 @@ export function PublicHeader() {
                 onClick={() => { navigate('/login'); setMenuOpen(false); }}
                 className="w-full h-[46px] rounded-full bg-[#FFD43B] text-[#151515] font-semibold flex items-center justify-center gap-2"
               >
-                <User className="w-4 h-4" />
+                {!onLoginPage && <User className="w-4 h-4" />}
                 <span>Login</span>
               </button>
             )}

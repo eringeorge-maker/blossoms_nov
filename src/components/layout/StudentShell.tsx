@@ -2,7 +2,7 @@ import { Link, Outlet, useLocation, useNavigate, Navigate } from 'react-router-d
 import { useState, useEffect } from 'react'
 import { Home, Compass, CalendarDays, BookMarked, User, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.png'
+import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.webp'
 import { getActiveStudent, logoutStudent, type StudentProfile } from '@/lib/auth/authStore'
 
 const STUDENT_NAV = [
@@ -56,15 +56,6 @@ export function StudentShell() {
                 <span>ROLL #{student.rollNumber}</span>
               </div>
             )}
-
-            <Link
-              to="/app/profile"
-              className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-ink bg-white shadow-[1.5px_1.5px_0px_#151515] hover:bg-[#FFD43B] transition-colors"
-              aria-label="My profile"
-              title="View Student Profile"
-            >
-              <User className="w-4 h-4 text-ink" />
-            </Link>
 
             <button
               type="button"

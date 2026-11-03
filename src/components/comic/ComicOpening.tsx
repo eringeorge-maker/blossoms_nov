@@ -5,7 +5,7 @@ import cover2Url from '@/assets/covers/cover-2.jpg'
 import cover3Url from '@/assets/covers/cover-3.jpg'
 import cover4Url from '@/assets/covers/cover-4.jpg'
 import cover5Url from '@/assets/covers/cover-5.jpg'
-import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.png'
+import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.webp'
 import backdropUrl from '@/assets/brand/opening-backdrop.webp'
 
 const COVERS = [cover1Url, cover2Url, cover3Url, cover4Url, cover5Url]

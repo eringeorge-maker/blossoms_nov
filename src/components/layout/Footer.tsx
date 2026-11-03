@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
-import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.png'
-import christLogoUrl from '@/assets/brand/christ-university.png'
-import docLogoUrl from '@/assets/brand/doc-mark-black.png'
+import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.webp'
+import christLogoUrl from '@/assets/brand/christ-university.webp'
+import docLogoUrl from '@/assets/brand/doc-mark-black.webp'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
@@ -17,8 +17,8 @@ export function Footer() {
             The official digital anthology of the annual cultural festival at CHRIST (Deemed to be University), Central Campus. Organised by the Department of Commerce.
           </p>
           <div className="inline-flex items-center gap-6 bg-caption-cream border-2 border-ink rounded-[14px] shadow-comic-sm px-5 py-3">
-            <img src={christLogoUrl} alt="CHRIST (Deemed to be University)" className="h-11 w-auto" />
-            <img src={docLogoUrl} alt="Department of Commerce" className="h-9 w-auto" />
+            <img src={christLogoUrl} alt="CHRIST (Deemed to be University)" className="h-11 w-auto" loading="lazy" decoding="async" />
+            <img src={docLogoUrl} alt="Department of Commerce" className="h-9 w-auto" loading="lazy" decoding="async" />
           </div>
         </div>
 

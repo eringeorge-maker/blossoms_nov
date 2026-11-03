@@ -5,7 +5,7 @@ import { DisplayText, ComicPanel } from '@/components/comic/ComicPrimitives'
 import { Button } from '@/components/ui/Button'
 import { loginStudent, loginDeveloperAdmin, isValidRollNumber, SAMPLE_STUDENTS } from '@/lib/auth/authStore'
 import { cn } from '@/lib/utils'
-import purpleBurstUrl from '@/assets/brand/bg-purple-burst.png'
+import purpleBurstUrl from '@/assets/brand/bg-purple-burst.svg'
 
 type LoginRole = 'student' | 'admin'
 
@@ -55,11 +55,16 @@ export default function LoginPage() {
 
   function handleAdminLogin(e: React.FormEvent) {
     e.preventDefault()
+    setError(null)
     setLoading(true)
     setTimeout(() => {
-      loginDeveloperAdmin()
+      const ok = loginDeveloperAdmin(adminKey)
       setLoading(false)
-      navigate('/admin', { replace: true })
+      if (ok) {
+        navigate('/admin', { replace: true })
+      } else {
+        setError('Incorrect developer passcode.')
+      }
     }, 300)
   }
 
@@ -202,19 +207,25 @@ onClick={() => { setRollNumber(item.roll); setError(null) }}
               <form onSubmit={handleAdminLogin} className="space-y-5" noValidate>
                 <div>
                   <label htmlFor="adminKey" className="block font-display text-sm uppercase tracking-wider text-ink mb-2 font-bold">
-                    Developer Passcode (Optional)
+                    Developer Passcode
                   </label>
                   <input
                     id="adminKey"
                     type="password"
-                    placeholder="Enter admin passcode (or leave blank for dev bypass)"
+                    placeholder="Enter admin passcode"
                     value={adminKey}
-                    onChange={(e) => setAdminKey(e.target.value)}
-                    className="w-full px-4 py-3 bg-[#FFF8E8] border-2 border-ink rounded-xl text-sm font-medium text-ink placeholder:text-ink/40 focus:outline-none focus:ring-2 focus:ring-[#151515]"
+                    onChange={(e) => { setAdminKey(e.target.value); if (error) setError(null) }}
+                    className={cn(
+                      'w-full px-4 py-3 bg-[#FFF8E8] border-2 border-ink rounded-xl text-sm font-medium text-ink placeholder:text-ink/40 focus:outline-none focus:ring-2 focus:ring-[#151515]',
+                      error ? 'border-[#df1b23] bg-red-50' : 'border-ink'
+                    )}
                   />
-                  <p className="text-[11px] text-ink/50 mt-1.5 font-medium">
-                    Developer bypass is enabled for local and campus testing.
-                  </p>
+                  {error && (
+                    <p className="flex items-center gap-1.5 text-xs text-[#df1b23] font-bold mt-2">
+                      <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                      {error}
+                    </p>
+                  )}
                 </div>
 
                 <Button

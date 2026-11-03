@@ -3,9 +3,14 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL as string) || 'https://placeholder.supabase.co'
 const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY as string) || 'placeholder-anon-key'
 
-export const isSupabaseConfigured = Boolean(
-  import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY
-)
+const envUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
+const envKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
+
+// Treat the .env.example template values as "not configured" so the app
+// falls back to mock mode instead of calling a non-existent host.
+const isPlaceholder = (v?: string) => !v || /your-project-ref|your-anon-key|placeholder/i.test(v)
+
+export const isSupabaseConfigured = !isPlaceholder(envUrl) && !isPlaceholder(envKey)
 
 if (!isSupabaseConfigured && import.meta.env.DEV) {
   console.info(

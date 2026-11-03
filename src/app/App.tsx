@@ -1,6 +1,6 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
 
 // Layouts
@@ -18,9 +18,11 @@ import AnnouncementsPage from '@/features/announcements/AnnouncementsPage'
 import AboutPage         from '@/features/public/AboutPage'
 import GalleryPage       from '@/features/gallery/GalleryPage'
 import WinnersPage       from '@/features/winners/WinnersPage'
+import TeamPage          from '@/features/public/TeamPage'
+import ContactPage       from '@/features/public/ContactPage'
 import LoginPage         from '@/features/auth/LoginPage'
-import { useEffect }     from 'react'
-import { useLocation }   from 'react-router-dom'
+import { getCategories } from '@/lib/api/events'
+import { getAnnouncements } from '@/lib/api/announcements'
 
 const DesignSystemPage    = lazy(() => import('@/features/public/DesignSystemPage'))
 
@@ -30,7 +32,7 @@ const StudentEventsPage   = lazy(() => import('@/features/student/StudentEventsP
 const MyEventsPage        = lazy(() => import('@/features/student/MyEventsPage'))
 const StudentSchedulePage = lazy(() => import('@/features/student/StudentSchedulePage'))
 const ProfilePage         = lazy(() => import('@/features/student/ProfilePage'))
-const TeamPage            = lazy(() => import('@/features/student/TeamPage'))
+const StudentTeamPage     = lazy(() => import('@/features/student/TeamPage'))
 
 // Admin pages (lazy loaded)
 const AdminOverview       = lazy(() => import('@/features/admin/AdminOverview'))
@@ -53,6 +55,23 @@ const queryClient = new QueryClient({
   },
 })
 
+/**
+ * Once the first screen has painted and the browser is idle, warm the data for the
+ * public pages so Notice Board / Events open without a loading skeleton.
+ */
+function usePrefetchPublicData() {
+  useEffect(() => {
+    const run = () => {
+      queryClient.prefetchQuery({ queryKey: ['categories'], queryFn: getCategories })
+      queryClient.prefetchQuery({ queryKey: ['announcements'], queryFn: getAnnouncements })
+    }
+    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1500))
+    const cancel = window.cancelIdleCallback ?? window.clearTimeout
+    const id = idle(run)
+    return () => cancel(id)
+  }, [])
+}
+
 function PageFallback() {
   return (
     <div className="p-8 space-y-4">
@@ -72,6 +91,8 @@ function ScrollToTop() {
 }
 
 export default function App() {
+  usePrefetchPublicData()
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
@@ -87,6 +108,8 @@ export default function App() {
               <Route path="events/:slug" element={<EventDetailPage />} />
               <Route path="schedule" element={<SchedulePage />} />
               <Route path="announcements" element={<AnnouncementsPage />} />
+              <Route path="team" element={<TeamPage />} />
+              <Route path="contact" element={<ContactPage />} />
               <Route path="about" element={<AboutPage />} />
               <Route path="gallery" element={<GalleryPage />} />
               <Route path="winners" element={<WinnersPage />} />
@@ -103,7 +126,7 @@ export default function App() {
               <Route path="my-events" element={<MyEventsPage />} />
               <Route path="schedule" element={<StudentSchedulePage />} />
               <Route path="profile" element={<ProfilePage />} />
-              <Route path="teams/:teamId" element={<TeamPage />} />
+              <Route path="teams/:teamId" element={<StudentTeamPage />} />
             </Route>
 
             {/* ── Admin routes (auth + role required) ───────── */}
