@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link, useLocation } from 'react-router-dom'
 
@@ -31,6 +32,15 @@ export function FloatingPillNavigation({
 }: FloatingPillNavigationProps) {
   const location = useLocation()
 
+  const [lastPathname, setLastPathname] = useState(location.pathname)
+  const [optimisticItem, setOptimisticItem] = useState<string | null>(null)
+
+  // Reset optimistic selection when location changes (React render-time adjustment)
+  if (lastPathname !== location.pathname) {
+    setLastPathname(location.pathname)
+    setOptimisticItem(null)
+  }
+
   function getActiveLabel(): string {
     const path = location.pathname
     if (path === '/') return 'Home'
@@ -45,7 +55,8 @@ export function FloatingPillNavigation({
     return matched ? matched.label : items[0]?.label || 'Home'
   }
 
-  const activeItem = getActiveLabel()
+  const realActive = getActiveLabel()
+  const activeItem = optimisticItem ?? realActive
 
   return (
     <nav
@@ -66,7 +77,8 @@ export function FloatingPillNavigation({
           <Link
             key={item.label}
             to={item.href}
-            className="relative transition-colors duration-200"
+            onClick={() => setOptimisticItem(item.label)}
+            className="relative transition-all duration-100 active:scale-95 touch-manipulation"
             style={{
               padding: linkPadding,
               textDecoration: 'none',
@@ -84,7 +96,7 @@ export function FloatingPillNavigation({
             {isActive && (
               <motion.div
                 layoutId="floatingPillActiveIndicator"
-                className="absolute inset-0"
+                className="absolute inset-0 pointer-events-none"
                 style={{
                   backgroundColor: activeBackgroundColor,
                   borderRadius: 9999,
@@ -92,9 +104,9 @@ export function FloatingPillNavigation({
                 }}
                 transition={{
                   type: 'spring',
-                  stiffness: 650,
-                  damping: 50,
-                  mass: 0.8,
+                  stiffness: 900,
+                  damping: 45,
+                  mass: 0.35,
                 }}
               />
             )}

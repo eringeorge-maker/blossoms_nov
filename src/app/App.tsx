@@ -9,19 +9,22 @@ import { StudentShell } from '@/components/layout/StudentShell'
 import { AdminShell }   from '@/components/layout/AdminShell'
 import { Skeleton }     from '@/components/ui/Skeleton'
 
-// Lazy-loaded pages
-const HomePage            = lazy(() => import('@/features/public/HomePage'))
-const EventsPage          = lazy(() => import('@/features/events/EventsPage'))
-const EventDetailPage     = lazy(() => import('@/features/events/EventDetailPage'))
-const SchedulePage        = lazy(() => import('@/features/schedule/SchedulePage'))
-const AnnouncementsPage   = lazy(() => import('@/features/announcements/AnnouncementsPage'))
-const AboutPage           = lazy(() => import('@/features/public/AboutPage'))
-const GalleryPage         = lazy(() => import('@/features/gallery/GalleryPage'))
-const WinnersPage         = lazy(() => import('@/features/winners/WinnersPage'))
-const LoginPage           = lazy(() => import('@/features/auth/LoginPage'))
+// Core Public pages (eagerly imported for instantaneous 0ms nav bar clicks)
+import HomePage          from '@/features/public/HomePage'
+import EventsPage        from '@/features/events/EventsPage'
+import EventDetailPage   from '@/features/events/EventDetailPage'
+import SchedulePage      from '@/features/schedule/SchedulePage'
+import AnnouncementsPage from '@/features/announcements/AnnouncementsPage'
+import AboutPage         from '@/features/public/AboutPage'
+import GalleryPage       from '@/features/gallery/GalleryPage'
+import WinnersPage       from '@/features/winners/WinnersPage'
+import LoginPage         from '@/features/auth/LoginPage'
+import { useEffect }     from 'react'
+import { useLocation }   from 'react-router-dom'
+
 const DesignSystemPage    = lazy(() => import('@/features/public/DesignSystemPage'))
 
-// Student pages
+// Student pages (lazy loaded)
 const StudentDashboard    = lazy(() => import('@/features/student/StudentDashboard'))
 const StudentEventsPage   = lazy(() => import('@/features/student/StudentEventsPage'))
 const MyEventsPage        = lazy(() => import('@/features/student/MyEventsPage'))
@@ -29,7 +32,7 @@ const StudentSchedulePage = lazy(() => import('@/features/student/StudentSchedul
 const ProfilePage         = lazy(() => import('@/features/student/ProfilePage'))
 const TeamPage            = lazy(() => import('@/features/student/TeamPage'))
 
-// Admin pages
+// Admin pages (lazy loaded)
 const AdminOverview       = lazy(() => import('@/features/admin/AdminOverview'))
 const AdminEventsPage     = lazy(() => import('@/features/admin/AdminEventsPage'))
 const AdminEventEditor    = lazy(() => import('@/features/admin/AdminEventEditor'))
@@ -60,10 +63,19 @@ function PageFallback() {
   )
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
+  }, [pathname])
+  return null
+}
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <ScrollToTop />
         <Suspense fallback={<PageFallback />}>
           <Routes>
             {/* ── Home route (Authentic Figma Modern Mobile Interface Design) ── */}
