@@ -1,10 +1,11 @@
-import { Link, Outlet, useLocation } from 'react-router-dom'
-import { useState } from 'react'
+import { Link, Outlet, useLocation, Navigate, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import {
   LayoutDashboard, CalendarDays, List, Users, UserCog,
-  Megaphone, Image, BarChart2, ScrollText, Menu, X, ChevronRight,
+  Megaphone, Image, ScrollText, Menu, X, ChevronRight, LogOut,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { isDeveloperAdmin, logoutDeveloperAdmin } from '@/lib/auth/authStore'
 
 const ADMIN_NAV = [
   { label: 'Overview',        href: '/admin',                icon: LayoutDashboard },
@@ -15,13 +16,32 @@ const ADMIN_NAV = [
   { label: 'Coordinators',    href: '/admin/coordinators',   icon: UserCog },
   { label: 'Announcements',   href: '/admin/announcements',  icon: Megaphone },
   { label: 'Content',         href: '/admin/content',        icon: Image },
-  { label: 'Reports',         href: '/admin/reports',        icon: BarChart2 },
   { label: 'Audit Log',       href: '/admin/audit',          icon: ScrollText },
 ]
 
 export function AdminShell() {
   const location = useLocation()
+  const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isAdmin, setIsAdmin] = useState<boolean>(isDeveloperAdmin())
+
+  useEffect(() => {
+    function handleAuthChange() {
+      setIsAdmin(isDeveloperAdmin())
+    }
+    window.addEventListener('blossoms-auth-changed', handleAuthChange)
+    return () => window.removeEventListener('blossoms-auth-changed', handleAuthChange)
+  }, [])
+
+  // ── Critical Security Guard (SEC-01) ──
+  if (!isAdmin) {
+    return <Navigate to="/login?role=admin&redirect=/admin" replace />
+  }
+
+  function handleLogout() {
+    logoutDeveloperAdmin()
+    navigate('/login?role=admin', { replace: true })
+  }
 
   return (
     <div className="min-h-screen flex bg-gutter">
@@ -36,9 +56,18 @@ export function AdminShell() {
           <Link to="/" className="font-display text-2xl text-blossoms-yellow uppercase">
             Blossoms
           </Link>
-          <p className="text-xs text-paper/50 mt-0.5">Admin Portal</p>
+          <p className="text-xs text-paper/50 mt-0.5">Admin &amp; Dev Console</p>
         </div>
         <NavList location={location} />
+        <div className="p-4 border-t border-paper/10 mt-auto">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-display uppercase tracking-wider text-red-300 hover:text-white hover:bg-red-900/30 border border-red-800/40 transition-colors"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            Sign Out Admin
+          </button>
+        </div>
       </aside>
 
       {/* Mobile sidebar drawer */}
@@ -56,6 +85,15 @@ export function AdminShell() {
               </button>
             </div>
             <NavList location={location} onNavigate={() => setSidebarOpen(false)} />
+            <div className="p-4 border-t border-paper/10 mt-auto">
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-display uppercase tracking-wider text-red-300 hover:text-white hover:bg-red-900/30 border border-red-800/40"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                Sign Out Admin
+              </button>
+            </div>
           </aside>
           <button
             className="flex-1 bg-ink/40"
@@ -90,12 +128,13 @@ export function AdminShell() {
             >
               Public Site →
             </Link>
-            <Link
-              to="/login?role=student"
-              className="text-xs font-display uppercase tracking-wider text-[#793f98] hover:text-[#793f98]/80 font-bold px-3 py-1.5 rounded-lg border border-[#793f98] bg-white"
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 text-xs font-display uppercase tracking-wider text-red-600 hover:text-red-700 font-bold px-3 py-1.5 rounded-lg border border-red-300 hover:border-red-500 bg-red-50"
             >
-              Student Login
-            </Link>
+              <LogOut className="w-3.5 h-3.5" />
+              Sign Out
+            </button>
           </div>
         </header>
         <main id="main-content" className="flex-1 p-4 md:p-8">

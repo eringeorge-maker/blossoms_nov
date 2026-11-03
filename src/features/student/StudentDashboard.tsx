@@ -10,16 +10,13 @@ import { formatSlot } from '@/lib/utils'
 import { getActiveStudent } from '@/lib/auth/authStore'
 
 export default function StudentDashboard() {
-  const student = getActiveStudent() || {
-    rollNumber: '241201',
-    name: 'Student 241201',
-    className: '3 BBA A',
-    department: 'Management',
-  }
+  const student = getActiveStudent()
   const { data: registrations = [], isLoading } = useQuery({
     queryKey: ['my-registrations'],
     queryFn: getStudentRegistrations,
   })
+
+  if (!student) return null
 
   const activeRegistrations = registrations.filter((r) => r.registration_status !== 'cancelled')
   const confirmed = activeRegistrations.filter((r) => r.registration_status === 'confirmed')

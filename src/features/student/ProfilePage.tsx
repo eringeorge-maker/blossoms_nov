@@ -1,24 +1,37 @@
+import { useState } from 'react'
 import { DisplayText, ComicPanel } from '@/components/comic/ComicPrimitives'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { getActiveStudent, logoutStudent } from '@/lib/auth/authStore'
 import { useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 
 export default function ProfilePage() {
   const navigate = useNavigate()
-  const student = getActiveStudent() || {
-    rollNumber: '241201',
-    name: 'Student 241201',
-    className: '3 BBA A',
-    department: 'Management',
-    campus: 'Central Campus',
+  const student = getActiveStudent()
+  const [mobile, setMobile] = useState(() => {
+    return localStorage.getItem(`blossoms_mobile_${student?.rollNumber}`) || ''
+  })
+
+  if (!student) {
+    navigate('/login?role=student', { replace: true })
+    return null
   }
 
   function handleLogout() {
     logoutStudent()
     navigate('/login?role=student', { replace: true })
   }
+
+  function handleSave(e: React.FormEvent) {
+    e.preventDefault()
+    if (student) {
+      localStorage.setItem(`blossoms_mobile_${student.rollNumber}`, mobile)
+    }
+    toast.success('Mobile contact saved successfully!')
+  }
+
   return (
     <div className="mx-auto max-w-[600px] px-4 py-6 space-y-6">
       <DisplayText as="h1" className="text-4xl">My Profile</DisplayText>
@@ -36,10 +49,10 @@ export default function ProfilePage() {
 
         <dl className="space-y-3 mb-6">
           {[
-            { label: 'Roll Number',   value: student.rollNumber,  locked: true },
-            { label: 'Class / Sec',   value: student.className || 'CHRIST Student', locked: true },
-            { label: 'Department',    value: student.department || 'Central Campus', locked: true },
-            { label: 'Campus',        value: 'Central Campus Bangalore', locked: true },
+            { label: 'Register Number', value: student.rollNumber,  locked: true },
+            { label: 'Class / Sec',     value: student.className || 'CHRIST Student', locked: true },
+            { label: 'Department',      value: student.department || 'Department of Commerce', locked: true },
+            { label: 'Campus',          value: student.campus || 'Central Campus Bangalore', locked: true },
           ].map(({ label, value, locked }) => (
             <div key={label} className="flex justify-between gap-3 py-2 border-b border-ink/10 last:border-0">
               <dt className="text-sm text-ink/50 font-medium">{label}</dt>
@@ -55,13 +68,14 @@ export default function ProfilePage() {
           Fields marked "University record" are sourced from the official student roster and cannot be edited here.
         </p>
 
-        <form className="space-y-4">
+        <form onSubmit={handleSave} className="space-y-4">
           <Input
             label="Mobile Number (optional)"
             type="tel"
             placeholder="+91 98765 43210"
-            defaultValue=""
-            hint="Only used for event-specific communications if needed."
+            value={mobile}
+            onChange={(e) => setMobile(e.target.value)}
+            hint="Only used for emergency event-specific coordination if needed."
           />
           <Button type="submit">Save Changes</Button>
         </form>

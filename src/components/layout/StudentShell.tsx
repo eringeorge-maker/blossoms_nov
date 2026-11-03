@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Link, Outlet, useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Home, Compass, CalendarDays, BookMarked, User, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -23,15 +23,14 @@ export function StudentShell() {
     function syncAuth() {
       const active = getActiveStudent()
       setStudent(active)
-      if (!active) {
-        // Redirect to simple roll-number login
-        navigate('/login?role=student', { replace: true })
-      }
     }
-    syncAuth()
     window.addEventListener('blossoms-auth-changed', syncAuth)
     return () => window.removeEventListener('blossoms-auth-changed', syncAuth)
-  }, [navigate])
+  }, [])
+
+  if (!student) {
+    return <Navigate to="/login?role=student" replace />
+  }
 
   function handleLogout() {
     logoutStudent()
