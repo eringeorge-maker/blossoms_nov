@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion'
 import { Link, useLocation } from 'react-router-dom'
-import { useState, useEffect } from 'react'
 
 export interface NavItem {
   label: string
@@ -46,11 +45,7 @@ export function FloatingPillNavigation({
     return matched ? matched.label : items[0]?.label || 'Home'
   }
 
-  const [activeItem, setActiveItem] = useState<string>(getActiveLabel())
-
-  useEffect(() => {
-    setActiveItem(getActiveLabel())
-  }, [location.pathname])
+  const activeItem = getActiveLabel()
 
   return (
     <nav
@@ -71,7 +66,6 @@ export function FloatingPillNavigation({
           <Link
             key={item.label}
             to={item.href}
-            onClick={() => setActiveItem(item.label)}
             className="relative transition-colors duration-200"
             style={{
               padding: linkPadding,

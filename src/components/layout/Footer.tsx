@@ -3,6 +3,8 @@ import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.png'
 import christLogoUrl from '@/assets/brand/christ-university.png'
 import docLogoUrl from '@/assets/brand/doc-mark-black.png'
 
+const CURRENT_YEAR = new Date().getFullYear()
+
 export function Footer() {
   return (
     <footer className="border-t-[2.5px] border-ink bg-primary text-white mt-20 relative overflow-hidden">
@@ -56,7 +58,7 @@ export function Footer() {
       </div>
 
       <div className="relative z-10 border-t border-white/20 py-4 text-center text-xs text-white/80">
-        © {new Date().getFullYear()} Blossoms Festival · CHRIST (Deemed to be University) · Edition 2026–27
+        © {CURRENT_YEAR} Blossoms Festival · CHRIST (Deemed to be University) · Edition 2026–27
       </div>
     </footer>
   )

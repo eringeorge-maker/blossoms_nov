@@ -14,6 +14,48 @@ import { getActiveStudent, loginStudent, type StudentProfile } from '@/lib/auth/
 import { registerIndividualEvent } from '@/lib/api/registration'
 import type { Event } from '@/types'
 
+// Predefined exact ordering matching user's reference screenshots
+const ORDER_MAP: Record<string, number> = {
+  // Arts
+  'Digital Poster Making': 1,
+  'Greeting Card': 2,
+  'Pot Art': 3,
+  'Pencil Sketching': 4,
+  'Reel Making': 5,
+  'Collage': 6,
+  'Mehendi Design': 7,
+  'Rangoli Design': 8,
+  'Painting': 9,
+  'Photography': 10,
+
+  // Literature
+  'Quiz': 1,
+  'Pot Pourri': 2,
+  'Extempore': 3,
+  'Dumb Charades': 4,
+  'Air Crash / Ship-Wreck': 5,
+  'Debate': 6,
+  'Jam': 7,
+  'Creative Writing': 8,
+
+  // Stage
+  'Indian Dance Classical (Group)': 1,
+  'Non Theme': 2,
+  'BOB (W)': 3,
+  'BOB (I)': 4,
+  'Indian Folk and Film Singing (Solo)': 5,
+  'Western Singing (Solo)': 6,
+  'Western Acapella': 7,
+  'Duet Dance': 8,
+
+  // Theatre
+  'Mono Act': 1,
+  'Proscenium': 2,
+  'Street Play': 3,
+  'Short Film Making': 4,
+  'Mime': 5,
+}
+
 export default function EventsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const activeCategory = searchParams.get('category') || 'all'
@@ -32,48 +74,6 @@ export default function EventsPage() {
     queryKey: ['events', activeCategory, search],
     queryFn: () => getEvents({ categorySlug: activeCategory, search }),
   })
-
-  // Predefined exact ordering matching user's reference screenshots
-  const ORDER_MAP: Record<string, number> = {
-    // Arts
-    'Digital Poster Making': 1,
-    'Greeting Card': 2,
-    'Pot Art': 3,
-    'Pencil Sketching': 4,
-    'Reel Making': 5,
-    'Collage': 6,
-    'Mehendi Design': 7,
-    'Rangoli Design': 8,
-    'Painting': 9,
-    'Photography': 10,
-
-    // Literature
-    'Quiz': 1,
-    'Pot Pourri': 2,
-    'Extempore': 3,
-    'Dumb Charades': 4,
-    'Air Crash / Ship-Wreck': 5,
-    'Debate': 6,
-    'Jam': 7,
-    'Creative Writing': 8,
-
-    // Stage
-    'Indian Dance Classical (Group)': 1,
-    'Non Theme': 2,
-    'BOB (W)': 3,
-    'BOB (I)': 4,
-    'Indian Folk and Film Singing (Solo)': 5,
-    'Western Singing (Solo)': 6,
-    'Western Acapella': 7,
-    'Duet Dance': 8,
-
-    // Theatre
-    'Mono Act': 1,
-    'Proscenium': 2,
-    'Street Play': 3,
-    'Short Film Making': 4,
-    'Mime': 5,
-  }
 
   // Group events by category for the Arena Matrix view
   const eventsByCategory = useMemo(() => {

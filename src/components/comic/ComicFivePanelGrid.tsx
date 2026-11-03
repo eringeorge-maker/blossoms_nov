@@ -142,14 +142,17 @@ export function ComicFivePanelGrid({
     }
   }, [])
 
-  // Sync with prop or URL if updated externally
-  useEffect(() => {
-    const target = initialCategory || categoryParam
-    if (target && target !== selectedCategory && scene === 'idle') {
-      setSelectedCategory(target)
+  // Adjust state during render if target prop or URL query parameter changes
+  const targetCategory = initialCategory || categoryParam
+  const [prevTargetCategory, setPrevTargetCategory] = useState(targetCategory)
+
+  if (targetCategory !== prevTargetCategory) {
+    setPrevTargetCategory(targetCategory)
+    if (targetCategory && targetCategory !== selectedCategory && scene === 'idle') {
+      setSelectedCategory(targetCategory)
       setScene('scene4_events')
     }
-  }, [initialCategory, categoryParam])
+  }
 
   // Choreographed 4-Scene Transition Trigger
   function triggerCategoryTransition(slug: string) {
