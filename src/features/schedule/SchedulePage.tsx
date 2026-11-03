@@ -1,391 +1,299 @@
 import { useState, useMemo } from 'react'
-import { CalendarDays, MapPin, Clock, Sparkles, Search } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
-import { DisplayText, HalftoneAccent } from '@/components/comic/ComicPrimitives'
-import { Badge } from '@/components/ui/Badge'
-import { Skeleton } from '@/components/ui/Skeleton'
-import { Link } from 'react-router-dom'
-import { cn, formatISTDate, formatISTTime } from '@/lib/utils'
-import { getEvents } from '@/lib/api/events'
-import type { Event, EventScheduleSlot } from '@/types'
+import {
+  CalendarDays,
+  MapPin,
+  Clock,
+  Search,
+  UserCheck,
+  Table as TableIcon,
+  LayoutGrid,
+  Filter,
+} from 'lucide-react'
+import { MASTER_SCHEDULE } from '@/lib/data/masterSchedule'
 
-type MonthFilter = 'all' | 'nov' | 'dec' | 'tbd'
+type MonthFilter = 'all' | 'nov' | 'dec'
+
+const DIVISION_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+  Arts: { bg: 'bg-[#ed1e79]/15', text: 'text-[#ed1e79]', border: 'border-[#ed1e79]' },
+  Literature: { bg: 'bg-[#0088e8]/15', text: 'text-[#0088e8]', border: 'border-[#0088e8]' },
+  Stage: { bg: 'bg-[#fdb813]/25', text: 'text-[#946200]', border: 'border-[#fdb813]' },
+  Theatre: { bg: 'bg-[#861ec2]/15', text: 'text-[#861ec2]', border: 'border-[#861ec2]' },
+  Inauguration: { bg: 'bg-[#00966b]/15', text: 'text-[#00966b]', border: 'border-[#00966b]' },
+  'Off Day': { bg: 'bg-neutral-200/60', text: 'text-neutral-600', border: 'border-neutral-300' },
+  Holiday: { bg: 'bg-amber-100', text: 'text-amber-800', border: 'border-amber-300' },
+}
 
 export default function SchedulePage() {
-  const { data: events = [], isLoading } = useQuery({
-    queryKey: ['events-schedule'],
-    queryFn: () => getEvents(),
-  })
-
   const [monthFilter, setMonthFilter] = useState<MonthFilter>('all')
-  const [selectedDate, setSelectedDate] = useState<string>('all')
+  const [viewMode, setViewMode] = useState<'timeline' | 'table'>('timeline')
   const [search, setSearch] = useState('')
+  const [hideOffDays, setHideOffDays] = useState(false)
 
-  // Flatten all slots with parent event
-  const allSlotsWithEvent = useMemo(() => {
-    const list: Array<EventScheduleSlot & { event: Event }> = []
-    for (const e of events) {
-      if (e.schedule_slots && e.schedule_slots.length > 0) {
-        for (const s of e.schedule_slots) {
-          list.push({ ...s, event: e })
-        }
-      }
-    }
-    // Sort chronologically: valid starts_at first, then TBD slots
-    return list.sort((a, b) => {
-      if (!a.starts_at && !b.starts_at) return 0
-      if (!a.starts_at) return 1
-      if (!b.starts_at) return -1
-      return new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime()
-    })
-  }, [events])
-
-  // Extract distinct chronological dates (only for scheduled events)
-  const chronologicalDates = useMemo(() => {
-    const dateMap = new Map<string, { label: string; dateObj: Date; count: number }>()
-
-    for (const s of allSlotsWithEvent) {
-      if (s.starts_at && s.status !== 'tbd') {
-        const dObj = new Date(s.starts_at)
-        const dateKey = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, '0')}-${String(dObj.getDate()).padStart(2, '0')}`
-        const label = formatISTDate(s.starts_at)
-
-        if (!dateMap.has(dateKey)) {
-          dateMap.set(dateKey, { label, dateObj: dObj, count: 1 })
-        } else {
-          dateMap.get(dateKey)!.count += 1
-        }
-      }
-    }
-
-    return Array.from(dateMap.entries())
-      .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
-      .map(([key, val]) => ({
-        key,
-        label: val.label,
-        dateObj: val.dateObj,
-        count: val.count,
-        isNov: val.dateObj.getMonth() === 10, // 0-indexed: 10 = Nov
-        isDec: val.dateObj.getMonth() === 11, // 11 = Dec
-      }))
-  }, [allSlotsWithEvent])
-
-  // Filter slots by Month, Date, and Search Query
-  const filteredSlots = useMemo(() => {
-    return allSlotsWithEvent.filter((slot) => {
+  const filteredEntries = useMemo(() => {
+    return MASTER_SCHEDULE.filter((entry) => {
       // 1. Month filter
-      if (monthFilter === 'tbd') {
-        if (slot.status !== 'tbd' && slot.starts_at) return false
-      } else if (monthFilter === 'nov') {
-        if (!slot.starts_at) return false
-        if (new Date(slot.starts_at).getMonth() !== 10) return false
-      } else if (monthFilter === 'dec') {
-        if (!slot.starts_at) return false
-        if (new Date(slot.starts_at).getMonth() !== 11) return false
-      }
+      if (monthFilter === 'nov' && !entry.dateStr.includes('-11-')) return false
+      if (monthFilter === 'dec' && !entry.dateStr.includes('-12-')) return false
 
-      // 2. Specific Date filter (if selected)
-      if (selectedDate !== 'all') {
-        if (!slot.starts_at) return false
-        const dObj = new Date(slot.starts_at)
-        const dateKey = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, '0')}-${String(dObj.getDate()).padStart(2, '0')}`
-        if (dateKey !== selectedDate) return false
-      }
+      // 2. Hide off days toggle
+      if (hideOffDays && (entry.isOffDay || entry.isHoliday)) return false
 
-      // 3. Search query filter
+      // 3. Search query
       if (search.trim()) {
         const query = search.toLowerCase()
-        const titleMatch = slot.event.title.toLowerCase().includes(query)
-        const venueMatch = slot.venue?.name?.toLowerCase().includes(query) || false
-        const roomMatch = slot.venue?.room?.toLowerCase().includes(query) || false
-        const slotTitleMatch = slot.slot_title?.toLowerCase().includes(query) || false
-        const categoryMatch = slot.event.category?.name?.toLowerCase().includes(query) || false
-        if (!titleMatch && !venueMatch && !roomMatch && !slotTitleMatch && !categoryMatch) {
+        const matchesName = entry.eventName.toLowerCase().includes(query)
+        const matchesVenue = entry.venue.toLowerCase().includes(query)
+        const matchesTeacher = entry.teachers.toLowerCase().includes(query)
+        const matchesDate = entry.dateStr.toLowerCase().includes(query)
+        const matchesDay = entry.day.toLowerCase().includes(query)
+        if (!matchesName && !matchesVenue && !matchesTeacher && !matchesDate && !matchesDay) {
           return false
         }
       }
 
       return true
     })
-  }, [allSlotsWithEvent, monthFilter, selectedDate, search])
-
-  // Group filtered slots by date string for section headers
-  const groupedSlots = useMemo(() => {
-    const groups: Record<string, typeof filteredSlots> = {}
-    for (const slot of filteredSlots) {
-      const headerKey = slot.starts_at && slot.status !== 'tbd'
-        ? formatISTDate(slot.starts_at)
-        : 'To Be Decided (TBD)'
-      if (!groups[headerKey]) {
-        groups[headerKey] = []
-      }
-      groups[headerKey].push(slot)
-    }
-    return groups
-  }, [filteredSlots])
-
-  // Reset selected date when changing month tabs
-  function handleMonthChange(tab: MonthFilter) {
-    setMonthFilter(tab)
-    setSelectedDate('all')
-  }
+  }, [monthFilter, hideOffDays, search])
 
   return (
-    <div className="mx-auto max-w-[1060px] px-4 py-3.5">
-      {/* ── TOP CONTROLS & SEARCH ──────────────────────────────── */}
-      <div className="bg-white border-2 border-ink p-3 rounded-xl shadow-[3px_3px_0px_#151515] mb-4 space-y-2.5">
-        {/* Search bar & Quick Stats */}
-        <div className="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center justify-between">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink/40" aria-hidden="true" />
-            <input
-              type="search"
-              placeholder="Search by event, venue (e.g. KE doc, 911, Birds park, Classroom, Panel Room)…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 bg-[#FFF8E8] border-[1.5px] border-ink rounded-lg text-xs font-medium placeholder:text-ink/40 focus:outline-none focus:ring-2 focus:ring-[#793f98]"
-            />
-          </div>
+    <div className="min-h-screen bg-[#faf8f5] text-ink pb-24">
+      {/* ── Compact Filter Header Bar ─────────────────────────── */}
+      <section className="relative border-b-3 border-ink bg-gradient-to-r from-comic-yellow/30 via-primary/10 to-comic-red/10 py-6 px-4 overflow-hidden">
+        {/* Halftone dot pattern overlay */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 opacity-15 pointer-events-none"
+          style={{
+            backgroundImage: 'radial-gradient(circle, #0f0f0f 1.5px, transparent 1.5px)',
+            backgroundSize: '18px 18px',
+          }}
+        />
 
-          {/* Month Segment Tabs */}
-          <div className="flex items-center gap-1 p-0.5 bg-[#FFF8E8] border-[1.5px] border-ink rounded-lg overflow-x-auto">
-            <button
-              onClick={() => handleMonthChange('all')}
-              className={cn(
-                'px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase font-bold transition-all',
-                monthFilter === 'all'
-                  ? 'bg-[#793f98] text-white shadow-[1px_1px_0px_#151515]'
-                  : 'text-ink/70 hover:text-ink'
-              )}
-            >
-              All Schedule
-            </button>
-            <button
-              onClick={() => handleMonthChange('nov')}
-              className={cn(
-                'px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase font-bold transition-all',
-                monthFilter === 'nov'
-                  ? 'bg-[#793f98] text-white shadow-[1px_1px_0px_#151515]'
-                  : 'text-ink/70 hover:text-ink'
-              )}
-            >
-              November
-            </button>
-            <button
-              onClick={() => handleMonthChange('dec')}
-              className={cn(
-                'px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase font-bold transition-all',
-                monthFilter === 'dec'
-                  ? 'bg-[#793f98] text-white shadow-[1px_1px_0px_#151515]'
-                  : 'text-ink/70 hover:text-ink'
-              )}
-            >
-              December
-            </button>
-            <button
-              onClick={() => handleMonthChange('tbd')}
-              className={cn(
-                'px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase font-bold transition-all',
-                monthFilter === 'tbd'
-                  ? 'bg-[#FFD43B] text-ink shadow-[1px_1px_0px_#151515]'
-                  : 'text-ink/70 hover:text-ink'
-              )}
-            >
-              TBD / TBA
-            </button>
-          </div>
-        </div>
-
-        {/* Date Pill Selector */}
-        {monthFilter !== 'tbd' && (
-          <div className="border-t border-ink/15 pt-2">
-            <div className="flex items-center gap-1.5 mb-1.5 text-[11px] font-display text-ink/70 uppercase font-bold">
-              <CalendarDays className="w-3 h-3 text-[#793f98]" />
-              <span>Select Exact Day ({chronologicalDates.length} Days)</span>
-              {selectedDate !== 'all' && (
-                <button
-                  onClick={() => setSelectedDate('all')}
-                  className="text-[11px] text-[#793f98] underline ml-auto font-sans font-bold"
-                >
-                  Clear day filter
-                </button>
-              )}
+        <div className="relative z-10 mx-auto max-w-[1240px]">
+          {/* ── Search & View Mode Toolbar ──────────────────────── */}
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            {/* Search Input */}
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink/50" />
+              <input
+                type="text"
+                placeholder="Search events, teachers, venues..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 text-xs font-semibold bg-white border-2 border-ink rounded-full shadow-comic-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+              />
             </div>
 
-            <div className="flex gap-1.5 overflow-x-auto pb-1.5 -mx-1 px-1 no-scrollbar">
+            {/* View Mode Toggle */}
+            <div className="flex items-center gap-1 bg-white border-2 border-ink rounded-full p-1 shadow-comic-sm">
               <button
-                onClick={() => setSelectedDate('all')}
-                className={cn(
-                  'flex-shrink-0 px-2.5 py-1 rounded-lg border-[1.5px] border-ink text-[11px] font-display tracking-wider uppercase transition-all shadow-[1.5px_1.5px_0px_#151515]',
-                  selectedDate === 'all'
-                    ? 'bg-[#151515] text-[#FFD43B]'
-                    : 'bg-[#FFF8E8] text-ink hover:bg-white'
-                )}
+                onClick={() => setViewMode('timeline')}
+                className={`cursor-pointer px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 transition-colors ${
+                  viewMode === 'timeline' ? 'bg-ink text-white' : 'text-ink/70 hover:text-ink'
+                }`}
               >
-                All Days
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span>Timeline</span>
               </button>
+              <button
+                onClick={() => setViewMode('table')}
+                className={`cursor-pointer px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 transition-colors ${
+                  viewMode === 'table' ? 'bg-ink text-white' : 'text-ink/70 hover:text-ink'
+                }`}
+              >
+                <TableIcon className="w-3.5 h-3.5" />
+                <span>Table View</span>
+              </button>
+            </div>
+          </div>
 
-              {chronologicalDates
-                .filter((d) => {
-                  if (monthFilter === 'nov') return d.isNov
-                  if (monthFilter === 'dec') return d.isDec
-                  return true
-                })
-                .map((d) => {
-                  const isSelected = selectedDate === d.key
-                  const dayName = d.dateObj.toLocaleDateString('en-IN', { weekday: 'short', timeZone: 'Asia/Kolkata' })
-                  const dayNum = d.dateObj.getDate()
-                  const monthName = d.dateObj.toLocaleDateString('en-IN', { month: 'short', timeZone: 'Asia/Kolkata' })
+          {/* Month Filters & Off-day toggle */}
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-ink/60 mr-1 flex items-center gap-1">
+              <Filter className="w-3 h-3" /> Month:
+            </span>
 
-                  return (
-                    <button
-                      key={d.key}
-                      onClick={() => setSelectedDate(d.key)}
-                      className={cn(
-                        'flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-lg border-[1.5px] border-ink text-[11px] font-display tracking-wider uppercase transition-all shadow-[1.5px_1.5px_0px_#151515]',
-                        isSelected
-                          ? 'bg-[#793f98] text-white'
-                          : 'bg-white text-ink hover:bg-[#FFF8E8]'
-                      )}
+            {(
+              [
+                { id: 'all', label: 'All Dates' },
+                { id: 'nov', label: 'November 2026' },
+                { id: 'dec', label: 'December 2026' },
+              ] as const
+            ).map((m) => (
+              <button
+                key={m.id}
+                onClick={() => setMonthFilter(m.id)}
+                className={`cursor-pointer px-3 py-1 text-xs font-bold rounded-full border-2 border-ink transition-all ${
+                  monthFilter === m.id
+                    ? 'bg-primary text-white shadow-comic-sm'
+                    : 'bg-white text-ink hover:bg-neutral-100'
+                }`}
+              >
+                {m.label}
+              </button>
+            ))}
+
+            <label className="ml-auto flex items-center gap-2 cursor-pointer text-xs font-bold text-ink/70">
+              <input
+                type="checkbox"
+                checked={hideOffDays}
+                onChange={(e) => setHideOffDays(e.target.checked)}
+                className="rounded border-ink text-primary focus:ring-0"
+              />
+              <span>Hide Off Days &amp; Holidays</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Main Schedule Content ─────────────────────────────── */}
+      <main className="mx-auto max-w-[1240px] px-4 pt-10">
+        {filteredEntries.length === 0 ? (
+          <div className="bg-white border-3 border-ink rounded-[16px] p-12 text-center shadow-comic-md">
+            <CalendarDays className="w-12 h-12 text-ink/30 mx-auto mb-3" />
+            <h3 className="font-display text-2xl text-ink font-bold">No events matched your search</h3>
+            <p className="text-xs text-ink/60 mt-1 max-w-md mx-auto">
+              Try clearing your search terms or resetting the month filter to see the complete festival schedule.
+            </p>
+            <button
+              onClick={() => {
+                setSearch('')
+                setMonthFilter('all')
+                setHideOffDays(false)
+              }}
+              className="mt-4 px-4 py-1.5 bg-comic-yellow text-ink text-xs font-bold rounded-full border-2 border-ink shadow-comic-sm"
+            >
+              Reset Filters
+            </button>
+          </div>
+        ) : viewMode === 'timeline' ? (
+          /* ── Timeline Cards View ─────────────────────────────── */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filteredEntries.map((entry) => {
+              const colors = DIVISION_COLORS[entry.division] || DIVISION_COLORS['Off Day']
+              const isNonEvent = entry.isOffDay || entry.isHoliday
+
+              return (
+                <div
+                  key={entry.id}
+                  className={`relative bg-white border-3 border-ink rounded-[16px] overflow-hidden shadow-comic-md flex flex-col justify-between transition-all duration-200 hover:translate-y-[-3px] hover:shadow-comic-lg ${
+                    isNonEvent ? 'opacity-80 bg-neutral-50' : ''
+                  }`}
+                >
+                  {/* Top Header Strip */}
+                  <div className="p-4 pb-3 border-b-2 border-ink bg-[#faf8f5] flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <div className="bg-ink text-white font-display text-xs px-2.5 py-1 rounded-md tracking-wider">
+                        {entry.dateStr}
+                      </div>
+                      <span className="font-bold text-xs text-ink/80">{entry.day}</span>
+                    </div>
+
+                    <span
+                      className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${colors.bg} ${colors.text} ${colors.border}`}
                     >
-                      <span className="font-sans font-black text-[11px]">{dayName}</span>
-                      <span className="font-bold">{dayNum} {monthName}</span>
-                      <span className={cn(
-                        'w-4 h-4 rounded-full text-[9px] tabular-nums font-bold flex items-center justify-center border',
-                        isSelected ? 'bg-white text-[#793f98] border-white' : 'bg-[#FFF8E8] text-ink border-ink'
-                      )}>
-                        {d.count}
+                      {entry.division}
+                    </span>
+                  </div>
+
+                  {/* Body Content */}
+                  <div className="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="font-display text-xl text-ink font-bold leading-snug">
+                        {entry.eventName}
+                      </h3>
+
+                      {!isNonEvent && (
+                        <div className="mt-3 space-y-2 text-xs">
+                          <div className="flex items-center gap-2 text-ink/80">
+                            <Clock className="w-3.5 h-3.5 text-primary shrink-0" />
+                            <span className="font-semibold">{entry.timings}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-ink/80">
+                            <MapPin className="w-3.5 h-3.5 text-comic-red shrink-0" />
+                            <span className="font-semibold">{entry.venue}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Teacher Coordinator Footer Strip */}
+                    <div className="mt-5 pt-3 border-t border-ink/10 flex items-center justify-between text-[11px]">
+                      <span className="text-ink/60 font-semibold flex items-center gap-1.5">
+                        <UserCheck className="w-3.5 h-3.5 text-ink/50" />
+                        <span>Teacher in Charge:</span>
                       </span>
-                    </button>
-                  )
-                })}
+                      <span className="font-bold text-ink truncate max-w-[160px]" title={entry.teachers}>
+                        {entry.teachers}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        ) : (
+          /* ── Table View Matching PDF ─────────────────────────── */
+          <div className="bg-white border-3 border-ink rounded-[16px] overflow-hidden shadow-comic-md">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-[#111217] text-white border-b-3 border-ink font-display text-xs uppercase tracking-wider">
+                    <th className="py-3 px-4">Date</th>
+                    <th className="py-3 px-4">Day</th>
+                    <th className="py-3 px-4">Event Name</th>
+                    <th className="py-3 px-4">Venue to Book</th>
+                    <th className="py-3 px-4">Timings</th>
+                    <th className="py-3 px-4">Division</th>
+                    <th className="py-3 px-4">Teachers</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y-2 divide-ink/10 font-body">
+                  {filteredEntries.map((entry) => {
+                    const colors = DIVISION_COLORS[entry.division] || DIVISION_COLORS['Off Day']
+                    const isNonEvent = entry.isOffDay || entry.isHoliday
+
+                    return (
+                      <tr
+                        key={entry.id}
+                        className={`transition-colors hover:bg-comic-yellow/10 ${
+                          isNonEvent ? 'bg-neutral-100/60 text-ink/50' : 'bg-white'
+                        }`}
+                      >
+                        <td className="py-3 px-4 font-bold text-ink whitespace-nowrap">
+                          {entry.dateStr}
+                        </td>
+                        <td className="py-3 px-4 font-semibold text-ink/80 whitespace-nowrap">
+                          {entry.day}
+                        </td>
+                        <td className="py-3 px-4 font-bold text-ink text-sm">
+                          {entry.eventName}
+                        </td>
+                        <td className="py-3 px-4 font-semibold text-ink/80">
+                          {entry.venue}
+                        </td>
+                        <td className="py-3 px-4 font-bold text-primary whitespace-nowrap">
+                          {entry.timings}
+                        </td>
+                        <td className="py-3 px-4">
+                          <span
+                            className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${colors.bg} ${colors.text} ${colors.border}`}
+                          >
+                            {entry.division}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 font-semibold text-ink">
+                          {entry.teachers}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
-      </div>
-
-      {/* ── SCHEDULE LISTING ───────────────────────────────────── */}
-      {isLoading ? (
-        <div className="space-y-3">
-          <Skeleton className="h-20 w-full" />
-          <Skeleton className="h-20 w-full" />
-          <Skeleton className="h-20 w-full" />
-        </div>
-      ) : filteredSlots.length === 0 ? (
-        <div className="comic-card p-8 text-center bg-white">
-          <DisplayText as="h3" className="text-xl text-ink mb-1.5">No Matching Sessions Found</DisplayText>
-          <p className="text-xs text-ink/70 max-w-md mx-auto">
-            Try adjusting your search keywords or switching to "All Schedule" to explore the full festival calendar.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-5">
-          {Object.entries(groupedSlots).map(([dateHeader, slots]) => (
-            <section key={dateHeader} aria-labelledby={`date-header-${dateHeader}`}>
-              {/* Day Header Banner */}
-              <div className="flex items-center gap-2.5 mb-2.5">
-                <div className="bg-[#151515] text-[#FFD43B] px-3 py-1 rounded-lg border-[1.5px] border-ink shadow-[1.5px_1.5px_0px_#151515] flex items-center gap-1.5">
-                  <CalendarDays className="w-3.5 h-3.5 text-[#793f98]" aria-hidden="true" />
-                  <span id={`date-header-${dateHeader}`} className="font-display text-xs tracking-wider uppercase font-bold">
-                    {dateHeader}
-                  </span>
-                </div>
-                <div className="h-0.5 flex-1 bg-ink/20" />
-                <span className="text-[10px] tabular-nums font-bold text-ink/60 bg-white px-2 py-0.5 rounded border border-ink">
-                  {slots.length} {slots.length === 1 ? 'EVENT' : 'EVENTS'}
-                </span>
-              </div>
-
-              {/* Day Slots Grid / Cards */}
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {slots.map((slot) => {
-                  const isOnline = slot.venue?.id === 'v-online' || slot.slot_title?.toLowerCase().includes('online') || slot.slot_title?.toLowerCase().includes('upload')
-                  const isTbd = slot.status === 'tbd' || !slot.starts_at
-
-                  return (
-                    <li key={slot.id} className="h-full">
-                      <Link
-                        to={`/events/${slot.event.slug}`}
-                        className="comic-card group h-full p-3 flex flex-col justify-center bg-white hover:border-[#793f98] transition-all relative overflow-hidden rounded-xl shadow-[2.5px_2.5px_0px_#151515]"
-                      >
-                        <HalftoneAccent color="yellow" className="opacity-0 group-hover:opacity-20 transition-opacity" />
-
-                        <div className="flex flex-col sm:flex-row gap-2.5 items-start w-full min-w-0">
-                          {/* Time Stamp / Format Box */}
-                          <div className={cn(
-                            'flex-shrink-0 text-center w-full sm:w-24 p-2 rounded-lg border-[1.5px] border-ink shadow-[1.5px_1.5px_0px_#151515]',
-                            isTbd
-                              ? 'bg-[#FFD43B]/30'
-                              : isOnline
-                              ? 'bg-[#3478F6]/15'
-                              : 'bg-[#FFF8E8]'
-                          )}>
-                            <Clock className="w-3.5 h-3.5 text-[#793f98] mx-auto mb-0.5" aria-hidden="true" />
-                            <p className="font-display text-xs tracking-wider text-ink font-bold leading-tight">
-                              {isTbd ? 'TIME TBD' : isOnline ? 'ONLINE' : formatISTTime(slot.starts_at)}
-                            </p>
-                            <p className="text-[10px] text-ink/70 font-semibold mt-0.5 leading-tight">
-                              {isTbd
-                                ? 'To Be Announced'
-                                : isOnline
-                                ? 'Digital Portal'
-                                : slot.ends_at
-                                ? `to ${formatISTTime(slot.ends_at)}`
-                                : 'Session Start'}
-                            </p>
-                          </div>
-
-                          {/* Event Information */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-1.5 mb-1">
-                              <div className="flex flex-wrap items-center gap-1">
-                                <Badge variant="outline" className="text-[9.5px] px-1.5 py-0">
-                                  {slot.event.category?.name || 'Festival'}
-                                </Badge>
-
-                                {isTbd && (
-                                  <span className="bg-[#FFD43B] text-ink border border-ink text-[9px] font-display font-black px-1.5 py-0 rounded shadow-[1px_1px_0px_#151515]">
-                                    ★ SCHEDULE TBA ★
-                                  </span>
-                                )}
-                              </div>
-
-                              <span className="font-display text-xs uppercase tracking-wider text-[#793f98] flex items-center gap-0.5 font-bold shrink-0 group-hover:translate-x-0.5 transition-transform">
-                                <Sparkles className="w-3 h-3" />
-                                Rules &amp; Entry →
-                              </span>
-                            </div>
-
-                            <DisplayText
-                              as="h2"
-                              className="text-base sm:text-lg text-ink leading-tight break-words group-hover:text-[#793f98] transition-colors"
-                            >
-                              {slot.event.title}
-                            </DisplayText>
-
-                            <p className="text-[11px] text-ink/80 flex flex-wrap items-center gap-1 mt-1 font-medium break-words">
-                              <MapPin className="w-3 h-3 text-[#793f98] flex-shrink-0" aria-hidden="true" />
-                              <span className="font-bold text-ink">
-                                {slot.venue?.name || 'Central Campus (TBA)'}
-                              </span>
-                              {slot.venue?.building && slot.venue.building !== 'Central Campus' && (
-                                <span className="text-ink/60">· {slot.venue.building}</span>
-                              )}
-                              {slot.venue?.room && (
-                                <span className="text-ink/60">· {slot.venue.room}</span>
-                              )}
-                            </p>
-                          </div>
-                        </div>
-                      </Link>
-                    </li>
-                  )
-                })}
-              </ul>
-            </section>
-          ))}
-        </div>
-      )}
+      </main>
     </div>
   )
 }
