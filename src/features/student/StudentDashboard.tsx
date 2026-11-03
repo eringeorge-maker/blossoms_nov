@@ -32,9 +32,6 @@ export default function StudentDashboard() {
         <ComicCaptionBox>
           STUDENT DOSSIER · 2025 EDITION
         </ComicCaptionBox>
-        <span className="text-xs tabular-nums font-bold text-ink/50 uppercase">
-          CHRIST CENTRAL CAMPUS
-        </span>
       </div>
 
       {/* Greeting */}

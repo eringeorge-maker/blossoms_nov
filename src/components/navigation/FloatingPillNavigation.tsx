@@ -81,7 +81,6 @@ export function FloatingPillNavigation({
               fontWeight: isActive ? 600 : 500,
               letterSpacing: '-0.37px',
               lineHeight: '18px',
-              cursor: 'pointer',
               zIndex: 1,
               borderRadius: 9999,
               whiteSpace: 'nowrap',

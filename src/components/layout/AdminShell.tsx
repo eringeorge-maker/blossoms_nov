@@ -1,10 +1,11 @@
-import { Link, Outlet, useLocation } from 'react-router-dom'
+import { Link, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 import {
   LayoutDashboard, CalendarDays, List, Users, UserCog,
   Megaphone, Image, BarChart2, ScrollText, Menu, X, ChevronRight,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { isDeveloperAdmin } from '@/lib/auth/authStore'
 
 const ADMIN_NAV = [
   { label: 'Overview',        href: '/admin',                icon: LayoutDashboard },
@@ -22,6 +23,8 @@ const ADMIN_NAV = [
 export function AdminShell() {
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  if (!isDeveloperAdmin()) return <Navigate to="/login?role=admin" replace />
 
   return (
     <div className="min-h-screen flex bg-gutter">

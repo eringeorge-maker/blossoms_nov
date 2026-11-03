@@ -15,6 +15,9 @@ export default function SchedulePage() {
   const { data: events = [], isLoading } = useQuery({
     queryKey: ['events-schedule'],
     queryFn: () => getEvents(),
+    // Schedule changes on festival days; never show data older than ~1 min.
+    staleTime: 60_000,
+    refetchInterval: 60_000,
   })
 
   const [monthFilter, setMonthFilter] = useState<MonthFilter>('all')

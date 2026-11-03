@@ -89,14 +89,20 @@ export function isDeveloperAdmin(): boolean {
   }
 }
 
-/** Log in developer admin */
-export function loginDeveloperAdmin(): void {
+// Checked in the browser only: this keeps casual visitors out of the dev console,
+// but it is not a substitute for server-side auth (Supabase roles / RLS).
+const DEV_CONSOLE_PASSCODE = 'blossoms2026'
+
+/** Log in developer admin; returns false when the passcode is wrong */
+export function loginDeveloperAdmin(passcode: string): boolean {
+  if (passcode !== DEV_CONSOLE_PASSCODE) return false
   try {
     localStorage.setItem(STORAGE_KEY_ADMIN, 'true')
     window.dispatchEvent(new Event('blossoms-auth-changed'))
   } catch {
     // ignore
   }
+  return true
 }
 
 /** Logout developer admin */

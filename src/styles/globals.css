@@ -1173,6 +1173,9 @@ body {
 }
 
 /* ── Comic cursor ─────────────────────────────────────────── */
+/* Keep cursor images small: Chrome drops custom cursors larger than 32×32 when they
+   would cross the viewport edge and falls back to the OS cursor. The arrow is 32px;
+   the POW is 40px with a centred hotspot so it only falls back in the top ~20px. */
 html,
 body {
   cursor: url('/cursors/comic-arrow.svg') 4 4, auto;
@@ -1188,7 +1191,7 @@ select,
 .expanded-event-card,
 .expanded-event-action-btn,
 .cursor-pointer {
-  cursor: url('/cursors/comic-pow.svg') 24 24, pointer;
+  cursor: url('/cursors/comic-pow.svg') 20 20, pointer;
 }
 
 button:disabled {

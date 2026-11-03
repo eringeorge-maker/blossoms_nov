@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
 
 // Layouts
@@ -9,16 +9,33 @@ import { StudentShell } from '@/components/layout/StudentShell'
 import { AdminShell }   from '@/components/layout/AdminShell'
 import { Skeleton }     from '@/components/ui/Skeleton'
 
+// Public page loaders (shared by lazy() and the idle-time prefetch below)
+const publicPages = {
+  home:          () => import('@/features/public/HomePage'),
+  events:        () => import('@/features/events/EventsPage'),
+  eventDetail:   () => import('@/features/events/EventDetailPage'),
+  schedule:      () => import('@/features/schedule/SchedulePage'),
+  announcements: () => import('@/features/announcements/AnnouncementsPage'),
+  about:         () => import('@/features/public/AboutPage'),
+  gallery:       () => import('@/features/gallery/GalleryPage'),
+  winners:       () => import('@/features/winners/WinnersPage'),
+  team:          () => import('@/features/public/TeamPage'),
+  contact:       () => import('@/features/public/ContactPage'),
+  login:         () => import('@/features/auth/LoginPage'),
+}
+
 // Lazy-loaded pages
-const HomePage            = lazy(() => import('@/features/public/HomePage'))
-const EventsPage          = lazy(() => import('@/features/events/EventsPage'))
-const EventDetailPage     = lazy(() => import('@/features/events/EventDetailPage'))
-const SchedulePage        = lazy(() => import('@/features/schedule/SchedulePage'))
-const AnnouncementsPage   = lazy(() => import('@/features/announcements/AnnouncementsPage'))
-const AboutPage           = lazy(() => import('@/features/public/AboutPage'))
-const GalleryPage         = lazy(() => import('@/features/gallery/GalleryPage'))
-const WinnersPage         = lazy(() => import('@/features/winners/WinnersPage'))
-const LoginPage           = lazy(() => import('@/features/auth/LoginPage'))
+const HomePage            = lazy(publicPages.home)
+const EventsPage          = lazy(publicPages.events)
+const EventDetailPage     = lazy(publicPages.eventDetail)
+const SchedulePage        = lazy(publicPages.schedule)
+const AnnouncementsPage   = lazy(publicPages.announcements)
+const AboutPage           = lazy(publicPages.about)
+const GalleryPage         = lazy(publicPages.gallery)
+const WinnersPage         = lazy(publicPages.winners)
+const TeamPage            = lazy(publicPages.team)
+const ContactPage         = lazy(publicPages.contact)
+const LoginPage           = lazy(publicPages.login)
 const DesignSystemPage    = lazy(() => import('@/features/public/DesignSystemPage'))
 
 // Student pages
@@ -27,7 +44,7 @@ const StudentEventsPage   = lazy(() => import('@/features/student/StudentEventsP
 const MyEventsPage        = lazy(() => import('@/features/student/MyEventsPage'))
 const StudentSchedulePage = lazy(() => import('@/features/student/StudentSchedulePage'))
 const ProfilePage         = lazy(() => import('@/features/student/ProfilePage'))
-const TeamPage            = lazy(() => import('@/features/student/TeamPage'))
+const StudentTeamPage     = lazy(() => import('@/features/student/TeamPage'))
 
 // Admin pages
 const AdminOverview       = lazy(() => import('@/features/admin/AdminOverview'))
@@ -50,6 +67,29 @@ const queryClient = new QueryClient({
   },
 })
 
+/**
+ * Once the first screen has painted and the browser is idle, warm the code chunks
+ * and data for the public pages so switching tabs doesn't flash a loading skeleton.
+ */
+function usePrefetchPublicPages() {
+  useEffect(() => {
+    const run = () => {
+      Object.values(publicPages).forEach((load) => load().catch(() => {}))
+      import('@/lib/api/events').then(({ getEvents, getCategories }) => {
+        queryClient.prefetchQuery({ queryKey: ['events-schedule'], queryFn: () => getEvents(), staleTime: 60_000 })
+        queryClient.prefetchQuery({ queryKey: ['categories'], queryFn: getCategories })
+      }).catch(() => {})
+      import('@/lib/api/announcements').then(({ getAnnouncements }) => {
+        queryClient.prefetchQuery({ queryKey: ['announcements'], queryFn: getAnnouncements })
+      }).catch(() => {})
+    }
+    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1500))
+    const cancel = window.cancelIdleCallback ?? window.clearTimeout
+    const id = idle(run)
+    return () => cancel(id)
+  }, [])
+}
+
 function PageFallback() {
   return (
     <div className="p-8 space-y-4">
@@ -61,6 +101,8 @@ function PageFallback() {
 }
 
 export default function App() {
+  usePrefetchPublicPages()
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
@@ -75,6 +117,8 @@ export default function App() {
               <Route path="events/:slug" element={<EventDetailPage />} />
               <Route path="schedule" element={<SchedulePage />} />
               <Route path="announcements" element={<AnnouncementsPage />} />
+              <Route path="team" element={<TeamPage />} />
+              <Route path="contact" element={<ContactPage />} />
               <Route path="about" element={<AboutPage />} />
               <Route path="gallery" element={<GalleryPage />} />
               <Route path="winners" element={<WinnersPage />} />
@@ -91,7 +135,7 @@ export default function App() {
               <Route path="my-events" element={<MyEventsPage />} />
               <Route path="schedule" element={<StudentSchedulePage />} />
               <Route path="profile" element={<ProfilePage />} />
-              <Route path="teams/:teamId" element={<TeamPage />} />
+              <Route path="teams/:teamId" element={<StudentTeamPage />} />
             </Route>
 
             {/* ── Admin routes (auth + role required) ───────── */}
