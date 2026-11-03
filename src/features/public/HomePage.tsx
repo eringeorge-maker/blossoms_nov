@@ -1,9 +1,9 @@
-import { CalendarDays, MapPin, Trophy, Users } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { ComicOpening, shouldPlayOpening } from '@/components/comic/ComicOpening';
-import DesktopHome, { MobileHomeGrid } from '@/features/public/DesktopHome';
+import HomeLanding from '@/features/public/landing/HomeLanding';
+import { Footer } from '@/components/layout/Footer';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { useState } from 'react';
-import toast from 'react-hot-toast';
 
 export type CategoryKey = 'arts' | 'literature' | 'stage' | 'theatre' | 'special';
 
@@ -643,180 +643,20 @@ export default function HomePage() {
 
   const [playedOpening] = useState(shouldPlayOpening);
   const [openingDone, setOpeningDone] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryKey | null>(null);
   const [selectedModal, setSelectedModal] = useState<DetailModal | null>(null);
-  const [activeFilter, setActiveFilter] = useState<string>('ALL');
-
-  // Student registration tracking
-  const [registeredIds, setRegisteredIds] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('blossoms_registered_events');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
-
-  const toggleRegister = (id: string, title: string) => {
-    setRegisteredIds((prev) => {
-      const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
-      try {
-        localStorage.setItem('blossoms_registered_events', JSON.stringify(next));
-      } catch {
-        // ignore
-      }
-      if (next.includes(id)) {
-        toast.success(`Registered for ${title}!`, {
-          style: {
-            background: '#fdfaf0',
-            border: '2.5px solid #0f0f0f',
-            color: '#0f0f0f',
-            fontFamily: '"Comic Neue", cursive, sans-serif',
-            fontWeight: 700,
-          },
-        });
-      } else {
-        toast(`Cancelled registration for ${title}`, {
-          style: {
-            background: '#fdfaf0',
-            border: '2.5px solid #0f0f0f',
-            color: '#0f0f0f',
-            fontFamily: '"Comic Neue", cursive, sans-serif',
-            fontWeight: 700,
-          },
-        });
-      }
-      return next;
-    });
-  };
-
-  const closeCategoryArena = () => {
-    setSelectedCategory(null);
-  };
-
-  const activeCategoryConfig = selectedCategory ? CATEGORY_DATA[selectedCategory] : null;
-
-  const filteredEvents = activeCategoryConfig
-    ? activeFilter === 'ALL'
-      ? activeCategoryConfig.events
-      : activeCategoryConfig.events.filter(
-          (e) => e.subCategory.toUpperCase() === activeFilter.toUpperCase()
-        )
-    : [];
 
   return (
     <div className="min-h-screen w-full bg-[#793f98] text-[#0f0f0f] relative selection:bg-black selection:text-white">
       {playedOpening && !openingDone && <ComicOpening onDone={() => setOpeningDone(true)} />}
 
-      {/* =========================================================================
-          MOBILE VIEWPORT (Figma Interface, Screen Width < 768px, Zero Shadows)
-         ========================================================================= */}
-      <div className="flex md:hidden flex-col min-h-screen w-full bg-[#0f0f0f]">
-        <div className="w-full min-h-screen flex flex-col relative bg-[#0f0f0f] overflow-x-hidden">
-          {/* Unified Top Mobile Bar with Top-Right Navigation Drawer */}
-          <PublicHeader />
-
-          <MobileHomeGrid
-            animateIn={playedOpening && openingDone}
-            onOpenSchedule={() => setSelectedModal(PANEL_DETAILS.schedule)}
-            onOpenAnnouncements={() => setSelectedModal(PANEL_DETAILS.announcements)}
-          />
-
-          {/* MOBILE EXPANDED CATEGORY OVERLAY */}
-          {selectedCategory && (
-            <div className="absolute inset-0 z-40 flex flex-col justify-between overflow-hidden bg-[#fdfaf0] animate-fadeIn">
-              <div
-                className="w-full pt-10 pb-3 px-4 border-b-[3.5px] border-[#0f0f0f] flex items-center justify-between"
-                style={{ backgroundColor: activeCategoryConfig?.bgHex }}
-              >
-                <div>
-                  <span className="bg-[#fdfaf0] border-[1.8px] border-[#0f0f0f] px-2 py-0.5 font-comic-sub text-[10px] font-bold">
-                    {activeCategoryConfig?.wingTag}
-                  </span>
-                  <h2 className="font-comic-display text-white text-[38px] leading-tight mt-1 comic-title-stroke">
-                    {activeCategoryConfig?.cardTitle}
-                  </h2>
-                </div>
-                <button
-                  type="button"
-                  onClick={closeCategoryArena}
-                  className="bg-[#f8ca16] border-[2.4px] border-[#0f0f0f] px-3 py-1 font-comic-sub font-black text-[12px] cursor-pointer active:scale-95"
-                >
-                  ✕ BACK
-                </button>
-              </div>
-
-              {/* Filters */}
-              <div className="w-full px-3 py-2 bg-[#f8ca16] border-b-[2.5px] border-[#0f0f0f] flex gap-1.5 overflow-x-auto">
-                {activeCategoryConfig?.filters.map((fil) => (
-                  <button
-                    key={fil}
-                    type="button"
-                    onClick={() => setActiveFilter(fil)}
-                    className={`px-2.5 py-1 text-[11px] font-comic-sub font-black border-[1.8px] border-[#0f0f0f] shrink-0 cursor-pointer ${
-                      activeFilter === fil ? 'bg-[#0f0f0f] text-white' : 'bg-[#fdfaf0] text-[#0f0f0f]'
-                    }`}
-                  >
-                    {fil}
-                  </button>
-                ))}
-              </div>
-
-              {/* Event Cards Scroll */}
-              <div className="flex-1 w-full p-3 overflow-y-auto space-y-3 pb-20">
-                {filteredEvents.map((ev) => {
-                  const isRegistered = registeredIds.includes(ev.id);
-                  return (
-                    <div
-                      key={ev.id}
-                      className="bg-white border-[2.8px] border-[#0f0f0f] p-3 rounded-lg flex flex-col justify-between"
-                    >
-                      <div className="flex items-start justify-between">
-                        <span
-                          className="px-2 py-0.5 text-[10px] font-bold border border-[#0f0f0f] text-black"
-                          style={{ backgroundColor: ev.badgeColor }}
-                        >
-                          {ev.subCategory}
-                        </span>
-                        <span className="inline-flex items-center gap-1 font-comic-sub font-bold text-[12px] text-[#793f98]">
-                          <Trophy className="w-3.5 h-3.5" aria-hidden="true" /> {ev.prize}
-                        </span>
-                      </div>
-                      <h4 className="font-comic-display text-[22px] text-[#0f0f0f] mt-1">{ev.title}</h4>
-                      <p className="text-[12px] text-neutral-700 leading-snug">{ev.tagline}</p>
-                      <div className="mt-2 flex items-center justify-between text-[11px] font-semibold text-neutral-600">
-                        <span className="inline-flex items-center gap-1"><CalendarDays className="w-3.5 h-3.5" aria-hidden="true" /> {ev.time}</span>
-                        <span className="inline-flex items-center gap-1"><MapPin className="w-3.5 h-3.5" aria-hidden="true" /> {ev.venue}</span>
-                      </div>
-                      <div className="mt-2 pt-2 border-t border-neutral-200 flex items-center justify-between">
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold"><Users className="w-3.5 h-3.5" aria-hidden="true" /> {ev.teamSize}</span>
-                        <button
-                          type="button"
-                          onClick={() => toggleRegister(ev.id, ev.title)}
-                          className={`px-3 py-1 font-comic-sub text-[12px] font-black border-[2px] border-[#0f0f0f] cursor-pointer active:scale-95 ${
-                            isRegistered ? 'bg-[#26A69A] text-white' : 'bg-[#793f98] text-white'
-                          }`}
-                        >
-                          {isRegistered ? 'REGISTERED ✓' : 'REGISTER'}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* =========================================================================
-          DESKTOP VIEWPORT: the mobile comic page re-flowed for wide screens
-         ========================================================================= */}
-      <DesktopHome
-        animateIn={playedOpening && openingDone}
+      <PublicHeader />
+      <HomeLanding
+        animateIn={playedOpening}
+        ready={openingDone}
         onOpenSchedule={() => setSelectedModal(PANEL_DETAILS.schedule)}
         onOpenAnnouncements={() => setSelectedModal(PANEL_DETAILS.announcements)}
       />
+      <Footer />
 
       {/* =========================================================================
           UNIVERSAL INTERACTIVE COMIC MODAL (Desktop & Mobile, Zero Shadows)

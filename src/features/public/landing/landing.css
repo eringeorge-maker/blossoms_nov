@@ -1,0 +1,802 @@
+/* ===================================================================
+   Home landing: hero, scroll-turned comic book, trailer and about
+   =================================================================== */
+.landing {
+  background: var(--color-blossoms-purple);
+  overflow-x: clip;
+}
+
+.landing-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 22px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-deep);
+  background: var(--color-festival-yellow);
+  border: 3px solid var(--color-ink-deep);
+  border-radius: 10px;
+  box-shadow: 5px 5px 0 var(--color-ink-deep);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.landing-btn--paper {
+  background: var(--color-caption-cream);
+}
+
+.landing-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 var(--color-ink-deep);
+}
+
+.landing-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 2px 2px 0 var(--color-ink-deep);
+}
+
+.landing-btn:focus-visible,
+.landing-trailer-link:focus-visible {
+  outline: 3px solid var(--color-caption-cream);
+  outline-offset: 3px;
+}
+
+.landing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+/* Hero */
+.landing-hero {
+  position: relative;
+  min-height: calc(100svh - 64px);
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 64px);
+  padding: clamp(28px, 4vw, 56px) clamp(16px, 5vw, 80px) 72px;
+  background: var(--color-blossoms-purple) url('../../../assets/brand/bg-purple-burst.png') center / cover no-repeat;
+}
+
+.landing-hero-float {
+  justify-self: center;
+  max-width: 100%;
+}
+
+.landing-hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.landing-hero-logo {
+  margin: 0;
+}
+
+.landing-hero-logo img {
+  display: block;
+  width: min(600px, 100%);
+  height: auto;
+  filter: drop-shadow(5px 5px 0 var(--color-ink-deep));
+}
+
+.landing-caption {
+  margin: 0;
+  padding: 6px 14px;
+  font-size: clamp(16px, 1.6vw, 22px);
+  font-weight: 800;
+  color: var(--color-ink-deep);
+  background: var(--color-festival-yellow);
+  border: 3px solid var(--color-ink-deep);
+  transform: rotate(-1.5deg);
+}
+
+.landing-hero-lede {
+  margin: 0;
+  max-width: 46ch;
+  font-size: clamp(15px, 1.2vw, 18px);
+  line-height: 1.55;
+  color: var(--color-caption-cream);
+}
+
+.landing-hero-art {
+  position: relative;
+  height: min(calc(100svh - 64px - 120px), 760px);
+  aspect-ratio: 1414 / 2000;
+  max-width: 100%;
+  border: 4px solid var(--color-ink-deep);
+  box-shadow: 12px 12px 0 var(--color-ink-deep);
+  transform: rotate(2.5deg);
+  background: var(--color-ink-deep);
+}
+
+.landing-hero-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.landing-bubble {
+  position: absolute;
+  top: 6%;
+  left: -18%;
+  margin: 0;
+  padding: 12px 20px;
+  font-size: clamp(20px, 2vw, 30px);
+  letter-spacing: 0.03em;
+  color: var(--color-ink-deep);
+  background: var(--color-caption-cream);
+  border: 3px solid var(--color-ink-deep);
+  border-radius: 999px;
+  transform: rotate(-6deg);
+  white-space: nowrap;
+}
+
+.landing-bubble::after {
+  content: '';
+  position: absolute;
+  right: 18%;
+  bottom: -18px;
+  width: 22px;
+  height: 22px;
+  background: var(--color-caption-cream);
+  border-right: 3px solid var(--color-ink-deep);
+  border-bottom: 3px solid var(--color-ink-deep);
+  transform: skewX(30deg) rotate(45deg);
+}
+
+.landing-scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-caption-cream);
+}
+
+/* Scroll-turned comic book */
+.flip-story {
+  position: relative;
+  height: 620vh;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(121, 63, 152, 0.9), transparent 65%),
+    #2b1238;
+}
+
+.flip-story::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(15, 15, 15, 0.45) 1.4px, transparent 1.6px);
+  background-size: 14px 14px;
+}
+
+.flip-stage {
+  position: sticky;
+  top: 64px;
+  height: calc(100svh - 64px);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.flip-intro {
+  position: absolute;
+  top: 28px;
+  margin: 0;
+  padding: 6px 14px;
+  font-size: 16px;
+  font-weight: 800;
+  background: var(--color-festival-yellow);
+  border: 3px solid var(--color-ink-deep);
+  z-index: 30;
+}
+
+.flip-book {
+  position: relative;
+  height: min(calc(100svh - 64px - 48px), calc(92vw * 2000 / 1414));
+  aspect-ratio: 1414 / 2000;
+  perspective: 2200px;
+  transform: scale(0.62);
+}
+
+.flip-cover,
+.flip-page {
+  position: absolute;
+  inset: 0;
+}
+
+.flip-cover {
+  z-index: 0;
+  border: 4px solid var(--color-ink-deep);
+  box-shadow: 10px 10px 0 var(--color-blossoms-purple);
+}
+
+.flip-cover img,
+.flip-face img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.flip-page {
+  transform-origin: left center;
+  transform-style: preserve-3d;
+}
+
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border: 4px solid var(--color-ink-deep);
+  background: var(--color-caption-cream);
+  overflow: hidden;
+}
+
+.flip-face--back {
+  transform: rotateY(180deg);
+  background:
+    radial-gradient(rgba(121, 63, 152, 0.35) 1.6px, transparent 1.8px) 0 0 / 12px 12px,
+    var(--color-caption-cream);
+}
+
+.flip-final {
+  position: absolute;
+  right: clamp(16px, 8vw, 140px);
+  bottom: clamp(24px, 8vh, 90px);
+  margin: 0;
+  padding: 10px 22px;
+  font-size: clamp(34px, 5vw, 72px);
+  line-height: 1;
+  letter-spacing: 0.03em;
+  color: var(--color-ink-deep);
+  background: var(--color-festival-yellow);
+  border: 4px solid var(--color-ink-deep);
+  box-shadow: 6px 6px 0 var(--color-ink-deep);
+  opacity: 0;
+  z-index: 30;
+}
+
+/* Trailer and about */
+.landing-about {
+  position: relative;
+  padding: clamp(24px, 4vw, 56px) clamp(16px, 5vw, 80px) clamp(56px, 8vw, 110px);
+  background: var(--color-blossoms-purple);
+}
+
+.landing-about-grid {
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(280px, 400px) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: start;
+}
+
+.landing-trailer {
+  position: relative;
+  margin: 0;
+  padding: 12px;
+  background: var(--color-ink-deep);
+  border: 4px solid var(--color-ink-deep);
+  border-radius: 14px;
+  box-shadow: 10px 10px 0 var(--color-festival-yellow);
+  transform: rotate(-1.5deg);
+}
+
+.landing-trailer-tab {
+  position: absolute;
+  top: -22px;
+  left: 18px;
+  z-index: 1;
+  padding: 4px 14px;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  background: var(--color-festival-yellow);
+  border: 3px solid var(--color-ink-deep);
+}
+
+.landing-trailer iframe {
+  display: block;
+  width: 100%;
+  height: 640px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--color-caption-cream);
+}
+
+.landing-trailer-link {
+  display: block;
+  padding-top: 10px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-festival-yellow);
+}
+
+.landing-about-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.landing-about-panels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.landing-panel {
+  padding: 20px 22px;
+  background: var(--color-caption-cream);
+  border: 3px solid var(--color-ink-deep);
+  border-radius: 12px;
+  box-shadow: 6px 6px 0 var(--color-ink-deep);
+}
+
+.landing-panel--tilt {
+  transform: rotate(1deg) translateY(10px);
+}
+
+.landing-panel h3 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  letter-spacing: 0.03em;
+  color: var(--color-blossoms-purple);
+}
+
+.landing-panel p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-ink);
+}
+
+.landing-organiser {
+  align-self: flex-start;
+  margin: 10px 0 0;
+  padding: 6px 14px;
+  font-size: 16px;
+  font-weight: 800;
+  background: var(--color-festival-yellow);
+  border: 3px solid var(--color-ink-deep);
+  transform: rotate(-1deg);
+}
+
+/* Hammer meets shield */
+.clash {
+  position: relative;
+  height: 320vh;
+  background: var(--color-blossoms-purple);
+}
+
+.clash-stage {
+  --clash-size: clamp(130px, 22vw, 300px);
+  position: sticky;
+  top: 64px;
+  height: calc(100svh - 64px);
+  overflow: hidden;
+  background: var(--color-blossoms-purple) url('../../../assets/brand/bg-purple-burst.png') center / cover no-repeat;
+}
+
+.clash-shake {
+  position: absolute;
+  inset: 0;
+}
+
+.clash-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.clash-hammer,
+.clash-shield,
+.clash-burst,
+.clash-ring,
+.clash-bolts {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+}
+
+.clash-hammer,
+.clash-shield {
+  width: var(--clash-size);
+  margin: calc(var(--clash-size) / -2) 0 0 calc(var(--clash-size) / -2);
+  z-index: 3;
+  filter: drop-shadow(8px 8px 0 var(--color-ink-deep));
+}
+
+.clash-hammer {
+  transform: translateX(-100vw);
+}
+
+.clash-shield {
+  transform: translateX(100vw);
+}
+
+.clash-hammer svg,
+.clash-shield svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.clash-burst {
+  --burst: calc(var(--clash-size) * 2.4);
+  width: var(--burst);
+  height: var(--burst);
+  margin: calc(var(--burst) / -2) 0 0 calc(var(--burst) / -2);
+  opacity: 0;
+  z-index: 1;
+}
+
+.clash-ring {
+  --ring: calc(var(--clash-size) * 0.9);
+  width: var(--ring);
+  height: var(--ring);
+  margin: calc(var(--ring) / -2) 0 0 calc(var(--ring) / -2);
+  border: 10px solid var(--color-caption-cream);
+  border-radius: 50%;
+  opacity: 0;
+  z-index: 2;
+}
+
+.clash-bolts {
+  --bolts: calc(var(--clash-size) * 2.2);
+  width: var(--bolts);
+  height: auto;
+  margin: calc(var(--bolts) / -2) 0 0 calc(var(--bolts) / -2);
+  opacity: 0;
+  z-index: 2;
+}
+
+.clash-sfx {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 8%;
+  margin: 0;
+  text-align: center;
+  font-size: clamp(56px, 9vw, 132px);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: var(--color-festival-yellow);
+  -webkit-text-stroke: 3px var(--color-ink-deep);
+  paint-order: stroke fill;
+  text-shadow: 6px 6px 0 var(--color-ink-deep);
+  opacity: 0;
+  z-index: 4;
+}
+
+.clash-flash {
+  position: absolute;
+  inset: 0;
+  background: var(--color-caption-cream);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.clash-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8%;
+  margin: 0;
+  padding: 0 16px;
+  text-align: center;
+  font-size: clamp(40px, 6vw, 88px);
+  line-height: 1;
+  letter-spacing: 0.03em;
+  opacity: 0;
+  z-index: 4;
+}
+
+.clash-dim {
+  position: absolute;
+  inset: 0;
+  background: #2b1238;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+
+/* Laser eyes burn the about heading in */
+.laser {
+  position: relative;
+  height: 480vh;
+  background: #2b1238;
+}
+
+.laser-stage {
+  position: sticky;
+  top: 64px;
+  height: calc(100svh - 64px);
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 64px);
+  padding: 0 clamp(16px, 5vw, 80px);
+  overflow: hidden;
+}
+
+.laser-face {
+  position: relative;
+  justify-self: center;
+  width: min(100%, 420px, calc((100svh - 64px - 120px) * 0.8));
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 4px solid var(--color-ink-deep);
+  box-shadow: 10px 10px 0 var(--color-ink-deep);
+  background: var(--color-ink-deep);
+  transform: rotate(-2deg);
+}
+
+.laser-face-art {
+  position: absolute;
+  width: 230%;
+  left: -62%;
+  top: -22%;
+}
+
+.laser-face-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.laser-eye {
+  position: absolute;
+  width: 5%;
+  aspect-ratio: 1;
+  margin: -2.5% 0 0 -2.5%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0 22%, #ffd43b 40%, #ff3b1f 66%, transparent 72%);
+  opacity: 0;
+}
+
+.laser-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.laser-title {
+  position: relative;
+  align-self: flex-start;
+  margin: 0;
+  font-size: clamp(56px, 8.5vw, 136px);
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+}
+
+.laser-cover {
+  position: absolute;
+  inset: -8px -14px;
+  background: #2b1238;
+  transform-origin: right center;
+}
+
+.laser-lede {
+  margin: 0;
+  max-width: 58ch;
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.6;
+  color: var(--color-caption-cream);
+  opacity: 0;
+}
+
+.laser-beams {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px #ff3b1f) drop-shadow(0 0 16px #ff3b1f);
+  z-index: 5;
+}
+
+.laser-beam {
+  opacity: 0;
+  stroke-linecap: round;
+}
+
+.laser-beam--glow {
+  stroke: #ff2d1a;
+  stroke-width: 16;
+  stroke-opacity: 0.6;
+}
+
+.laser-beam--core {
+  stroke: #fff7c2;
+  stroke-width: 5;
+}
+
+.laser-spark {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 70px;
+  height: 70px;
+  margin: -35px 0 0 -35px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0 16%, #ffd43b 30%, rgba(255, 80, 20, 0.6) 55%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+
+@media (max-width: 1023px) {
+  .landing-about-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .landing-trailer {
+    width: min(400px, 100%);
+    justify-self: center;
+  }
+}
+
+@media (max-width: 767px) {
+  .landing-hero {
+    grid-template-columns: minmax(0, 1fr);
+    padding-bottom: 64px;
+  }
+
+  .landing-hero-copy {
+    align-items: center;
+    text-align: center;
+  }
+
+  .landing-actions {
+    justify-content: center;
+  }
+
+  .landing-hero-art {
+    height: auto;
+    width: min(78vw, 360px);
+  }
+
+  .landing-bubble {
+    left: -6%;
+    top: -4%;
+  }
+
+  .flip-story {
+    height: 500vh;
+  }
+
+  .flip-book {
+    transform: scale(0.82);
+  }
+
+  .clash {
+    height: 260vh;
+  }
+
+  .laser {
+    height: 420vh;
+  }
+
+  .laser-stage {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: 28px;
+  }
+
+  .laser-face {
+    width: min(58vw, 260px, calc((100svh - 64px) * 0.32));
+  }
+
+  .laser-title {
+    align-self: center;
+    text-align: center;
+  }
+
+  .laser-lede {
+    text-align: center;
+  }
+
+  /* No room for an open spread on a phone: turned pages leave instead. */
+  .flip-face--back {
+    display: none;
+  }
+
+  .landing-about-panels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .landing-panel--tilt {
+    transform: none;
+  }
+
+  .landing-about-copy {
+    align-items: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-story {
+    height: auto;
+  }
+
+  .flip-stage {
+    position: relative;
+    top: 0;
+    padding: 48px 0;
+  }
+
+  .flip-book {
+    transform: none;
+  }
+
+  .flip-page,
+  .flip-intro {
+    display: none;
+  }
+
+  .flip-final {
+    opacity: 1;
+    transform: rotate(-3deg);
+  }
+
+  /* Without motion, each scene shows its final frame. */
+  .clash,
+  .laser {
+    height: auto;
+  }
+
+  .clash-stage,
+  .laser-stage {
+    position: relative;
+    top: 0;
+  }
+
+  .laser-stage {
+    height: auto;
+    padding-block: 48px;
+    background: var(--color-blossoms-purple);
+  }
+
+  .clash-hammer {
+    transform: translateX(calc(var(--clash-size) * -0.72)) rotate(-26deg);
+  }
+
+  .clash-shield {
+    transform: translateX(calc(var(--clash-size) * 0.66)) rotate(30deg);
+  }
+
+  .clash-burst,
+  .clash-sfx,
+  .clash-caption,
+  .laser-lede {
+    opacity: 1;
+  }
+
+  .clash-sfx {
+    transform: rotate(-8deg);
+  }
+
+  .laser-cover,
+  .laser-beams,
+  .laser-spark {
+    display: none;
+  }
+}
