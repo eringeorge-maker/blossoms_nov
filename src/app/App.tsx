@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Suspense, lazy, useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
@@ -9,36 +9,24 @@ import { StudentShell } from '@/components/layout/StudentShell'
 import { AdminShell }   from '@/components/layout/AdminShell'
 import { Skeleton }     from '@/components/ui/Skeleton'
 
-// Public page loaders (shared by lazy() and the idle-time prefetch below)
-const publicPages = {
-  home:          () => import('@/features/public/HomePage'),
-  events:        () => import('@/features/events/EventsPage'),
-  eventDetail:   () => import('@/features/events/EventDetailPage'),
-  schedule:      () => import('@/features/schedule/SchedulePage'),
-  announcements: () => import('@/features/announcements/AnnouncementsPage'),
-  about:         () => import('@/features/public/AboutPage'),
-  gallery:       () => import('@/features/gallery/GalleryPage'),
-  winners:       () => import('@/features/winners/WinnersPage'),
-  team:          () => import('@/features/public/TeamPage'),
-  contact:       () => import('@/features/public/ContactPage'),
-  login:         () => import('@/features/auth/LoginPage'),
-}
+// Core Public pages (eagerly imported for instantaneous 0ms nav bar clicks)
+import HomePage          from '@/features/public/HomePage'
+import EventsPage        from '@/features/events/EventsPage'
+import EventDetailPage   from '@/features/events/EventDetailPage'
+import SchedulePage      from '@/features/schedule/SchedulePage'
+import AnnouncementsPage from '@/features/announcements/AnnouncementsPage'
+import AboutPage         from '@/features/public/AboutPage'
+import GalleryPage       from '@/features/gallery/GalleryPage'
+import WinnersPage       from '@/features/winners/WinnersPage'
+import TeamPage          from '@/features/public/TeamPage'
+import ContactPage       from '@/features/public/ContactPage'
+import LoginPage         from '@/features/auth/LoginPage'
+import { getCategories } from '@/lib/api/events'
+import { getAnnouncements } from '@/lib/api/announcements'
 
-// Lazy-loaded pages
-const HomePage            = lazy(publicPages.home)
-const EventsPage          = lazy(publicPages.events)
-const EventDetailPage     = lazy(publicPages.eventDetail)
-const SchedulePage        = lazy(publicPages.schedule)
-const AnnouncementsPage   = lazy(publicPages.announcements)
-const AboutPage           = lazy(publicPages.about)
-const GalleryPage         = lazy(publicPages.gallery)
-const WinnersPage         = lazy(publicPages.winners)
-const TeamPage            = lazy(publicPages.team)
-const ContactPage         = lazy(publicPages.contact)
-const LoginPage           = lazy(publicPages.login)
 const DesignSystemPage    = lazy(() => import('@/features/public/DesignSystemPage'))
 
-// Student pages
+// Student pages (lazy loaded)
 const StudentDashboard    = lazy(() => import('@/features/student/StudentDashboard'))
 const StudentEventsPage   = lazy(() => import('@/features/student/StudentEventsPage'))
 const MyEventsPage        = lazy(() => import('@/features/student/MyEventsPage'))
@@ -46,7 +34,7 @@ const StudentSchedulePage = lazy(() => import('@/features/student/StudentSchedul
 const ProfilePage         = lazy(() => import('@/features/student/ProfilePage'))
 const StudentTeamPage     = lazy(() => import('@/features/student/TeamPage'))
 
-// Admin pages
+// Admin pages (lazy loaded)
 const AdminOverview       = lazy(() => import('@/features/admin/AdminOverview'))
 const AdminEventsPage     = lazy(() => import('@/features/admin/AdminEventsPage'))
 const AdminEventEditor    = lazy(() => import('@/features/admin/AdminEventEditor'))
@@ -68,20 +56,14 @@ const queryClient = new QueryClient({
 })
 
 /**
- * Once the first screen has painted and the browser is idle, warm the code chunks
- * and data for the public pages so switching tabs doesn't flash a loading skeleton.
+ * Once the first screen has painted and the browser is idle, warm the data for the
+ * public pages so Notice Board / Events open without a loading skeleton.
  */
-function usePrefetchPublicPages() {
+function usePrefetchPublicData() {
   useEffect(() => {
     const run = () => {
-      Object.values(publicPages).forEach((load) => load().catch(() => {}))
-      import('@/lib/api/events').then(({ getEvents, getCategories }) => {
-        queryClient.prefetchQuery({ queryKey: ['events-schedule'], queryFn: () => getEvents(), staleTime: 60_000 })
-        queryClient.prefetchQuery({ queryKey: ['categories'], queryFn: getCategories })
-      }).catch(() => {})
-      import('@/lib/api/announcements').then(({ getAnnouncements }) => {
-        queryClient.prefetchQuery({ queryKey: ['announcements'], queryFn: getAnnouncements })
-      }).catch(() => {})
+      queryClient.prefetchQuery({ queryKey: ['categories'], queryFn: getCategories })
+      queryClient.prefetchQuery({ queryKey: ['announcements'], queryFn: getAnnouncements })
     }
     const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1500))
     const cancel = window.cancelIdleCallback ?? window.clearTimeout
@@ -100,12 +82,21 @@ function PageFallback() {
   )
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
+  }, [pathname])
+  return null
+}
+
 export default function App() {
-  usePrefetchPublicPages()
+  usePrefetchPublicData()
 
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <ScrollToTop />
         <Suspense fallback={<PageFallback />}>
           <Routes>
             {/* ── Home route (Authentic Figma Modern Mobile Interface Design) ── */}

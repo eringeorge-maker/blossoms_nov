@@ -87,6 +87,12 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Eliminate 300ms mobile touch delay on interactive elements */
+a, button, [role="button"], input, select, textarea {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   font-family: var(--font-body);
   background-color: var(--color-paper);

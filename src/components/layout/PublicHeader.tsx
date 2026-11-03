@@ -152,7 +152,7 @@ export function PublicHeader() {
           </button>
         )}
         <button
-          className="flex items-center justify-center w-10 h-10 shrink-0 rounded-full border-2 border-[#0f0f0f] bg-[#FFF8E8] text-[#151515] hover:bg-[#FFD43B] transition-colors focus-visible:outline-[#FFD43B]"
+          className="flex items-center justify-center w-10 h-10 shrink-0 rounded-full border-2 border-[#0f0f0f] bg-[#FFF8E8] text-[#151515] hover:bg-[#FFD43B] active:scale-90 transition-all duration-100 cursor-pointer focus-visible:outline-[#FFD43B] touch-manipulation"
           onClick={() => setMenuOpen((o) => !o)}
           aria-expanded={menuOpen}
           aria-controls="mobile-nav-drawer"
@@ -167,7 +167,7 @@ export function PublicHeader() {
       {menuOpen && (
         <div
           id="mobile-nav-drawer"
-          className="min-[1200px]:hidden fixed inset-x-0 top-16 bottom-0 z-[100] bg-[#FFF8E8] flex flex-col p-6 animate-fadeIn overflow-y-auto"
+          className="min-[1200px]:hidden fixed inset-x-0 top-16 bottom-0 z-[100] bg-[#FFF8E8] flex flex-col p-6 overflow-y-auto"
         >
           <nav aria-label="Mobile Navigation" className="flex flex-col gap-2">
             {NAV_LINKS.map((link) => {
@@ -177,7 +177,7 @@ export function PublicHeader() {
                   key={link.label}
                   to={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className={`flex items-center justify-between px-5 py-3 rounded-[18px] border-2 border-[#0f0f0f] text-[17px] font-[500] transition-colors ${
+                  className={`flex items-center justify-between px-5 py-3 rounded-[18px] border-2 border-[#0f0f0f] text-[17px] font-[500] transition-all duration-100 active:scale-[0.98] active:bg-[#FFD43B] touch-manipulation cursor-pointer ${
                     active
                       ? 'bg-primary text-white font-semibold'
                       : 'bg-white text-[#151515] hover:bg-[#FFD43B]'

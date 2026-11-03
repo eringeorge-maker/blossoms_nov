@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { PublicHeader } from '@/components/layout/PublicHeader'
 import { EVENTS } from '@/lib/data/eventsData'
 import type { Event } from '@/types'
@@ -243,23 +243,26 @@ export default function DesktopEventsShowcase({
     }
   }, [])
 
-  const handlePanelSelect = (panel: ComicPanelConfig, element: HTMLButtonElement) => {
-    if (!panel.isExpansionEnabled || expansionPhase !== 'idle') return
+  const handlePanelSelect = useCallback(
+    (panel: ComicPanelConfig, element: HTMLButtonElement) => {
+      if (!panel.isExpansionEnabled || expansionPhase !== 'idle') return
 
-    const rect = element.getBoundingClientRect()
-    setOriginRect({
-      left: rect.left,
-      top: rect.top,
-      width: rect.width,
-      height: rect.height,
-    })
-    setActiveExpandedPanel(panel)
-    setExpansionPhase('expanding')
-    if (transitionTimerRef.current) window.clearTimeout(transitionTimerRef.current)
-    transitionTimerRef.current = window.setTimeout(() => {
-      setExpansionPhase('expanded')
-    }, TRANSITION_DURATION_MS)
-  }
+      const rect = element.getBoundingClientRect()
+      setOriginRect({
+        left: rect.left,
+        top: rect.top,
+        width: rect.width,
+        height: rect.height,
+      })
+      setActiveExpandedPanel(panel)
+      setExpansionPhase('expanding')
+      if (transitionTimerRef.current) window.clearTimeout(transitionTimerRef.current)
+      transitionTimerRef.current = window.setTimeout(() => {
+        setExpansionPhase('expanded')
+      }, TRANSITION_DURATION_MS)
+    },
+    [expansionPhase]
+  )
 
   const handleBackToShowcase = () => {
     if (!activeExpandedPanel || (expansionPhase !== 'expanded' && expansionPhase !== 'expanding')) return
@@ -304,7 +307,7 @@ export default function DesktopEventsShowcase({
         }
       }
     }
-  }, [activeCategory, isMobileViewport])
+  }, [activeCategory, activeExpandedPanel, activePanels, expansionPhase, handlePanelSelect])
 
   const activeCategoryEvents = useMemo(() => {
     if (!activeExpandedPanel) return []
