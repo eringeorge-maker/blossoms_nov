@@ -1,13 +1,15 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import {
   CalendarDays,
   MapPin,
   Clock,
   Search,
-  UserCheck,
+  User,
   Table as TableIcon,
   LayoutGrid,
   Filter,
+  ChevronRight,
+  SlidersHorizontal,
 } from 'lucide-react'
 import { MASTER_SCHEDULE } from '@/lib/data/masterSchedule'
 
@@ -25,9 +27,31 @@ const DIVISION_COLORS: Record<string, { bg: string; text: string; border: string
 
 export default function SchedulePage() {
   const [monthFilter, setMonthFilter] = useState<MonthFilter>('all')
+  const [divisionFilter, setDivisionFilter] = useState<string>('all')
+  const [selectedDate, setSelectedDate] = useState<string>('')
   const [viewMode, setViewMode] = useState<'timeline' | 'table'>('timeline')
   const [search, setSearch] = useState('')
   const [hideOffDays, setHideOffDays] = useState(false)
+  const scrollerRef = useRef<HTMLDivElement>(null)
+
+  // Unique dates for horizontal date picker in mobile
+  const uniqueDates = useMemo(() => {
+    const list: Array<{ dateStr: string; dayNum: string; monthName: string; dayShort: string }> = []
+    const seen = new Set<string>()
+    for (const item of MASTER_SCHEDULE) {
+      if (!seen.has(item.dateStr)) {
+        seen.add(item.dateStr)
+        const [d, m] = item.dateStr.split('-')
+        list.push({
+          dateStr: item.dateStr,
+          dayNum: d,
+          monthName: m === '11' ? 'Nov' : 'Dec',
+          dayShort: item.day.slice(0, 3),
+        })
+      }
+    }
+    return list
+  }, [])
 
   const filteredEntries = useMemo(() => {
     return MASTER_SCHEDULE.filter((entry) => {
@@ -35,10 +59,13 @@ export default function SchedulePage() {
       if (monthFilter === 'nov' && !entry.dateStr.includes('-11-')) return false
       if (monthFilter === 'dec' && !entry.dateStr.includes('-12-')) return false
 
-      // 2. Hide off days toggle
+      // 2. Division filter (Mobile & Desktop)
+      if (divisionFilter !== 'all' && entry.division !== divisionFilter) return false
+
+      // 3. Hide off days toggle
       if (hideOffDays && (entry.isOffDay || entry.isHoliday)) return false
 
-      // 3. Search query
+      // 4. Search query
       if (search.trim()) {
         const query = search.toLowerCase()
         const matchesName = entry.eventName.toLowerCase().includes(query)
@@ -53,247 +80,495 @@ export default function SchedulePage() {
 
       return true
     })
-  }, [monthFilter, hideOffDays, search])
+  }, [monthFilter, divisionFilter, hideOffDays, search])
+
+  function handleScrollRight() {
+    if (scrollerRef.current) {
+      scrollerRef.current.scrollBy({ left: 160, behavior: 'smooth' })
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#faf8f5] text-ink pb-24">
-      {/* ── Compact Filter Header Bar ─────────────────────────── */}
-      <section className="relative border-b-3 border-ink bg-gradient-to-r from-comic-yellow/30 via-primary/10 to-comic-red/10 py-6 px-4 overflow-hidden">
-        {/* Halftone dot pattern overlay */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 opacity-15 pointer-events-none"
-          style={{
-            backgroundImage: 'radial-gradient(circle, #0f0f0f 1.5px, transparent 1.5px)',
-            backgroundSize: '18px 18px',
-          }}
-        />
-
-        <div className="relative z-10 mx-auto max-w-[1240px]">
-          {/* ── Search & View Mode Toolbar ──────────────────────── */}
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            {/* Search Input */}
-            <div className="relative w-full sm:w-80">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink/50" />
-              <input
-                type="text"
-                placeholder="Search events, teachers, venues..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 text-xs font-semibold bg-white border-2 border-ink rounded-full shadow-comic-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-              />
+      {/* ======================================================================= */}
+      {/* ── MOBILE VIEWPORT: Authentic Comic Reference Design (md:hidden) ───── */}
+      {/* ======================================================================= */}
+      <div className="md:hidden px-4 pt-6 space-y-4">
+        {/* Comic Header: SCHEDULE + Action Rays + Calendar Icon */}
+        <div className="text-center pt-2 pb-2">
+          <div className="inline-flex items-center justify-center gap-2">
+            {/* Left 3 Comic Burst Rays */}
+            <div className="flex flex-col gap-1 items-end mr-1 text-ink" aria-hidden="true">
+              <div className="w-3.5 h-[2.5px] bg-ink rounded-full rotate-[25deg]" />
+              <div className="w-4.5 h-[2.5px] bg-ink rounded-full" />
+              <div className="w-3.5 h-[2.5px] bg-ink rounded-full -rotate-[25deg]" />
             </div>
 
-            {/* View Mode Toggle */}
-            <div className="flex items-center gap-1 bg-white border-2 border-ink rounded-full p-1 shadow-comic-sm">
-              <button
-                onClick={() => setViewMode('timeline')}
-                className={`cursor-pointer px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 transition-colors ${
-                  viewMode === 'timeline' ? 'bg-ink text-white' : 'text-ink/70 hover:text-ink'
-                }`}
-              >
-                <LayoutGrid className="w-3.5 h-3.5" />
-                <span>Timeline</span>
-              </button>
-              <button
-                onClick={() => setViewMode('table')}
-                className={`cursor-pointer px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 transition-colors ${
-                  viewMode === 'table' ? 'bg-ink text-white' : 'text-ink/70 hover:text-ink'
-                }`}
-              >
-                <TableIcon className="w-3.5 h-3.5" />
-                <span>Table View</span>
-              </button>
+            {/* SCHEDULE badge with yellow splash */}
+            <div className="relative inline-block">
+              <div
+                className="absolute inset-0 bg-[#FFD43B] border-2 border-ink rounded-xl -rotate-1 shadow-[2.5px_2.5px_0px_#151515]"
+                aria-hidden="true"
+              />
+              <h1 className="relative font-display italic font-black text-4xl text-ink tracking-wider px-3.5 py-1">
+                SCHEDULE
+              </h1>
+            </div>
+
+            {/* Right Calendar Icon with Comic Action Rays */}
+            <div className="relative ml-1.5 flex flex-col items-center" aria-hidden="true">
+              {/* Rays */}
+              <div className="flex items-end justify-center gap-1 mb-0.5">
+                <div className="w-2.5 h-[2px] bg-ink rounded-full -rotate-45" />
+                <div className="w-3 h-[2px] bg-ink rounded-full -rotate-90" />
+                <div className="w-2.5 h-[2px] bg-ink rounded-full rotate-45" />
+              </div>
+              {/* Calendar block */}
+              <div className="w-9 h-9 bg-white border-2 border-ink rounded-lg shadow-[2px_2px_0px_#151515] overflow-hidden flex flex-col">
+                <div className="bg-[#FFD43B] border-b-2 border-ink h-2.5 flex items-center justify-around px-1">
+                  <div className="w-1 h-1 rounded-full bg-ink" />
+                  <div className="w-1 h-1 rounded-full bg-ink" />
+                </div>
+                <div className="p-1 grid grid-cols-4 gap-0.5 flex-1 items-center">
+                  <div className="w-1 h-1 bg-ink rounded-sm" />
+                  <div className="w-1 h-1 bg-ink rounded-sm" />
+                  <div className="w-1 h-1 bg-ink rounded-sm" />
+                  <div className="w-1 h-1 bg-ink rounded-sm" />
+                  <div className="w-1 h-1 bg-[#e51e25] rounded-sm" />
+                  <div className="w-1 h-1 bg-ink rounded-sm" />
+                  <div className="w-1 h-1 bg-ink rounded-sm" />
+                  <div className="w-1 h-1 bg-ink rounded-sm" />
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Month Filters & Off-day toggle */}
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-ink/60 mr-1 flex items-center gap-1">
-              <Filter className="w-3 h-3" /> Month:
-            </span>
-
-            {(
-              [
-                { id: 'all', label: 'All Dates' },
-                { id: 'nov', label: 'November 2026' },
-                { id: 'dec', label: 'December 2026' },
-              ] as const
-            ).map((m) => (
-              <button
-                key={m.id}
-                onClick={() => setMonthFilter(m.id)}
-                className={`cursor-pointer px-3 py-1 text-xs font-bold rounded-full border-2 border-ink transition-all ${
-                  monthFilter === m.id
-                    ? 'bg-primary text-white shadow-comic-sm'
-                    : 'bg-white text-ink hover:bg-neutral-100'
-                }`}
-              >
-                {m.label}
-              </button>
-            ))}
-
-            <label className="ml-auto flex items-center gap-2 cursor-pointer text-xs font-bold text-ink/70">
-              <input
-                type="checkbox"
-                checked={hideOffDays}
-                onChange={(e) => setHideOffDays(e.target.checked)}
-                className="rounded border-ink text-primary focus:ring-0"
-              />
-              <span>Hide Off Days &amp; Holidays</span>
-            </label>
-          </div>
+          <p className="text-sm font-semibold text-ink mt-2">
+            All events, at a glance.
+          </p>
         </div>
-      </section>
 
-      {/* ── Main Schedule Content ─────────────────────────────── */}
-      <main className="mx-auto max-w-[1240px] px-4 pt-10">
-        {filteredEntries.length === 0 ? (
-          <div className="bg-white border-3 border-ink rounded-[16px] p-12 text-center shadow-comic-md">
-            <CalendarDays className="w-12 h-12 text-ink/30 mx-auto mb-3" />
-            <h3 className="font-display text-2xl text-ink font-bold">No events matched your search</h3>
-            <p className="text-xs text-ink/60 mt-1 max-w-md mx-auto">
-              Try clearing your search terms or resetting the month filter to see the complete festival schedule.
-            </p>
-            <button
-              onClick={() => {
-                setSearch('')
-                setMonthFilter('all')
-                setHideOffDays(false)
-              }}
-              className="mt-4 px-4 py-1.5 bg-comic-yellow text-ink text-xs font-bold rounded-full border-2 border-ink shadow-comic-sm"
+        {/* Search Bar */}
+        <div className="relative">
+          <Search className="w-4.5 h-4.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/60" />
+          <input
+            type="text"
+            placeholder="Search event, venue or teacher..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 bg-white border-2 border-ink rounded-2xl text-xs font-bold text-ink placeholder:text-ink/40 focus:outline-none shadow-[1px_1px_0px_#151515]"
+          />
+        </div>
+
+        {/* Filter Row: All Dates, All Arenas, Sliders */}
+        <div className="flex items-center gap-2">
+          {/* All Dates Dropdown */}
+          <div className="relative flex-1">
+            <select
+              value={monthFilter}
+              onChange={(e) => setMonthFilter(e.target.value as MonthFilter)}
+              className="w-full appearance-none bg-[#48206d] text-white border-2 border-ink rounded-full px-4 py-2 text-xs font-bold focus:outline-none shadow-[1.5px_1.5px_0px_#151515] cursor-pointer"
             >
-              Reset Filters
-            </button>
+              <option value="all" className="bg-white text-ink font-semibold">All Dates</option>
+              <option value="nov" className="bg-white text-ink font-semibold">November 2026</option>
+              <option value="dec" className="bg-white text-ink font-semibold">December 2026</option>
+            </select>
+            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-white text-[10px]">
+              ▼
+            </div>
           </div>
-        ) : viewMode === 'timeline' ? (
-          /* ── Timeline Cards View ─────────────────────────────── */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredEntries.map((entry) => {
-              const colors = DIVISION_COLORS[entry.division] || DIVISION_COLORS['Off Day']
-              const isNonEvent = entry.isOffDay || entry.isHoliday
+
+          {/* All Arenas Dropdown */}
+          <div className="relative flex-1">
+            <select
+              value={divisionFilter}
+              onChange={(e) => setDivisionFilter(e.target.value)}
+              className="w-full appearance-none bg-white text-ink border-2 border-ink rounded-full px-4 py-2 text-xs font-bold focus:outline-none shadow-[1.5px_1.5px_0px_#151515] cursor-pointer"
+            >
+              <option value="all">All Arenas</option>
+              <option value="Literature">Literature</option>
+              <option value="Arts">Fine Arts</option>
+              <option value="Stage">Stage</option>
+              <option value="Theatre">Theatre</option>
+            </select>
+            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-ink text-[10px]">
+              ▼
+            </div>
+          </div>
+
+          {/* Sliders / Filter icon */}
+          <button
+            onClick={() => setHideOffDays(!hideOffDays)}
+            className={`w-9 h-9 rounded-2xl border-2 border-ink flex items-center justify-center shadow-[1.5px_1.5px_0px_#151515] transition-colors ${
+              hideOffDays ? 'bg-[#FFD43B]' : 'bg-white'
+            }`}
+            aria-label="Toggle off days"
+            title="Toggle off-days"
+          >
+            <SlidersHorizontal className="w-4 h-4 text-ink" />
+          </button>
+        </div>
+
+        {/* Horizontal Date Picker Cards Row */}
+        <div className="flex items-center gap-2 pt-1">
+          <div
+            ref={scrollerRef}
+            className="flex-1 flex gap-2 overflow-x-auto pb-1 scrollbar-none scroll-smooth"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {uniqueDates.map((item) => {
+              const isSelected = selectedDate === item.dateStr
+              return (
+                <button
+                  key={item.dateStr}
+                  onClick={() => {
+                    if (selectedDate === item.dateStr) {
+                      setSelectedDate('')
+                    } else {
+                      setSelectedDate(item.dateStr)
+                    }
+                  }}
+                  className={`flex-shrink-0 w-[58px] py-2 px-1 rounded-2xl border-2 border-ink text-center transition-all ${
+                    isSelected
+                      ? 'bg-[#48206d] text-white shadow-[2px_2px_0px_#151515] translate-y-[-1px]'
+                      : 'bg-white text-ink shadow-[1px_1px_0px_#151515]'
+                  }`}
+                >
+                  <p className="font-bold text-lg leading-tight">{item.dayNum}</p>
+                  <p className="text-[10px] font-bold leading-tight mt-0.5">{item.monthName}</p>
+                  <p className="text-[10px] font-bold leading-tight opacity-80">{item.dayShort}</p>
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Arrow button */}
+          <button
+            onClick={handleScrollRight}
+            className="w-9 h-9 flex-shrink-0 bg-white border-2 border-ink rounded-full flex items-center justify-center shadow-[1px_1px_0px_#151515]"
+            aria-label="Scroll dates forward"
+          >
+            <ChevronRight className="w-4 h-4 text-ink" />
+          </button>
+        </div>
+
+        {/* Schedule Cards List */}
+        <div className="space-y-3 pt-2">
+          {filteredEntries
+            .filter((e) => (selectedDate ? e.dateStr === selectedDate || !selectedDate : true))
+            .map((entry) => {
+              const [dayNum, monthNum] = entry.dateStr.split('-')
+              const monthName = monthNum === '11' ? 'NOV' : 'DEC'
+              const dayShort = entry.day.slice(0, 3).toUpperCase()
+              const isOffDay = entry.isOffDay || entry.isHoliday
 
               return (
                 <div
                   key={entry.id}
-                  className={`relative bg-white border-3 border-ink rounded-[16px] overflow-hidden shadow-comic-md flex flex-col justify-between transition-all duration-200 hover:translate-y-[-3px] hover:shadow-comic-lg ${
-                    isNonEvent ? 'opacity-80 bg-neutral-50' : ''
-                  }`}
+                  className="bg-white border-[1.5px] border-[#151515] rounded-[16px] overflow-hidden flex flex-row shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
                 >
-                  {/* Top Header Strip */}
-                  <div className="p-4 pb-3 border-b-2 border-ink bg-[#faf8f5] flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <div className="bg-ink text-white font-display text-xs px-2.5 py-1 rounded-md tracking-wider">
-                        {entry.dateStr}
-                      </div>
-                      <span className="font-bold text-xs text-ink/80">{entry.day}</span>
-                    </div>
-
-                    <span
-                      className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${colors.bg} ${colors.text} ${colors.border}`}
-                    >
-                      {entry.division}
-                    </span>
+                  {/* Left Date Block */}
+                  <div className="w-[74px] bg-[#ECE6F2] py-3.5 px-2 flex flex-col items-center justify-center text-center shrink-0">
+                    <span className="font-bold text-[24px] text-[#111] leading-none">{dayNum}</span>
+                    <span className="text-[10.5px] font-black uppercase text-[#111] tracking-wider mt-1">{monthName}</span>
+                    <span className="text-[10.5px] font-bold uppercase text-[#111]/75 tracking-wide">{dayShort}</span>
                   </div>
 
-                  {/* Body Content */}
-                  <div className="p-5 flex-1 flex flex-col justify-between">
-                    <div>
-                      <h3 className="font-display text-xl text-ink font-bold leading-snug">
-                        {entry.eventName}
-                      </h3>
+                  {/* Inset Vertical Divider Line */}
+                  <div className="w-[1.5px] bg-[#151515] my-2.5 shrink-0" />
 
-                      {!isNonEvent && (
-                        <div className="mt-3 space-y-2 text-xs">
-                          <div className="flex items-center gap-2 text-ink/80">
-                            <Clock className="w-3.5 h-3.5 text-primary shrink-0" />
-                            <span className="font-semibold">{entry.timings}</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-ink/80">
-                            <MapPin className="w-3.5 h-3.5 text-comic-red shrink-0" />
-                            <span className="font-semibold">{entry.venue}</span>
-                          </div>
+                  {/* Right Content Area */}
+                  <div className="flex-1 py-3 px-3.5 flex flex-col justify-between min-w-0">
+                    {isOffDay ? (
+                      <div className="flex items-center justify-between gap-2 h-full py-2">
+                        <h2 className="font-display italic font-normal text-lg text-ink uppercase tracking-wide">
+                          {entry.eventName}
+                        </h2>
+                        <span className="shrink-0 rounded-full px-3 py-0.5 text-[10.5px] font-bold uppercase tracking-wider border-[1.5px] border-[#888888] bg-[#F2F2F2] text-[#666666]">
+                          {entry.division}
+                        </span>
+                      </div>
+                    ) : (
+                      <>
+                        {/* Top Row: Event Title + Division Badge */}
+                        <div className="flex items-start justify-between gap-2">
+                          <h2 className="font-display italic font-normal text-[16.5px] text-ink uppercase tracking-wide line-clamp-1">
+                            {entry.eventName}
+                          </h2>
+
+                          {/* Division Pill Badge */}
+                          <span
+                            className={`shrink-0 rounded-full px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider border-[1.5px] ${
+                              entry.division === 'Inauguration'
+                                ? 'border-[#00966b] bg-[#e8f8f2] text-[#00966b]'
+                                : entry.division === 'Literature'
+                                ? 'border-[#0088e8] bg-[#eaf5fd] text-[#0088e8]'
+                                : entry.division === 'Arts'
+                                ? 'border-[#ed1e79] bg-[#fdebf3] text-[#ed1e79]'
+                                : entry.division === 'Stage'
+                                ? 'border-[#e5a800] bg-[#fff8e6] text-[#996500]'
+                                : entry.division === 'Theatre'
+                                ? 'border-[#861ec2] bg-[#f7eefb] text-[#861ec2]'
+                                : 'border-[#888888] bg-[#f2f2f2] text-[#666666]'
+                            }`}
+                          >
+                            {entry.division}
+                          </span>
                         </div>
-                      )}
-                    </div>
 
-                    {/* Teacher Coordinator Footer Strip */}
-                    <div className="mt-5 pt-3 border-t border-ink/10 flex items-center justify-between text-[11px]">
-                      <span className="text-ink/60 font-semibold flex items-center gap-1.5">
-                        <UserCheck className="w-3.5 h-3.5 text-ink/50" />
-                        <span>Teacher in Charge:</span>
-                      </span>
-                      <span className="font-bold text-ink truncate max-w-[160px]" title={entry.teachers}>
-                        {entry.teachers}
-                      </span>
-                    </div>
+                        {/* Middle Details: Time & Venue */}
+                        <div className="space-y-1.5 mt-1.5 text-xs text-neutral-800">
+                          {entry.timings && (
+                            <div className="flex items-center gap-2 font-medium text-[12px] text-[#222]">
+                              <Clock className="w-4 h-4 text-[#793f98] shrink-0" />
+                              <span className="truncate">{entry.timings}</span>
+                            </div>
+                          )}
+                          {entry.venue && (
+                            <div className="flex items-center gap-2 font-medium text-[12px] text-[#222]">
+                              <MapPin className="w-4 h-4 text-[#e51e25] shrink-0" />
+                              <span className="truncate">{entry.venue}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Thin Divider */}
+                        <div className="border-t border-[#e8e8e8] my-2" />
+
+                        {/* Teacher in Charge */}
+                        <div className="flex items-center gap-1.5 text-[11px] text-[#444] font-normal truncate">
+                          <User className="w-3.5 h-3.5 text-[#333] shrink-0" />
+                          <span>Teacher in Charge:</span>
+                          <strong className="text-black truncate font-bold ml-0.5">{entry.teachers}</strong>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               )
             })}
-          </div>
-        ) : (
-          /* ── Table View Matching PDF ─────────────────────────── */
-          <div className="bg-white border-3 border-ink rounded-[16px] overflow-hidden shadow-comic-md">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="bg-[#111217] text-white border-b-3 border-ink font-display text-xs uppercase tracking-wider">
-                    <th className="py-3 px-4">Date</th>
-                    <th className="py-3 px-4">Day</th>
-                    <th className="py-3 px-4">Event Name</th>
-                    <th className="py-3 px-4">Venue to Book</th>
-                    <th className="py-3 px-4">Timings</th>
-                    <th className="py-3 px-4">Division</th>
-                    <th className="py-3 px-4">Teachers</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y-2 divide-ink/10 font-body">
-                  {filteredEntries.map((entry) => {
-                    const colors = DIVISION_COLORS[entry.division] || DIVISION_COLORS['Off Day']
-                    const isNonEvent = entry.isOffDay || entry.isHoliday
+        </div>
+      </div>
 
-                    return (
+      {/* ======================================================================= */}
+      {/* ── DESKTOP VIEWPORT: Existing Responsive Desktop Layout (hidden md:block) */}
+      {/* ======================================================================= */}
+      <div className="hidden md:block">
+        {/* ── Compact Filter Header Bar ─────────────────────────── */}
+        <section className="relative border-b-3 border-ink bg-gradient-to-r from-comic-yellow/30 via-primary/10 to-comic-red/10 py-6 px-4 overflow-hidden">
+          {/* Halftone dot pattern overlay */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 opacity-15 pointer-events-none"
+            style={{
+              backgroundImage: 'radial-gradient(circle, #0f0f0f 1.5px, transparent 1.5px)',
+              backgroundSize: '18px 18px',
+            }}
+          />
+
+          <div className="relative z-10 mx-auto max-w-[1240px]">
+            {/* Search & View Mode Toolbar */}
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="relative w-full sm:w-80">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink/50" />
+                <input
+                  type="text"
+                  placeholder="Search events, teachers, venues..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 text-xs font-semibold bg-white border-2 border-ink rounded-full shadow-comic-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                />
+              </div>
+
+              {/* View Mode Toggle */}
+              <div className="flex items-center gap-1 bg-white border-2 border-ink rounded-full p-1 shadow-comic-sm">
+                <button
+                  onClick={() => setViewMode('timeline')}
+                  className={`cursor-pointer px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 transition-colors ${
+                    viewMode === 'timeline' ? 'bg-ink text-white' : 'text-ink/70 hover:text-ink'
+                  }`}
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <span>Timeline</span>
+                </button>
+                <button
+                  onClick={() => setViewMode('table')}
+                  className={`cursor-pointer px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 transition-colors ${
+                    viewMode === 'table' ? 'bg-ink text-white' : 'text-ink/70 hover:text-ink'
+                  }`}
+                >
+                  <TableIcon className="w-3.5 h-3.5" />
+                  <span>Table View</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Month Filters & Off-day toggle */}
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-ink/60 mr-1 flex items-center gap-1">
+                <Filter className="w-3 h-3" /> Month:
+              </span>
+
+              {(
+                [
+                  { id: 'all', label: 'All Dates' },
+                  { id: 'nov', label: 'November 2026' },
+                  { id: 'dec', label: 'December 2026' },
+                ] as const
+              ).map((m) => (
+                <button
+                  key={m.id}
+                  onClick={() => setMonthFilter(m.id)}
+                  className={`cursor-pointer px-3 py-1 text-xs font-bold rounded-full border-2 border-ink transition-all ${
+                    monthFilter === m.id
+                      ? 'bg-primary text-white shadow-comic-sm'
+                      : 'bg-white text-ink hover:bg-neutral-100'
+                  }`}
+                >
+                  {m.label}
+                </button>
+              ))}
+
+              <label className="ml-auto flex items-center gap-2 cursor-pointer text-xs font-bold text-ink/70">
+                <input
+                  type="checkbox"
+                  checked={hideOffDays}
+                  onChange={(e) => setHideOffDays(e.target.checked)}
+                  className="rounded border-ink text-primary focus:ring-0"
+                />
+                <span>Hide Off Days &amp; Holidays</span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        {/* Main Schedule Content */}
+        <main className="mx-auto max-w-[1240px] px-4 pt-10">
+          {filteredEntries.length === 0 ? (
+            <div className="bg-white border-3 border-ink rounded-[16px] p-12 text-center shadow-comic-md">
+              <CalendarDays className="w-12 h-12 text-ink/30 mx-auto mb-3" />
+              <h3 className="font-display text-2xl text-ink font-bold">No events matched your search</h3>
+              <p className="text-xs text-ink/60 mt-1 max-w-md mx-auto">
+                Try clearing your search terms or resetting the month filter to see the complete festival schedule.
+              </p>
+              <button
+                onClick={() => {
+                  setSearch('')
+                  setMonthFilter('all')
+                  setHideOffDays(false)
+                }}
+                className="mt-4 px-4 py-1.5 bg-comic-yellow text-ink text-xs font-bold rounded-full border-2 border-ink shadow-comic-sm"
+              >
+                Reset Filters
+              </button>
+            </div>
+          ) : viewMode === 'timeline' ? (
+            /* Timeline Cards View */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {filteredEntries.map((entry) => {
+                const colors = DIVISION_COLORS[entry.division] || DIVISION_COLORS['Off Day']
+                const isNonEvent = entry.isOffDay || entry.isHoliday
+
+                return (
+                  <div
+                    key={entry.id}
+                    className={`relative bg-white border-3 border-ink rounded-[16px] overflow-hidden shadow-comic-md flex flex-col justify-between transition-all duration-200 hover:translate-y-[-3px] hover:shadow-comic-lg ${
+                      isNonEvent ? 'opacity-80 bg-neutral-50' : ''
+                    }`}
+                  >
+                    <div className="p-4 pb-3 border-b-2 border-ink bg-[#faf8f5] flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="bg-ink text-white font-display text-xs px-2.5 py-1 rounded-md tracking-wider">
+                          {entry.dateStr}
+                        </div>
+                        <span className="font-bold text-xs text-ink/80">{entry.day}</span>
+                      </div>
+
+                      <span
+                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${colors.bg} ${colors.text} ${colors.border}`}
+                      >
+                        {entry.division}
+                      </span>
+                    </div>
+
+                    <div className="p-5 flex-1 flex flex-col justify-between">
+                      <div>
+                        <h3 className="font-display text-xl text-ink font-bold tracking-tight mb-2">
+                          {entry.eventName}
+                        </h3>
+
+                        {!isNonEvent && (
+                          <div className="space-y-1.5 text-xs text-ink/75">
+                            {entry.venue && (
+                              <div className="flex items-center gap-2">
+                                <MapPin className="w-3.5 h-3.5 text-comic-red shrink-0" />
+                                <span className="font-semibold">{entry.venue}</span>
+                              </div>
+                            )}
+                            {entry.timings && (
+                              <div className="flex items-center gap-2">
+                                <Clock className="w-3.5 h-3.5 text-primary shrink-0" />
+                                <span>{entry.timings}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {!isNonEvent && entry.teachers && (
+                        <div className="mt-4 pt-3 border-t-2 border-ink/10 flex items-center justify-between text-[11px] text-ink/60">
+                          <span className="line-clamp-1">In charge: {entry.teachers}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            /* Table View */
+            <div className="bg-white border-3 border-ink rounded-[16px] overflow-hidden shadow-comic-md">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-ink text-white border-b-2 border-ink">
+                      <th className="py-3 px-4 font-display uppercase tracking-wider">Date &amp; Day</th>
+                      <th className="py-3 px-4 font-display uppercase tracking-wider">Competition / Session</th>
+                      <th className="py-3 px-4 font-display uppercase tracking-wider">Division</th>
+                      <th className="py-3 px-4 font-display uppercase tracking-wider">Venue</th>
+                      <th className="py-3 px-4 font-display uppercase tracking-wider">Timings</th>
+                      <th className="py-3 px-4 font-display uppercase tracking-wider">Faculty in Charge</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredEntries.map((entry, idx) => (
                       <tr
                         key={entry.id}
-                        className={`transition-colors hover:bg-comic-yellow/10 ${
-                          isNonEvent ? 'bg-neutral-100/60 text-ink/50' : 'bg-white'
+                        className={`border-b border-ink/10 transition-colors hover:bg-comic-yellow/15 ${
+                          idx % 2 === 0 ? 'bg-[#faf8f5]' : 'bg-white'
                         }`}
                       >
                         <td className="py-3 px-4 font-bold text-ink whitespace-nowrap">
-                          {entry.dateStr}
+                          {entry.dateStr} ({entry.day.slice(0, 3)})
                         </td>
-                        <td className="py-3 px-4 font-semibold text-ink/80 whitespace-nowrap">
-                          {entry.day}
-                        </td>
-                        <td className="py-3 px-4 font-bold text-ink text-sm">
+                        <td className="py-3 px-4 font-display text-sm text-ink font-bold">
                           {entry.eventName}
                         </td>
-                        <td className="py-3 px-4 font-semibold text-ink/80">
-                          {entry.venue}
-                        </td>
-                        <td className="py-3 px-4 font-bold text-primary whitespace-nowrap">
-                          {entry.timings}
-                        </td>
                         <td className="py-3 px-4">
-                          <span
-                            className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${colors.bg} ${colors.text} ${colors.border}`}
-                          >
-                            {entry.division}
-                          </span>
+                          <span className="font-bold">{entry.division}</span>
                         </td>
-                        <td className="py-3 px-4 font-semibold text-ink">
-                          {entry.teachers}
-                        </td>
+                        <td className="py-3 px-4">{entry.venue}</td>
+                        <td className="py-3 px-4">{entry.timings}</td>
+                        <td className="py-3 px-4 text-ink/75">{entry.teachers}</td>
                       </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        )}
-      </main>
+          )}
+        </main>
+      </div>
     </div>
   )
 }
