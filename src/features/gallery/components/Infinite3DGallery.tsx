@@ -321,19 +321,6 @@ export function Infinite3DGallery({
                           draggable={false}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
-
-                        {/* Subtle dark gradient overlay on hover / tap */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2.5 sm:p-4 text-white">
-                          <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-white/70">
-                            {photo.categoryLabel}
-                          </span>
-                          <h4 className="font-sans font-bold text-xs sm:text-sm text-white leading-tight mt-0.5 truncate">
-                            {photo.title}
-                          </h4>
-                          <span className="text-[10px] sm:text-[11px] text-white/60 truncate mt-0.5">
-                            {photo.venue}
-                          </span>
-                        </div>
                       </div>
                     ))}
                   </div>

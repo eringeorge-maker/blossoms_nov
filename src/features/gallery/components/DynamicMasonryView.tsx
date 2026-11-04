@@ -61,19 +61,6 @@ export function DynamicMasonryView({ photos, onSelectPhoto }: DynamicMasonryView
                 loading="lazy"
                 className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105"
               />
-
-              {/* Hover overlay with title & tag */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 text-white">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-white/70">
-                  {photo.categoryLabel}
-                </span>
-                <h4 className="font-sans font-bold text-sm text-white leading-tight mt-0.5 truncate">
-                  {photo.title}
-                </h4>
-                <span className="text-[11px] text-white/60 truncate mt-0.5">
-                  {photo.venue}
-                </span>
-              </div>
             </div>
           )
         })}
