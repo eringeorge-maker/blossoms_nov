@@ -6,14 +6,15 @@ import { Footer } from './Footer'
 export function PublicShell() {
   const location = useLocation()
   const isEvents = location.pathname.startsWith('/events')
+  const isGallery = location.pathname.startsWith('/gallery')
 
   return (
-    <div className={`min-h-screen flex flex-col ${isEvents ? 'bg-primary' : 'bg-paper'}`}>
+    <div className={`min-h-screen flex flex-col ${isEvents ? 'bg-primary' : isGallery ? 'bg-[#0a0a0c]' : 'bg-paper'}`}>
       <PublicHeader />
-      <main id="main-content" className="flex-1">
+      <main id="main-content" className="flex-1 flex flex-col">
         <Outlet />
       </main>
-      {!isEvents && (
+      {!isEvents && !isGallery && (
         <div className="hidden md:block">
           <Footer />
         </div>

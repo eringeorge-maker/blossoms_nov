@@ -14,7 +14,6 @@ const NAV_LINKS: NavItem[] = [
   { label: 'Notice Board', href: '/announcements' },
   { label: 'Meet the Team', href: '/team' },
   { label: 'Contact Us',   href: '/contact' },
-  { label: 'About',        href: '/about' },
 ]
 
 export function PublicHeader() {
