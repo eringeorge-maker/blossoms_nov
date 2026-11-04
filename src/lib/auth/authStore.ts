@@ -205,30 +205,30 @@ function notConfigured(): ActionResult {
   return { ok: false, message: 'Sign-in is not available: the site is not connected to its database.' }
 }
 
-/** Step 1 for students: check the register number + email, then email a code. */
-export async function requestStudentCode(registerNumber: string, email: string): Promise<ActionResult> {
-  if (!isSupabaseConfigured) return notConfigured()
+/**
+ * Students sign in with their register number only (interim, no email delivery yet).
+ * The server creates/returns a placeholder account for the register number
+ * (migration 006); the password is derived from the register number, so it is not a
+ * secret. Real passwords can replace it later via supabase.auth.updateUser.
+ */
+export async function signInStudent(registerNumber: string): Promise<AuthState & ActionResult> {
+  if (!isSupabaseConfigured) return { ...state, ...notConfigured() }
   const reg = registerNumber.trim()
-  const mail = email.trim().toLowerCase()
+  writePending(null)
 
-  const { data, error } = await supabase.rpc('student_claim_precheck', {
-    p_register_number: reg,
-    p_email: mail,
-  })
-  if (error) return { ok: false, message: error.message }
-  const check = data as { ok: boolean; message?: string; name_hint?: string }
-  if (!check.ok) return { ok: false, message: check.message }
+  const { data, error } = await supabase.rpc('student_login_prepare', { p_register_number: reg })
+  if (error) return { ...state, ok: false, message: error.message }
+  const prep = data as { ok: boolean; message?: string; email?: string }
+  if (!prep.ok || !prep.email) return { ...state, ok: false, message: prep.message ?? 'Could not sign in.' }
 
-  writePending({ registerNumber: reg, email: mail })
-  const { error: otpError } = await supabase.auth.signInWithOtp({
-    email: mail,
-    options: { shouldCreateUser: true, emailRedirectTo: `${window.location.origin}/login?role=student` },
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email: prep.email,
+    password: `blossoms:${reg}`,
   })
-  if (otpError) {
-    writePending(null)
-    return { ok: false, message: friendlyAuthError(otpError.message) }
-  }
-  return { ok: true, nameHint: check.name_hint }
+  if (signInError) return { ...state, ok: false, message: friendlyAuthError(signInError.message) }
+
+  const next = await refreshAuth()
+  return { ...next, ok: Boolean(next.student), message: next.student ? undefined : next.linkError ?? 'Could not sign in.' }
 }
 
 /** Step 1 for admins: email a code to an invited address. */
@@ -272,7 +272,10 @@ export async function saveProfilePhone(phone: string): Promise<ActionResult> {
 }
 
 function friendlyAuthError(message: string): string {
-  if (/rate limit|too many/i.test(message)) {
+  if (/email rate limit/i.test(message)) {
+    return 'Login emails are paused for a while because too many were sent in the last hour. Try again later.'
+  }
+  if (/rate limit|too many|seconds/i.test(message)) {
     return 'Too many code requests. Wait a minute, then try again.'
   }
   if (/expired|invalid/i.test(message)) {

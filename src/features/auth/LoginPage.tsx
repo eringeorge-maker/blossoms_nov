@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/Input'
 import {
   isValidRegisterNumber,
   requestAdminCode,
-  requestStudentCode,
+  signInStudent,
   signOut,
   useAuth,
   verifyEmailCode,
@@ -17,8 +17,6 @@ import purpleBurstUrl from '@/assets/brand/bg-purple-burst.svg'
 
 type LoginRole = 'student' | 'admin'
 type Step = 'details' | 'code'
-
-const CHRIST_EMAIL = /^[^\s@]+@([a-z0-9-]+\.)*christuniversity\.in$/i
 
 export default function LoginPage() {
   const [searchParams] = useSearchParams()
@@ -59,13 +57,18 @@ export default function LoginPage() {
     setError(null)
     if (role === 'student') {
       if (!isValidRegisterNumber(registerNumber)) return setError('Enter your 7-digit register number.')
-      if (!CHRIST_EMAIL.test(email.trim())) return setError('Use your CHRIST email (ending in christuniversity.in).')
+      setLoading(true)
+      const res = await signInStudent(registerNumber)
+      setLoading(false)
+      if (!res.ok) return setError(res.message ?? 'Could not sign in.')
+      navigate(redirect ?? '/app', { replace: true })
+      return
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       return setError('Enter your admin email address.')
     }
 
     setLoading(true)
-    const res = role === 'student' ? await requestStudentCode(registerNumber, email) : await requestAdminCode(email)
+    const res = await requestAdminCode(email)
     setLoading(false)
     if (!res.ok) return setError(res.message ?? 'Could not send the code.')
     setNameHint(res.nameHint ?? null)
@@ -131,7 +134,7 @@ export default function LoginPage() {
             >
               <p className="text-sm text-ink/70">
                 {role === 'student'
-                  ? 'Enter your register number and CHRIST email. We email you a 6-digit code: no password needed.'
+                  ? 'Enter your 7-digit register number to sign in.'
                   : 'Enter the email you were invited with. We email you a 6-digit code.'}
               </p>
 
@@ -153,24 +156,26 @@ export default function LoginPage() {
                 />
               )}
 
+              {role === 'admin' && (
               <Input
-                label={role === 'student' ? 'CHRIST email' : 'Admin email'}
+                label="Admin email"
                 type="email"
                 autoComplete="email"
-                placeholder={role === 'student' ? 'firstname.lastname@bcom.christuniversity.in' : 'you@example.com'}
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value)
                   setError(null)
                 }}
-                autoFocus={role === 'admin'}
+                autoFocus
                 required
               />
+              )}
 
               <ErrorLine message={error} />
 
               <Button type="submit" size="lg" className="w-full gap-2 shadow-[4px_4px_0px_var(--color-ink)]" isLoading={loading}>
-                Email me a code <ArrowRight className="w-5 h-5" />
+                {role === 'student' ? 'Sign in' : 'Email me a code'} <ArrowRight className="w-5 h-5" />
               </Button>
             </form>
           ) : (
@@ -237,8 +242,8 @@ export default function LoginPage() {
 
           {role === 'student' && step === 'details' && (
             <p className="mt-6 border-t-2 border-ink/10 pt-4 text-xs text-ink/60">
-              Your email is linked to your register number the first time you sign in. If someone else has already
-              linked your number, ask a Blossoms admin to reset it.
+              Your register number is on the Department of Commerce 2026-27 student list. If it is not found, check with
+              your class rep or a Blossoms admin.
             </p>
           )}
         </ComicPanel>
