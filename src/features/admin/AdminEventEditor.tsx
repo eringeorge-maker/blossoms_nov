@@ -1,242 +1,172 @@
-import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
-import { DisplayText } from '@/components/comic/ComicPrimitives'
+import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
-import { EVENTS } from '@/lib/data/eventsData'
-import type { Event, EventFormat, EventStatus } from '@/types'
+import { Input } from '@/components/ui/Input'
+import { Skeleton } from '@/components/ui/Skeleton'
+import { updateEvent, type EventPatch } from '@/lib/api/admin'
+import { slotLabel } from '@/lib/eventDisplay'
+import type { EventStatus } from '@/types'
+import { PageHeader, Panel, selectClass, useAdminEvents } from './AdminUI'
+
+/** datetime-local value in IST for an ISO timestamp */
+function toLocalInput(iso: string | null | undefined): string {
+  if (!iso) return ''
+  const d = new Date(new Date(iso).getTime() + 5.5 * 3600 * 1000)
+  return d.toISOString().slice(0, 16)
+}
+function fromLocalInput(v: string): string | null {
+  return v ? new Date(`${v}:00+05:30`).toISOString() : null
+}
 
 export default function AdminEventEditor() {
   const { id } = useParams()
-  const isNew = !id || id === 'new'
-  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const { data: events = [], isLoading } = useAdminEvents()
+  const event = events.find((e) => e.id === id)
+  const [form, setForm] = useState<EventPatch>({})
 
-  // Find existing event if editing
-  const existingEvent = !isNew ? EVENTS.find((e) => e.id === id || e.slug === id) : null
+  useEffect(() => {
+    if (!event) return
+    setForm({
+      title: event.title,
+      description: event.description,
+      rules_markdown: event.rules_markdown,
+      status: event.status,
+      registration_enabled: event.registration_enabled ?? true,
+      registration_closed: event.registration_closed ?? false,
+      registration_closes_at: event.registration_closes_at,
+      whatsapp_group_url: event.whatsapp_group_url ?? null,
+      min_team_size: event.min_team_size,
+      max_team_size: event.max_team_size,
+      cancellation_allowed: event.cancellation_allowed,
+    })
+  }, [event])
 
-  const [title, setTitle] = useState(existingEvent?.title || '')
-  const [categoryId, setCategoryId] = useState(existingEvent?.category_id || 'cat-1')
-  const [description, setDescription] = useState(existingEvent?.description || '')
-  const [eventFormat, setEventFormat] = useState<EventFormat>(existingEvent?.event_format || 'individual')
-  const [minTeamSize, setMinTeamSize] = useState(existingEvent?.min_team_size ? String(existingEvent.min_team_size) : '2')
-  const [maxTeamSize, setMaxTeamSize] = useState(existingEvent?.max_team_size ? String(existingEvent.max_team_size) : '6')
-  const [capacity, setCapacity] = useState(existingEvent?.capacity ? String(existingEvent.capacity) : '50')
-  const [waitlistEnabled, setWaitlistEnabled] = useState(existingEvent?.waitlist_enabled ?? true)
-  const [cancellationAllowed, setCancellationAllowed] = useState(existingEvent?.cancellation_allowed ?? true)
-  const [status] = useState<EventStatus>(existingEvent?.status || 'published')
+  const save = useMutation({
+    mutationFn: () => updateEvent(id!, form),
+    onSuccess: () => {
+      toast.success('Event saved')
+      queryClient.invalidateQueries({ queryKey: ['admin-events'] })
+      queryClient.invalidateQueries({ queryKey: ['events'] })
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
 
-
-
-  function handleSave(saveStatus?: EventStatus) {
-    if (!title.trim()) {
-      toast.error('Event title is required.')
-      return
-    }
-
-    const targetStatus = saveStatus || status
-
-    // Persist custom admin event to local storage
-    try {
-      const stored = localStorage.getItem('blossoms_custom_events')
-      const customEvents: Record<string, Partial<Event>> = stored ? JSON.parse(stored) : {}
-      const targetId = isNew ? `custom-${Date.now()}` : id!
-
-      customEvents[targetId] = {
-        id: targetId,
-        title: title.trim(),
-        category_id: categoryId,
-        description: description.trim(),
-        event_format: eventFormat,
-        min_team_size: eventFormat === 'team' ? parseInt(minTeamSize, 10) || 2 : null,
-        max_team_size: eventFormat === 'team' ? parseInt(maxTeamSize, 10) || 6 : null,
-        capacity: parseInt(capacity, 10) || 50,
-        waitlist_enabled: waitlistEnabled,
-        cancellation_allowed: cancellationAllowed,
-        status: targetStatus,
-        updated_at: new Date().toISOString(),
-      }
-
-      localStorage.setItem('blossoms_custom_events', JSON.stringify(customEvents))
-    } catch {
-      // ignore
-    }
-
-    toast.success(
-      targetStatus === 'published'
-        ? `Event "${title}" published successfully!`
-        : `Draft for "${title}" saved!`
+  if (isLoading) return <Skeleton className="h-96 w-full" />
+  if (!event) {
+    return (
+      <div className="space-y-4">
+        <p className="font-display text-2xl">Event not found</p>
+        <Button asChild variant="outline">
+          <Link to="/admin/events">Back to events</Link>
+        </Button>
+      </div>
     )
-    navigate('/admin/events')
   }
 
+  const set = <K extends keyof EventPatch>(k: K, v: EventPatch[K]) => setForm((f) => ({ ...f, [k]: v }))
+  const isTeam = event.event_format !== 'individual'
+
   return (
-    <div className="max-w-3xl space-y-6">
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div>
-          <DisplayText as="h1" className="text-4xl">
-            {isNew ? 'New Competition Event' : 'Edit Competition Event'}
-          </DisplayText>
-          <p className="text-xs text-ink/60 mt-0.5">
-            {isNew ? 'Create an official entry in the Blossoms 2026 directory' : `Modifying event ID: ${id}`}
-          </p>
-        </div>
-        {!isNew && (
-          <Badge variant={status === 'published' ? 'open' : 'soon'}>
-            {status.toUpperCase()}
-          </Badge>
-        )}
-      </div>
+    <div className="space-y-6 max-w-3xl">
+      <Link to="/admin/events" className="inline-flex items-center gap-2 text-sm font-display uppercase tracking-wider hover:text-primary">
+        <ArrowLeft className="w-4 h-4" /> Events
+      </Link>
+      <PageHeader title={event.title} description={`${event.category?.name} · ${slotLabel(event.schedule_slots?.[0])} · ${event.schedule_slots?.[0]?.venue?.name ?? ''}`} />
 
       <form
-        className="space-y-6"
         onSubmit={(e) => {
           e.preventDefault()
-          handleSave()
+          if (isTeam && form.min_team_size && form.max_team_size && form.max_team_size < form.min_team_size) {
+            return toast.error('Maximum team size must be at least the minimum.')
+          }
+          save.mutate()
         }}
+        className="space-y-6"
       >
-        {/* Basics */}
-        <section className="comic-card p-6 space-y-4 bg-white">
-          <h2 className="font-display text-2xl">Basic Information</h2>
-          <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-ink block mb-1">
-              Event Title *
+        <Panel title="Registration">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <label className="flex items-center gap-2 text-sm font-semibold">
+              <input type="checkbox" checked={!!form.registration_enabled} onChange={(e) => set('registration_enabled', e.target.checked)} className="w-4 h-4 accent-[var(--color-primary)]" />
+              Takes registrations
             </label>
-            <input
-              type="text"
-              required
-              placeholder="e.g. Western Acoustic Band Showcase"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full rounded-xl border-2 border-ink bg-[#FFF8E8] px-4 py-2.5 text-base font-bold text-ink focus:outline-none focus:ring-2 focus:ring-[#793f98]"
-            />
+            <label className="flex items-center gap-2 text-sm font-semibold">
+              <input type="checkbox" checked={!!form.registration_closed} onChange={(e) => set('registration_closed', e.target.checked)} className="w-4 h-4 accent-[var(--color-primary)]" />
+              Registration closed (manual switch)
+            </label>
+            <label className="flex flex-col gap-1 text-sm font-semibold">
+              Closes automatically at (IST)
+              <input
+                type="datetime-local"
+                value={toLocalInput(form.registration_closes_at)}
+                onChange={(e) => set('registration_closes_at', fromLocalInput(e.target.value))}
+                className={selectClass}
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm font-semibold">
+              Status
+              <select value={form.status} onChange={(e) => set('status', e.target.value as EventStatus)} className={selectClass}>
+                {['published', 'draft', 'completed', 'cancelled', 'archived'].map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex items-center gap-2 text-sm font-semibold">
+              <input type="checkbox" checked={!!form.cancellation_allowed} onChange={(e) => set('cancellation_allowed', e.target.checked)} className="w-4 h-4 accent-[var(--color-primary)]" />
+              Students can cancel before registration closes
+            </label>
           </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-bold uppercase tracking-wider text-ink">Arena Category</label>
-            <select
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              className="w-full rounded-xl border-2 border-ink bg-[#FFF8E8] px-4 py-2.5 text-sm font-bold text-ink focus:outline-none focus:ring-2 focus:ring-[#793f98]"
-            >
-              <option value="cat-1">Fine Arts Arena</option>
-              <option value="cat-2">Literature Arena</option>
-              <option value="cat-3">Stage Arena</option>
-              <option value="cat-4">Theatre Arena</option>
-              <option value="cat-5">Special Events Arena</option>
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-bold uppercase tracking-wider text-ink">Synopsis / Description</label>
-            <textarea
-              rows={4}
-              placeholder="Detailed briefing for participants..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full rounded-xl border-2 border-ink bg-[#FFF8E8] px-4 py-2.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-[#793f98] resize-y font-medium"
-            />
-          </div>
-        </section>
-
-        {/* Format */}
-        <section className="comic-card p-6 space-y-4 bg-white">
-          <h2 className="font-display text-2xl">Performer Format</h2>
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-bold uppercase tracking-wider text-ink">Participation Format</label>
-            <select
-              value={eventFormat}
-              onChange={(e) => setEventFormat(e.target.value as EventFormat)}
-              className="w-full rounded-xl border-2 border-ink bg-[#FFF8E8] px-4 py-2.5 text-sm font-bold text-ink focus:outline-none focus:ring-2 focus:ring-[#793f98]"
-            >
-              <option value="individual">Solo Performer (Individual)</option>
-              <option value="team">Crew Performer (Team)</option>
-              <option value="either">Either (Open Format)</option>
-            </select>
-          </div>
-
-          {eventFormat !== 'individual' && (
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-xs font-bold uppercase tracking-wider text-ink block mb-1">
-                  Min Team Size
-                </label>
-                <input
-                  type="number"
-                  min="2"
-                  max="30"
-                  value={minTeamSize}
-                  onChange={(e) => setMinTeamSize(e.target.value)}
-                  className="w-full rounded-xl border-2 border-ink bg-[#FFF8E8] px-4 py-2.5 text-sm font-bold text-ink"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-bold uppercase tracking-wider text-ink block mb-1">
-                  Max Team Size
-                </label>
-                <input
-                  type="number"
-                  min="2"
-                  max="30"
-                  value={maxTeamSize}
-                  onChange={(e) => setMaxTeamSize(e.target.value)}
-                  className="w-full rounded-xl border-2 border-ink bg-[#FFF8E8] px-4 py-2.5 text-sm font-bold text-ink"
-                />
-              </div>
+          {isTeam && (
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <Input label="Min team size" type="number" min={2} value={form.min_team_size ?? ''} onChange={(e) => set('min_team_size', e.target.value ? Number(e.target.value) : null)} />
+              <Input label="Max team size" type="number" min={2} value={form.max_team_size ?? ''} onChange={(e) => set('max_team_size', e.target.value ? Number(e.target.value) : null)} />
             </div>
           )}
-        </section>
-
-        {/* Registration Limits */}
-        <section className="comic-card p-6 space-y-4 bg-white">
-          <h2 className="font-display text-2xl">Capacity &amp; Policies</h2>
-          <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-ink block mb-1">
-              Seat / Slot Capacity Limit
-            </label>
-            <input
-              type="number"
-              min="1"
-              value={capacity}
-              onChange={(e) => setCapacity(e.target.value)}
-              className="w-full rounded-xl border-2 border-ink bg-[#FFF8E8] px-4 py-2.5 text-sm font-bold text-ink"
+          <div className="mt-4">
+            <Input
+              label="WhatsApp group link"
+              type="url"
+              placeholder="https://chat.whatsapp.com/…"
+              value={form.whatsapp_group_url ?? ''}
+              onChange={(e) => set('whatsapp_group_url', e.target.value || null)}
+              hint="Shown only to students registered for this event."
             />
           </div>
+        </Panel>
 
-          <div className="flex flex-col gap-2 pt-2">
-            <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer">
-              <input
-                type="checkbox"
-                checked={waitlistEnabled}
-                onChange={(e) => setWaitlistEnabled(e.target.checked)}
-                className="w-4 h-4 rounded border-ink"
-              />
-              Enable Automatic Waitlisting when capacity is reached
+        <Panel title="Details">
+          <div className="space-y-4">
+            <Input label="Title" value={form.title ?? ''} onChange={(e) => set('title', e.target.value)} required />
+            <label className="flex flex-col gap-1 text-sm font-semibold">
+              Description
+              <textarea rows={3} value={form.description ?? ''} onChange={(e) => set('description', e.target.value)} className="rounded-xl border-2 border-ink bg-paper px-3 py-2 text-sm font-normal focus:outline-none focus:border-primary" />
             </label>
-            <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer">
-              <input
-                type="checkbox"
-                checked={cancellationAllowed}
-                onChange={(e) => setCancellationAllowed(e.target.checked)}
-                className="w-4 h-4 rounded border-ink"
-              />
-              Allow Student Self-Cancellation before deadline
+            <label className="flex flex-col gap-1 text-sm font-semibold">
+              Rules (one per line)
+              <textarea rows={10} value={form.rules_markdown ?? ''} onChange={(e) => set('rules_markdown', e.target.value)} className="rounded-xl border-2 border-ink bg-paper px-3 py-2 text-sm font-normal font-mono focus:outline-none focus:border-primary" />
             </label>
           </div>
-        </section>
+        </Panel>
 
-        {/* Actions */}
-        <div className="flex gap-3 flex-wrap">
-          <Button type="button" variant="primary" onClick={() => handleSave('published')}>
-            {isNew ? 'Publish Event' : 'Save & Publish'}
-          </Button>
-          <Button type="button" variant="secondary" onClick={() => handleSave('draft')}>
-            Save as Draft
-          </Button>
-          <Button type="button" variant="ghost" onClick={() => navigate('/admin/events')}>
-            Cancel
-          </Button>
-        </div>
+        {event.contacts && event.contacts.length > 0 && (
+          <Panel title="Contacts">
+            <p className="text-sm">
+              <strong>Faculty:</strong> {event.contacts.filter((c) => c.role === 'faculty_coordinator').map((c) => c.name).join(', ') || '—'}
+            </p>
+            <p className="text-sm mt-1">
+              <strong>Event heads:</strong> {event.contacts.filter((c) => c.role === 'student_head').map((c) => c.name).join(', ') || '—'}
+            </p>
+          </Panel>
+        )}
+
+        <Button type="submit" size="lg" isLoading={save.isPending}>
+          Save event
+        </Button>
       </form>
     </div>
   )

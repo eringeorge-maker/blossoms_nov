@@ -1,129 +1,154 @@
-import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { DisplayText } from '@/components/comic/ComicPrimitives'
-import { Button } from '@/components/ui/Button'
+import { useQuery } from '@tanstack/react-query'
+import { ArrowRight } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
-import { Users, List, CalendarDays, CheckCircle, ArrowRight, ShieldCheck } from 'lucide-react'
-import { MASTER_SCHEDULE } from '@/lib/data/masterSchedule'
-import { STUDENT_ROSTER } from '@/lib/data/studentsRoster'
-import { EVENTS } from '@/lib/data/eventsData'
-import { getStoredRegistrations } from '@/lib/api/registration'
+import { Button } from '@/components/ui/Button'
+import { Skeleton } from '@/components/ui/Skeleton'
+import { ErrorState } from '@/components/ui/States'
+import { getDashboardStats } from '@/lib/api/admin'
+import { formatDay } from '@/lib/eventDisplay'
+import { DataTable, PageHeader, Panel, StatTile, percent } from './AdminUI'
 
 export default function AdminOverview() {
-  const registrations = useMemo(() => getStoredRegistrations(), [])
-  const confirmedCount = registrations.filter((r) => r.registration_status === 'confirmed').length
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ['admin-stats'],
+    queryFn: getDashboardStats,
+    refetchInterval: 60_000,
+  })
 
-  const STATS = [
-    {
-      label: 'Scheduled Sessions',
-      value: MASTER_SCHEDULE.length,
-      sub: 'Nov 12 – Dec 15, 2026',
-      icon: CalendarDays,
-      color: 'text-[#793f98]',
-      href: '/admin/schedule',
-    },
-    {
-      label: 'Verified Students',
-      value: Object.keys(STUDENT_ROSTER).length.toLocaleString(),
-      sub: 'Dept of Commerce Roster',
-      icon: Users,
-      color: 'text-[#0088e8]',
-      href: '/admin/students',
-    },
-    {
-      label: 'Festival Events',
-      value: EVENTS.length,
-      sub: '5 Competition Arenas',
-      icon: List,
-      color: 'text-[#ed1e79]',
-      href: '/admin/events',
-    },
-    {
-      label: 'Active Registrations',
-      value: registrations.length,
-      sub: `${confirmedCount} confirmed`,
-      icon: CheckCircle,
-      color: 'text-[#00966b]',
-      href: '/admin/registrations',
-    },
-  ]
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-72" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[0, 1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-28" />
+          ))}
+        </div>
+      </div>
+    )
+  }
+  if (isError || !data) return <ErrorState description={(error as Error)?.message} retry={() => refetch()} />
+
+  const t = data.totals
+  const lowClasses = [...data.by_class].sort((a, b) => a.registered / a.students - b.registered / b.students).slice(0, 8)
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div>
-          <DisplayText as="h1" className="text-4xl">Developer &amp; Admin Console</DisplayText>
-          <p className="text-sm text-ink/60 mt-1">
-            Operational mission control for KALA · Blossoms Festival 2026–27
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="open" className="gap-1.5 py-1 px-3">
-            <ShieldCheck className="w-4 h-4 text-[#00966b]" /> ALL SERVICES HEALTHY
-          </Badge>
-        </div>
-      </div>
+      <PageHeader
+        title="Overview"
+        description="Live numbers from the database. Refreshes every minute."
+        actions={
+          <Button asChild variant="outline">
+            <Link to="/admin/exports">Download reports</Link>
+          </Button>
+        }
+      />
 
-      {/* Primary Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {STATS.map(({ label, value, sub, icon: Icon, color, href }) => (
-          <Link
-            key={label}
-            to={href}
-            className="comic-card p-5 bg-white hover:-translate-y-1 hover:shadow-[4px_4px_0px_#151515] transition-all group"
-          >
-            <div className="flex items-center justify-between mb-3">
-              <Icon className={`w-7 h-7 ${color}`} aria-hidden="true" />
-              <ArrowRight className="w-4 h-4 text-ink/30 group-hover:text-ink transition-colors" />
-            </div>
-            <p className="font-display text-4xl text-ink tabular-nums">{value}</p>
-            <p className="text-sm font-bold text-ink mt-1">{label}</p>
-            <p className="text-xs text-ink/50 mt-0.5">{sub}</p>
-          </Link>
-        ))}
+        <StatTile label="Students on the list" value={t.students.toLocaleString()} sub={`${t.accounts_linked.toLocaleString()} signed in · ${percent(t.accounts_linked, t.students)}`} tone="text-primary" />
+        <StatTile label="Students registered" value={t.students_registered.toLocaleString()} sub={`${percent(t.students_registered, t.students)} of all students`} tone="text-blossoms-blue" />
+        <StatTile label="Registrations" value={t.registrations.toLocaleString()} sub={`${t.teams} teams · ${t.events} events open`} tone="text-blossoms-pink" />
+        <StatTile label="Students attended" value={t.students_present.toLocaleString()} sub={`${t.attendance_marked.toLocaleString()} attendance marks`} tone="text-blossoms-green" />
       </div>
 
-      {/* Quick Launch Cards */}
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="comic-card p-6 bg-white space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="font-display text-2xl text-ink">Master Schedule Control</h2>
-            <Badge variant="outline">2026 Timetable</Badge>
-          </div>
-          <p className="text-sm text-ink/70 leading-relaxed">
-            Review the official 34 sessions across Central Campus auditoriums, Bird's Park Amphitheatre, and open arenas.
-          </p>
-          <div className="pt-2 flex gap-2">
-            <Button asChild variant="primary">
-              <Link to="/admin/schedule">Open Schedule Manager →</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <a href="/FINAL SCHEDULE.pdf" target="_blank" rel="noopener noreferrer">
-                View PDF
-              </a>
-            </Button>
-          </div>
-        </div>
+      <div className="grid lg:grid-cols-3 gap-6">
+        <Panel title="By category">
+          <ul className="space-y-3">
+            {data.by_category
+              .filter((c) => c.slug !== 'special-events')
+              .map((c) => {
+                const max = Math.max(1, ...data.by_category.map((x) => x.registrations))
+                return (
+                  <li key={c.slug}>
+                    <div className="flex justify-between text-sm font-semibold">
+                      <span>{c.category}</span>
+                      <span className="tabular-nums">
+                        {c.registrations} reg · {c.present} present
+                      </span>
+                    </div>
+                    <div className="mt-1 h-3 rounded-full border-2 border-ink bg-paper overflow-hidden">
+                      <div className="h-full bg-primary" style={{ width: `${(c.registrations / max) * 100}%` }} />
+                    </div>
+                  </li>
+                )
+              })}
+          </ul>
+        </Panel>
 
-        <div className="comic-card p-6 bg-white space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="font-display text-2xl text-ink">Student Roster Audit</h2>
-            <Badge variant="registered">2,603 Verified</Badge>
-          </div>
-          <p className="text-sm text-ink/70 leading-relaxed">
-            Search, lookup, and verify student records across all sections of BCOM, BCOM F&amp;I, and MCOM programs.
-          </p>
-          <div className="pt-2 flex gap-2">
-            <Button asChild variant="primary">
-              <Link to="/admin/students">Search Student Roster →</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link to="/admin/registrations">Registration Reports</Link>
-            </Button>
-          </div>
-        </div>
+        <Panel
+          title="Classes to chase"
+          className="lg:col-span-2"
+          actions={
+            <Link to="/admin/defaulters" className="text-sm font-semibold text-primary hover:underline">
+              Defaulter lists →
+            </Link>
+          }
+        >
+          <p className="text-xs text-ink/60 mb-2">Lowest share of students registered for at least one event.</p>
+          <DataTable>
+            <thead>
+              <tr>
+                <th>Class</th>
+                <th className="text-right">Students</th>
+                <th className="text-right">Signed in</th>
+                <th className="text-right">Registered</th>
+                <th className="text-right">Attended</th>
+              </tr>
+            </thead>
+            <tbody>
+              {lowClasses.map((c) => (
+                <tr key={c.class_name}>
+                  <td className="font-semibold">{c.class_name}</td>
+                  <td className="text-right tabular-nums">{c.students}</td>
+                  <td className="text-right tabular-nums">{c.linked}</td>
+                  <td className="text-right tabular-nums">
+                    {c.registered} <span className="text-ink/50">({percent(c.registered, c.students)})</span>
+                  </td>
+                  <td className="text-right tabular-nums">{c.attended}</td>
+                </tr>
+              ))}
+            </tbody>
+          </DataTable>
+        </Panel>
       </div>
+
+      <Panel title="Events">
+        <DataTable>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Event</th>
+              <th>Status</th>
+              <th className="text-right">Registered</th>
+              <th className="text-right">Teams</th>
+              <th className="text-right">Present</th>
+              <th className="text-right">Absent</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {data.by_event
+              .filter((e) => e.registration_enabled)
+              .map((e) => (
+                <tr key={e.event_id}>
+                  <td className="whitespace-nowrap">{formatDay(e.event_date)}</td>
+                  <td className="font-semibold">{e.title}</td>
+                  <td>{e.registration_closed ? <Badge variant="closed">Closed</Badge> : <Badge variant="open">Open</Badge>}</td>
+                  <td className="text-right tabular-nums">{e.registrations}</td>
+                  <td className="text-right tabular-nums">{e.event_format === 'individual' ? '—' : e.teams}</td>
+                  <td className="text-right tabular-nums">{e.present}</td>
+                  <td className="text-right tabular-nums">{e.absent}</td>
+                  <td className="text-right">
+                    <Link to={`/admin/attendance?event=${e.event_id}`} className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
+                      Attendance <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </DataTable>
+      </Panel>
     </div>
   )
 }

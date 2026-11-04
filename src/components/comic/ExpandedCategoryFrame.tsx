@@ -2,7 +2,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { Calendar, MapPin, Users } from 'lucide-react'
 import type { Event } from '@/types'
-import { formatSlot } from '@/lib/utils'
+import { slotLabel } from '@/lib/eventDisplay'
 import type { ComicPanelConfig } from './ComicPanel'
 
 export type ExpansionPhase = 'idle' | 'expanding' | 'expanded' | 'contracting'
@@ -174,9 +174,7 @@ export const ExpandedCategoryFrame: React.FC<ExpandedCategoryFrameProps> = ({
           <div className="expanded-events-grid">
             {events.map((ev, index) => {
               const firstSlot = ev.schedule_slots?.[0]
-              const slotText = firstSlot?.starts_at
-                ? formatSlot(firstSlot.starts_at, firstSlot.ends_at)
-                : 'Schedule TBD'
+              const slotText = firstSlot ? slotLabel(firstSlot) : 'Schedule TBD'
               const venueText = firstSlot?.venue?.name || 'Venue TBD'
 
               return (

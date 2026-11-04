@@ -1,219 +1,264 @@
-import { useState, useMemo } from 'react'
-import { DisplayText } from '@/components/comic/ComicPrimitives'
+import { useEffect, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
+import { X } from 'lucide-react'
+import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
-import { Search, Filter, ChevronLeft, ChevronRight, CheckCircle2, GraduationCap } from 'lucide-react'
-import { STUDENT_ROSTER } from '@/lib/data/studentsRoster'
+import { Input } from '@/components/ui/Input'
+import { Skeleton } from '@/components/ui/Skeleton'
+import { ErrorState } from '@/components/ui/States'
+import { getClassList, getStudentDetail, searchStudentsAdmin, setStudentEmail } from '@/lib/api/admin'
+import { useAuth } from '@/lib/auth/authStore'
+import { formatDateTime } from '@/lib/eventDisplay'
+import { cn } from '@/lib/utils'
+import { ClassSelect, DataTable, Muted, PageHeader, Panel, SearchBox, percent } from './AdminUI'
 
-const PAGE_SIZE = 50
-
-interface StudentEntry {
-  registerNo: string
-  name: string
-  rawName: string
-  className: string
-  department: string
-  campus: string
-}
-
-const ALL_STUDENTS: StudentEntry[] = Object.entries(STUDENT_ROSTER).map(([registerNo, data]) => ({
-  registerNo,
-  ...data,
-}))
+type Tab = 'students' | 'classes'
 
 export default function AdminStudents() {
-  const [search, setSearch] = useState('')
-  const [classFilter, setClassFilter] = useState('all')
-  const [currentPage, setCurrentPage] = useState(1)
-
-  // Extract unique classes for filter dropdown
-  const classes = useMemo(() => {
-    const set = new Set<string>()
-    for (const s of ALL_STUDENTS) {
-      if (s.className) set.add(s.className)
-    }
-    return Array.from(set).sort()
-  }, [])
-
-  const filteredStudents = useMemo(() => {
-    return ALL_STUDENTS.filter((s) => {
-      if (classFilter !== 'all' && s.className !== classFilter) return false
-      if (search.trim()) {
-        const q = search.toLowerCase()
-        const matchRoll = s.registerNo.includes(q)
-        const matchName = s.name.toLowerCase().includes(q)
-        const matchClass = s.className.toLowerCase().includes(q)
-        return matchRoll || matchName || matchClass
-      }
-      return true
-    })
-  }, [search, classFilter])
-
-  const totalPages = Math.ceil(filteredStudents.length / PAGE_SIZE) || 1
-  const paginatedStudents = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE
-    return filteredStudents.slice(start, start + PAGE_SIZE)
-  }, [filteredStudents, currentPage])
-
-  function handleFilterChange(val: string) {
-    setClassFilter(val)
-    setCurrentPage(1)
-  }
-
-  function handleSearchChange(val: string) {
-    setSearch(val)
-    setCurrentPage(1)
-  }
-
+  const [tab, setTab] = useState<Tab>('students')
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div>
-          <DisplayText as="h1" className="text-4xl">Verified Student Roster</DisplayText>
-          <p className="text-sm text-ink/60 mt-1">
-            Official Department of Commerce student database from <code className="font-bold text-ink">student_list_updated.xlsx</code>
-          </p>
-        </div>
-        <div className="flex items-center gap-2 bg-[#FFF8E8] border border-ink px-3 py-1.5 rounded-xl shadow-[2px_2px_0px_#151515]">
-          <GraduationCap className="w-5 h-5 text-[#793f98]" />
-          <span className="font-display text-base text-ink tabular-nums">
-            {ALL_STUDENTS.length.toLocaleString()} Total Records
-          </span>
-        </div>
-      </div>
-
-      {/* Metrics Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-xl border-2 border-ink shadow-[2px_2px_0px_#151515]">
-          <p className="text-xs uppercase font-bold text-ink/50 tracking-wider">Total Enrolled</p>
-          <p className="font-display text-3xl text-ink mt-0.5">{ALL_STUDENTS.length.toLocaleString()}</p>
-        </div>
-        <div className="bg-white p-4 rounded-xl border-2 border-ink shadow-[2px_2px_0px_#151515]">
-          <p className="text-xs uppercase font-bold text-[#26A69A] tracking-wider">Verified Records</p>
-          <p className="font-display text-3xl text-[#26A69A] mt-0.5">100%</p>
-        </div>
-        <div className="bg-white p-4 rounded-xl border-2 border-ink shadow-[2px_2px_0px_#151515]">
-          <p className="text-xs uppercase font-bold text-[#793f98] tracking-wider">Active Classes</p>
-          <p className="font-display text-3xl text-[#793f98] mt-0.5">{classes.length}</p>
-        </div>
-        <div className="bg-white p-4 rounded-xl border-2 border-ink shadow-[2px_2px_0px_#151515]">
-          <p className="text-xs uppercase font-bold text-ink/50 tracking-wider">Current Filter</p>
-          <p className="font-display text-2xl text-ink mt-0.5 truncate">{filteredStudents.length} matches</p>
-        </div>
-      </div>
-
-      {/* Search and Class Filter */}
-      <div className="p-4 bg-white rounded-2xl border-2 border-ink shadow-[3px_3px_0px_#151515] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-ink/40" />
-          <input
-            type="text"
-            placeholder="Search by 7-digit register number, student name, or section…"
-            value={search}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-[#FFF8E8] border border-ink rounded-xl text-sm font-semibold text-ink placeholder:text-ink/40 focus:outline-none focus:ring-1 focus:ring-[#793f98]"
-          />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-ink/50" />
-          <select
-            value={classFilter}
-            onChange={(e) => handleFilterChange(e.target.value)}
-            className="px-3 py-2 bg-[#FFF8E8] border border-ink rounded-xl text-xs font-bold text-ink uppercase tracking-wider focus:outline-none max-w-[200px]"
+      <PageHeader title="Students & classes" description="2026-27 Department of Commerce student list. Search a student to see their events and account status." />
+      <div role="tablist" className="flex gap-2">
+        {(['students', 'classes'] as Tab[]).map((t) => (
+          <button
+            key={t}
+            role="tab"
+            aria-selected={tab === t}
+            onClick={() => setTab(t)}
+            className={cn('px-4 py-2 rounded-xl border-2 border-ink text-sm font-semibold capitalize', tab === t ? 'bg-primary text-white' : 'bg-paper hover:bg-gutter')}
           >
-            <option value="all">All Classes ({classes.length})</option>
-            {classes.map((cls) => (
-              <option key={cls} value={cls}>{cls}</option>
-            ))}
-          </select>
-        </div>
+            {t === 'students' ? 'Student search' : 'Class list'}
+          </button>
+        ))}
       </div>
+      {tab === 'students' ? <StudentSearch /> : <ClassList />}
+    </div>
+  )
+}
 
-      {/* Roster Table */}
-      <div className="comic-card overflow-hidden bg-white">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm" role="table">
-            <thead className="border-b-2 border-ink bg-[#FFF8E8]">
+function useDebounced<T>(value: T, ms = 300): T {
+  const [v, setV] = useState(value)
+  useEffect(() => {
+    const t = setTimeout(() => setV(value), ms)
+    return () => clearTimeout(t)
+  }, [value, ms])
+  return v
+}
+
+function StudentSearch() {
+  const [query, setQuery] = useState('')
+  const [className, setClassName] = useState('')
+  const [openId, setOpenId] = useState<string | null>(null)
+  const q = useDebounced(query)
+  const enabled = q.trim().length >= 2 || Boolean(className)
+
+  const { data: rows = [], isLoading, isError, error, refetch } = useQuery({
+    queryKey: ['admin-students', q, className],
+    queryFn: () => searchStudentsAdmin(q.trim(), className || null, 200),
+    enabled,
+  })
+
+  return (
+    <>
+      <div className="flex flex-wrap items-end gap-3">
+        <SearchBox value={query} onChange={setQuery} placeholder="Name, register number or email" />
+        <ClassSelect value={className} onChange={setClassName} />
+      </div>
+      {!enabled ? (
+        <Muted>Type at least 2 characters or pick a class.</Muted>
+      ) : isLoading ? (
+        <Skeleton className="h-80 w-full" />
+      ) : isError ? (
+        <ErrorState description={(error as Error).message} retry={() => refetch()} />
+      ) : rows.length === 0 ? (
+        <Muted>No students match.</Muted>
+      ) : (
+        <Panel title={`${rows.length}${rows.length === 200 ? '+' : ''} students`}>
+          <DataTable>
+            <thead>
               <tr>
-                <th className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink">Register Number</th>
-                <th className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink">Full Student Name</th>
-                <th className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink">Class / Section</th>
-                <th className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink">Department</th>
-                <th className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink">Campus</th>
-                <th className="px-4 py-3 text-right font-display text-xs uppercase tracking-wider text-ink">Status</th>
+                <th>Student</th>
+                <th>Class</th>
+                <th>Account</th>
+                <th>Phone</th>
+                <th className="text-right">Events</th>
+                <th className="text-right">Attended</th>
               </tr>
             </thead>
             <tbody>
-              {paginatedStudents.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-ink/50 font-medium">
-                    No students found matching "{search}".
+              {rows.map((r) => (
+                <tr key={r.student_id} className="cursor-pointer hover:bg-paper" onClick={() => setOpenId(r.student_id)}>
+                  <td>
+                    <button type="button" className="text-left font-semibold hover:underline" onClick={() => setOpenId(r.student_id)}>
+                      {r.full_name}
+                    </button>
+                    <p className="text-xs text-ink/50 tabular-nums">{r.register_number}</p>
                   </td>
+                  <td className="text-xs">{r.class_name}</td>
+                  <td>{r.linked ? <Badge variant="green">Signed in</Badge> : <Badge variant="outline">Not yet</Badge>}</td>
+                  <td className="text-xs tabular-nums">{r.phone ?? '—'}</td>
+                  <td className="text-right tabular-nums">{r.registered_count}</td>
+                  <td className="text-right tabular-nums">{r.attended_count}</td>
                 </tr>
-              ) : (
-                paginatedStudents.map((s) => (
-                  <tr key={s.registerNo} className="border-b border-ink/10 hover:bg-[#FFF8E8]/50 transition-colors">
-                    <td className="px-4 py-3 font-mono font-bold text-ink text-sm">
-                      {s.registerNo}
-                    </td>
-                    <td className="px-4 py-3 font-semibold text-ink">
-                      {s.name}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="bg-[#FFF8E8] border border-ink/40 text-ink text-xs font-bold px-2 py-0.5 rounded">
-                        {s.className}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-xs text-ink/70">
-                      {s.department}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-ink/60">
-                      {s.campus}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#00966b] bg-[#00966b]/10 border border-[#00966b]/30 px-2 py-0.5 rounded-full">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Verified
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              )}
+              ))}
             </tbody>
-          </table>
-        </div>
+          </DataTable>
+        </Panel>
+      )}
+      {openId && <StudentDrawer id={openId} onClose={() => setOpenId(null)} />}
+    </>
+  )
+}
 
-        {/* Pagination Controls */}
-        <div className="p-4 border-t-2 border-ink bg-[#FFF8E8] flex items-center justify-between flex-wrap gap-3">
-          <p className="text-xs font-semibold text-ink/70">
-            Showing {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, filteredStudents.length)} of {filteredStudents.length} students
-          </p>
+function StudentDrawer({ id, onClose }: { id: string; onClose: () => void }) {
+  const { admin } = useAuth()
+  const queryClient = useQueryClient()
+  const { data, isLoading } = useQuery({ queryKey: ['admin-student', id], queryFn: () => getStudentDetail(id) })
+  const [email, setEmail] = useState('')
+  useEffect(() => setEmail(data?.student.institutional_email ?? ''), [data])
 
-          <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              className="gap-1"
-            >
-              <ChevronLeft className="w-4 h-4" /> Prev
-            </Button>
-            <span className="text-xs font-bold px-2 tabular-nums">
-              Page {currentPage} of {totalPages}
-            </span>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              className="gap-1"
-            >
-              Next <ChevronRight className="w-4 h-4" />
-            </Button>
+  const update = useMutation({
+    mutationFn: ({ unlink }: { unlink: boolean }) => setStudentEmail(id, unlink ? null : email.trim() || null, unlink),
+    onSuccess: (res) => {
+      if (!res.success) return toast.error(res.message ?? 'Failed')
+      toast.success('Saved')
+      queryClient.invalidateQueries({ queryKey: ['admin-student', id] })
+      queryClient.invalidateQueries({ queryKey: ['admin-students'] })
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
+
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end" role="dialog" aria-modal="true" aria-label="Student details">
+      <button className="flex-1 bg-ink/40" onClick={onClose} aria-label="Close" />
+      <aside className="w-full max-w-md bg-paper border-l-2 border-ink overflow-y-auto p-6 space-y-5">
+        <div className="flex justify-between items-start">
+          <div>
+            <p className="font-display text-2xl">{data?.student.full_name ?? '…'}</p>
+            <p className="text-sm text-ink/60 tabular-nums">
+              {data?.student.register_number} · {data?.student.class_name}
+            </p>
           </div>
+          <button onClick={onClose} aria-label="Close" className="p-1.5 rounded-lg border border-ink bg-white">
+            <X className="w-4 h-4" />
+          </button>
         </div>
-      </div>
+
+        {isLoading || !data ? (
+          <Skeleton className="h-40 w-full" />
+        ) : (
+          <>
+            <dl className="text-sm space-y-1">
+              <Row label="Account">{data.linked ? 'Signed in' : 'Not signed in yet'}</Row>
+              <Row label="Email">{data.student.institutional_email ?? '—'}</Row>
+              <Row label="Phone">{data.student.phone ?? '—'}</Row>
+              <Row label="Programme">
+                {data.student.programme} · Year {data.student.year_of_study}
+              </Row>
+            </dl>
+
+            <section>
+              <h3 className="font-display text-lg mb-2">Events ({data.registrations.length})</h3>
+              {data.registrations.length === 0 ? (
+                <p className="text-sm text-ink/60">Not registered for any event.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {data.registrations.map((r) => (
+                    <li key={r.event_id} className="rounded-xl border-2 border-ink/20 bg-white p-3 text-sm">
+                      <p className="font-semibold">{r.event_title}</p>
+                      <p className="text-xs text-ink/60">
+                        {r.registration_status} · {formatDateTime(r.registered_at)}
+                        {r.team_name ? ` · team ${r.team_name}` : ''}
+                      </p>
+                      {r.attendance_status && <Badge variant={r.attendance_status === 'present' ? 'green' : 'red'} className="mt-1">{r.attendance_status}</Badge>}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+
+            {admin?.role === 'super_admin' && (
+              <section className="space-y-3 border-t-2 border-ink/10 pt-4">
+                <h3 className="font-display text-lg">Account fixes</h3>
+                <p className="text-xs text-ink/60">
+                  Set the email this student must sign in with (use when their CHRIST email does not contain their name), or
+                  unlink an account someone else claimed.
+                </p>
+                <Input label="Sign-in email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@bcom.christuniversity.in" />
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" isLoading={update.isPending} onClick={() => update.mutate({ unlink: false })}>
+                    Save email
+                  </Button>
+                  {data.linked && (
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      disabled={update.isPending}
+                      onClick={() => {
+                        if (window.confirm('Unlink this account? The student signs in again with their own email.')) update.mutate({ unlink: true })
+                      }}
+                    >
+                      Unlink account
+                    </Button>
+                  )}
+                </div>
+              </section>
+            )}
+          </>
+        )}
+      </aside>
     </div>
+  )
+}
+
+function Row({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex justify-between gap-3 py-1.5 border-b border-ink/10">
+      <dt className="text-ink/60">{label}</dt>
+      <dd className="font-semibold text-right break-all">{children}</dd>
+    </div>
+  )
+}
+
+function ClassList() {
+  const { data: classes = [], isLoading, isError, error, refetch } = useQuery({ queryKey: ['admin-classes'], queryFn: getClassList })
+  if (isLoading) return <Skeleton className="h-96 w-full" />
+  if (isError) return <ErrorState description={(error as Error).message} retry={() => refetch()} />
+  const total = classes.reduce((a, c) => a + c.students, 0)
+  return (
+    <Panel title={`${classes.length} classes · ${total.toLocaleString()} students`}>
+      <DataTable>
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Programme</th>
+            <th className="text-right">Students</th>
+            <th className="text-right">Signed in</th>
+            <th className="text-right">Registered</th>
+            <th className="text-right">Attended</th>
+          </tr>
+        </thead>
+        <tbody>
+          {classes.map((c) => (
+            <tr key={c.class_name}>
+              <td className="font-semibold">{c.class_name}</td>
+              <td className="text-xs">
+                {c.programme} · Year {c.year_of_study}
+              </td>
+              <td className="text-right tabular-nums">{c.students}</td>
+              <td className="text-right tabular-nums">{c.linked}</td>
+              <td className="text-right tabular-nums">
+                {c.registered} <span className="text-ink/50">({percent(c.registered, c.students)})</span>
+              </td>
+              <td className="text-right tabular-nums">
+                {c.attended} <span className="text-ink/50">({percent(c.attended, c.students)})</span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </DataTable>
+    </Panel>
   )
 }

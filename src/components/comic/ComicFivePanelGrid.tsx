@@ -1,11 +1,11 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { ArrowLeft, Calendar, MapPin, Users, CheckCircle2, Sparkles, X, ChevronRight } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { ArrowLeft, Calendar, MapPin, Users, X, ChevronRight } from 'lucide-react'
 import { EVENTS, CATEGORIES } from '@/lib/data/eventsData'
-import { getActiveStudent, loginStudent, type StudentProfile } from '@/lib/auth/authStore'
-import { registerIndividualEvent } from '@/lib/api/registration'
-import { cn, formatSlot } from '@/lib/utils'
+import { QuickRegisterBox } from '@/components/events/QuickRegisterBox'
+import { slotLabel, teamSizeLabel } from '@/lib/eventDisplay'
+import { eventOrderIndex } from '@/lib/eventOrder'
+import { cn } from '@/lib/utils'
 import type { Event } from '@/types'
 
 export type TransitionScene =
@@ -21,52 +21,6 @@ export interface ComicFivePanelGridProps {
 }
 
 /** Predefined exact ordering matching user's reference screenshots */
-const ORDER_MAP: Record<string, number> = {
-  // Arts
-  'Digital Poster Making': 1,
-  'Greeting Card': 2,
-  'Pot Art': 3,
-  'Pencil Sketching': 4,
-  'Reel Making': 5,
-  'Collage': 6,
-  'Mehendi Design': 7,
-  'Rangoli Design': 8,
-  'Painting': 9,
-  'Photography': 10,
-
-  // Literature
-  'Quiz': 1,
-  'Pot Pourri': 2,
-  'Extempore': 3,
-  'Dumb Charades': 4,
-  'Air Crash / Ship-Wreck': 5,
-  'Debate': 6,
-  'Jam': 7,
-  'Creative Writing': 8,
-
-  // Stage
-  'Indian Dance Classical (Group)': 1,
-  'Non Theme': 2,
-  'BOB (W)': 3,
-  'BOB (I)': 4,
-  'Indian Folk and Film Singing (Solo)': 5,
-  'Western Singing (Solo)': 6,
-  'Western Acapella': 7,
-  'Duet Dance': 8,
-
-  // Theatre
-  'Mono Act': 1,
-  'Proscenium': 2,
-  'Street Play': 3,
-  'Short Film Making': 4,
-  'Mime': 5,
-
-  // Special Events
-  'Blossoms Inauguration': 1,
-  'Valedictory': 2,
-  'Battle of Bands (Indian)': 3,
-  'Acoustic Music Group': 4,
-}
 
 const CATEGORY_THEMES: Record<
   string,
@@ -129,9 +83,6 @@ export function ComicFivePanelGrid({
     initialCategory || categoryParam ? 'scene4_events' : 'idle'
   )
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
-  const [rollInput, setRollInput] = useState('')
-  const [student, setStudent] = useState<StudentProfile | null>(getActiveStudent())
-  const [isRegistering, setIsRegistering] = useState(false)
 
   const timeoutsRef = useRef<number[]>([])
 
@@ -216,8 +167,8 @@ export function ComicFivePanelGrid({
       (ev: Event) => (ev.category?.slug || 'special-events') === selectedCategory
     )
     return list.sort((a: Event, b: Event) => {
-      const orderA = ORDER_MAP[a.title] ?? 99
-      const orderB = ORDER_MAP[b.title] ?? 99
+      const orderA = eventOrderIndex(a)
+      const orderB = eventOrderIndex(b)
       return orderA - orderB
     })
   }, [selectedCategory])
@@ -227,44 +178,6 @@ export function ComicFivePanelGrid({
     if (!selectedEventId) return null
     return activeEvents.find((e: Event) => e.id === selectedEventId) || null
   }, [selectedEventId, activeEvents])
-
-  // Handle instant 6-digit roll number registration
-  async function handleQuickRegister(ev: Event) {
-    let currentStudent = student
-    if (!currentStudent) {
-      if (!rollInput || !/^\d{6,8}$/.test(rollInput.trim())) {
-        toast.error('Enter your 7-digit register number to register.')
-        return
-      }
-      const res = loginStudent(rollInput.trim())
-      if (!res.success || !res.student) {
-        toast.error(res.error || 'Invalid roll number.')
-        return
-      }
-      currentStudent = res.student
-      setStudent(currentStudent)
-      toast.success(`Logged in as #${currentStudent.rollNumber}`)
-    }
-
-    setIsRegistering(true)
-    try {
-      const result = await registerIndividualEvent(ev.id)
-      if (result.success) {
-        toast.success(`Registered #${currentStudent.rollNumber} for ${ev.title}!`, {
-          icon: '🎉',
-          duration: 4500,
-        })
-      } else {
-        toast(result.message || 'Already registered for this event.', {
-          icon: 'ℹ️',
-        })
-      }
-    } catch {
-      toast.error('Registration failed. Please try again.')
-    } finally {
-      setIsRegistering(false)
-    }
-  }
 
   const currentTheme = selectedCategory
     ? CATEGORY_THEMES[selectedCategory] || CATEGORY_THEMES.arts
@@ -469,10 +382,7 @@ export function ComicFivePanelGrid({
                     <div>
                       <span className="block text-white/40 text-[10px] uppercase font-bold">SLOT</span>
                       <span className="text-white font-medium">
-                        {formatSlot(
-                          selectedEvent.schedule_slots?.[0]?.starts_at ?? null,
-                          selectedEvent.schedule_slots?.[0]?.ends_at ?? null
-                        )}
+                        {slotLabel(selectedEvent.schedule_slots?.[0])}
                       </span>
                     </div>
                   </div>
@@ -492,49 +402,13 @@ export function ComicFivePanelGrid({
                     <div>
                       <span className="block text-white/40 text-[10px] uppercase font-bold">FORMAT</span>
                       <span className="text-white font-medium capitalize">
-                        {selectedEvent.event_format} ({selectedEvent.min_team_size ?? 1}-{selectedEvent.max_team_size ?? 1})
+                        {teamSizeLabel(selectedEvent)}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* 6-Digit Roll Number Registration Form */}
-                <div className="bg-[#111217] border border-white/10 rounded-xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3">
-                  {student ? (
-                    <div className="flex items-center gap-2 text-xs sm:text-sm">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                      <div>
-                        <span className="text-white/60">Registered Identity: </span>
-                        <span className="text-white font-mono font-bold">
-                          #{student.rollNumber} ({student.name})
-                        </span>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 w-full sm:w-auto">
-                      <span className="text-xs text-white/70 font-mono font-bold whitespace-nowrap">
-                        ROLL NO:
-                      </span>
-                      <input
-                        type="text"
-                        maxLength={7}
-                        placeholder="7-digit reg #"
-                        value={rollInput}
-                        onChange={(e) => setRollInput(e.target.value.replace(/\D/g, '').slice(0, 7))}
-                        className="w-36 bg-[#1A1B22] border border-[#F5B82E]/50 rounded-lg px-2.5 py-1.5 text-sm font-mono text-[#F5B82E] placeholder:text-white/30 focus:outline-none focus:border-[#F5B82E]"
-                      />
-                    </div>
-                  )}
-
-                  <button
-                    disabled={isRegistering}
-                    onClick={() => handleQuickRegister(selectedEvent)}
-                    className="w-full sm:w-auto bg-[#F5B82E] hover:bg-[#FFE066] disabled:opacity-50 text-[#151515] font-display uppercase tracking-wider font-black px-5 py-2 rounded-xl border-2 border-[#151515] shadow-[2px_2px_0px_#151515] text-xs sm:text-sm active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    {isRegistering ? 'REGISTERING...' : 'REGISTER FOR EVENT'}
-                  </button>
-                </div>
+                <QuickRegisterBox event={selectedEvent} />
               </div>
             )}
           </div>

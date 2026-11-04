@@ -63,11 +63,21 @@ export interface EventScheduleSlot {
   event_id: string
   venue_id: string | null
   slot_title: string | null
+  slot_date?: string | null      // 'YYYY-MM-DD' — set even when the timing is not fixed (online, TBA)
   starts_at: string | null       // ISO timestamptz
   ends_at: string | null         // ISO timestamptz
   timezone: string               // 'Asia/Kolkata'
   status: ScheduleSlotStatus
-  venue?: Venue
+  venue?: Venue | null
+}
+
+export interface EventContact {
+  id?: string
+  event_id?: string
+  role: 'faculty_coordinator' | 'student_head'
+  name: string
+  phone?: string | null
+  display_order: number
 }
 
 export interface EventEligibilityRule {
@@ -103,6 +113,14 @@ export interface Event {
   created_by: string | null
   created_at: string
   updated_at: string
+  /** false for ceremonies such as inaugurations that take no sign-ups */
+  registration_enabled?: boolean
+  /** manual switch admins flip to stop new registrations */
+  registration_closed?: boolean
+  whatsapp_group_url?: string | null
+  points?: number | null
+  finals_rule?: string | null
+  contacts?: EventContact[]
   schedule_slots?: EventScheduleSlot[]
   eligibility_rules?: EventEligibilityRule[]
   registration_count?: number

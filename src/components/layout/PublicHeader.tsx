@@ -1,8 +1,8 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Menu, X, User, LogOut, ShieldAlert } from 'lucide-react'
 import { FloatingPillNavigation, type NavItem } from '@/components/navigation/FloatingPillNavigation'
-import { getActiveStudent, logoutStudent, isDeveloperAdmin, logoutDeveloperAdmin, type StudentProfile } from '@/lib/auth/authStore'
+import { signOut, useAuth } from '@/lib/auth/authStore'
 import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.webp'
 
 const NAV_LINKS: NavItem[] = [
@@ -19,27 +19,15 @@ const NAV_LINKS: NavItem[] = [
 
 export function PublicHeader() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [student, setStudent] = useState<StudentProfile | null>(getActiveStudent())
-  const [admin, setAdmin] = useState<boolean>(isDeveloperAdmin())
+  const auth = useAuth()
+  const student = auth.student
+  const admin = Boolean(auth.admin)
   const location = useLocation()
   const navigate = useNavigate()
   const onLoginPage = location.pathname === '/login'
 
-  useEffect(() => {
-    function syncAuth() {
-      setStudent(getActiveStudent())
-      setAdmin(isDeveloperAdmin())
-    }
-    syncAuth()
-    window.addEventListener('blossoms-auth-changed', syncAuth)
-    return () => window.removeEventListener('blossoms-auth-changed', syncAuth)
-  }, [])
-
   function handleLogout() {
-    logoutStudent()
-    logoutDeveloperAdmin()
-    setStudent(null)
-    setAdmin(false)
+    void signOut()
   }
 
   function isLinkActive(href: string): boolean {
@@ -94,7 +82,7 @@ export function PublicHeader() {
               className="h-[44px] px-4 rounded-[18px] border-2 border-[#0f0f0f] shadow-comic-sm bg-[#FFD43B] hover:bg-[#FFE066] active:scale-95 text-[#151515] font-semibold text-[14px] flex items-center gap-2 cursor-pointer transition-all duration-150 focus-visible:outline-[#FFD43B] shadow-xs"
             >
               {!onLoginPage && <User className="w-[17px] h-[17px] stroke-[2.4]" />}
-              <span>Roll #{student.rollNumber}</span>
+              <span>{student.registerNumber}</span>
             </Link>
             <button
               type="button"
@@ -199,7 +187,7 @@ export function PublicHeader() {
                   className="w-full h-[46px] rounded-full bg-[#FFD43B] text-[#151515] font-semibold flex items-center justify-center gap-2"
                 >
                   {!onLoginPage && <User className="w-4 h-4" />}
-                  <span>Student Portal (Roll #{student.rollNumber})</span>
+                  <span>Student portal ({student.registerNumber})</span>
                 </Link>
                 <button
                   type="button"

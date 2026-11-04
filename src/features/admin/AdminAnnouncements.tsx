@@ -1,177 +1,232 @@
 import { useState } from 'react'
-import { DisplayText } from '@/components/comic/ComicPrimitives'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
+import { Pin, Trash2, Pencil, Send } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
-import { Megaphone, Pin } from 'lucide-react'
-import { getAnnouncements } from '@/lib/api/announcements'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import toast from 'react-hot-toast'
+import { Input } from '@/components/ui/Input'
+import { Skeleton } from '@/components/ui/Skeleton'
+import {
+  deleteAnnouncement,
+  deleteNotification,
+  listAllAnnouncements,
+  listSentNotifications,
+  saveAnnouncement,
+  sendNotification,
+  type AnnouncementInput,
+} from '@/lib/api/admin'
+import { useAuth } from '@/lib/auth/authStore'
+import { formatDateTime } from '@/lib/eventDisplay'
 import type { Announcement, AnnouncementSeverity } from '@/types'
+import { EventSelect, Muted, PageHeader, Panel, selectClass, useAdminEvents } from './AdminUI'
+
+const EMPTY: AnnouncementInput = { title: '', body: '', severity: 'normal', is_pinned: false, is_published: true }
+
+const textareaClass = 'rounded-xl border-2 border-ink bg-paper px-3 py-2 text-sm font-normal focus:outline-none focus:border-primary'
 
 export default function AdminAnnouncements() {
-  const queryClient = useQueryClient()
-  const { data: announcements = [] } = useQuery({
-    queryKey: ['announcements'],
-    queryFn: getAnnouncements,
-  })
-
-  const [title, setTitle] = useState('')
-  const [body, setBody] = useState('')
-  const [severity, setSeverity] = useState<AnnouncementSeverity>('normal')
-  const [isPinned, setIsPinned] = useState(false)
-
-  function handleCreate(e: React.FormEvent) {
-    e.preventDefault()
-    if (!title.trim() || !body.trim()) {
-      toast.error('Title and message body are required.')
-      return
-    }
-
-    const newAnnouncement: Announcement = {
-      id: `ann-${Date.now()}`,
-      title: title.trim(),
-      body: body.trim(),
-      severity,
-      is_pinned: isPinned,
-      is_published: true,
-      publish_at: new Date().toISOString(),
-      expires_at: null,
-      created_by: 'admin',
-      created_at: new Date().toISOString(),
-    }
-
-    // Save to local announcements store
-    try {
-      const stored = localStorage.getItem('blossoms_custom_announcements')
-      const existing: Announcement[] = stored ? JSON.parse(stored) : []
-      existing.unshift(newAnnouncement)
-      localStorage.setItem('blossoms_custom_announcements', JSON.stringify(existing))
-    } catch {
-      // ignore
-    }
-
-    toast.success('Announcement published to public notice board!')
-    setTitle('')
-    setBody('')
-    setIsPinned(false)
-    queryClient.invalidateQueries({ queryKey: ['announcements'] })
-  }
-
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div>
-          <DisplayText as="h1" className="text-4xl">Announcements Manager</DisplayText>
-          <p className="text-sm text-ink/60 mt-1">
-            Broadcast official festival notices, venue updates, and urgent schedule changes
-          </p>
-        </div>
-      </div>
-
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Create Announcement Form */}
-        <div className="comic-card p-6 bg-white space-y-4">
-          <h2 className="font-display text-2xl text-ink flex items-center gap-2">
-            <Megaphone className="w-5 h-5 text-[#793f98]" /> Broadcast Notice
-          </h2>
-
-          <form onSubmit={handleCreate} className="space-y-4">
-            <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-ink block mb-1">
-                Notice Title *
-              </label>
-              <input
-                type="text"
-                required
-                placeholder="e.g. Schedule Update for Street Dance"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full rounded-xl border border-ink bg-[#FFF8E8] px-3.5 py-2 text-sm font-bold text-ink focus:outline-none focus:ring-1 focus:ring-[#793f98]"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-ink block mb-1">
-                Severity Level
-              </label>
-              <select
-                value={severity}
-                onChange={(e) => setSeverity(e.target.value as AnnouncementSeverity)}
-                className="w-full rounded-xl border border-ink bg-[#FFF8E8] px-3.5 py-2 text-xs font-bold text-ink uppercase tracking-wider focus:outline-none"
-              >
-                <option value="normal">Normal Notice</option>
-                <option value="important">Important (Amber)</option>
-                <option value="urgent">Urgent / Alert (Red)</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-ink block mb-1">
-                Announcement Body *
-              </label>
-              <textarea
-                rows={4}
-                required
-                placeholder="Type the announcement text to appear on the public notice board..."
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                className="w-full rounded-xl border border-ink bg-[#FFF8E8] px-3.5 py-2 text-sm text-ink focus:outline-none focus:ring-1 focus:ring-[#793f98] resize-y"
-              />
-            </div>
-
-            <label className="flex items-center gap-2 text-xs font-bold text-ink cursor-pointer">
-              <input
-                type="checkbox"
-                checked={isPinned}
-                onChange={(e) => setIsPinned(e.target.checked)}
-                className="w-4 h-4 rounded border-ink"
-              />
-              Pin to top of public notice board
-            </label>
-
-            <Button type="submit" variant="primary" className="w-full">
-              Publish Announcement →
-            </Button>
-          </form>
-        </div>
-
-        {/* Live Announcements List */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between">
-            <DisplayText as="h2" className="text-2xl text-ink">
-              Current Live Notices
-            </DisplayText>
-            <span className="text-xs font-bold text-ink/50 uppercase">
-              {announcements.length} Published
-            </span>
-          </div>
-
-          <div className="space-y-3">
-            {announcements.map((ann) => (
-              <div key={ann.id} className="bg-white p-5 rounded-2xl border-2 border-ink shadow-[2px_2px_0px_#151515] space-y-2">
-                <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <div className="flex items-center gap-2">
-                    {ann.is_pinned && (
-                      <span className="bg-[#FFD43B] text-ink text-[10px] font-bold px-2 py-0.5 rounded border border-ink flex items-center gap-1">
-                        <Pin className="w-3 h-3" /> PINNED
-                      </span>
-                    )}
-                    <Badge variant={ann.severity === 'urgent' ? 'red' : ann.severity === 'important' ? 'soon' : 'outline'}>
-                      {ann.severity.toUpperCase()}
-                    </Badge>
-                  </div>
-                  <span className="text-[11px] text-ink/50 tabular-nums">
-                    {new Date(ann.created_at).toLocaleDateString()}
-                  </span>
-                </div>
-
-                <p className="font-display text-lg text-ink">{ann.title}</p>
-                <p className="text-xs text-ink/80 leading-relaxed">{ann.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+      <PageHeader title="Announcements" description="Notice-board posts are public. Notifications go to signed-in students: everyone, or just those registered for one event." />
+      <div className="grid xl:grid-cols-2 gap-6 items-start">
+        <AnnouncementsPanel />
+        <NotificationsPanel />
       </div>
     </div>
+  )
+}
+
+function AnnouncementsPanel() {
+  const { admin } = useAuth()
+  const queryClient = useQueryClient()
+  const { data: items = [], isLoading } = useQuery({ queryKey: ['admin-announcements'], queryFn: listAllAnnouncements })
+  const [editing, setEditing] = useState<Announcement | null>(null)
+  const [form, setForm] = useState<AnnouncementInput>(EMPTY)
+
+  const refresh = () => {
+    queryClient.invalidateQueries({ queryKey: ['admin-announcements'] })
+    queryClient.invalidateQueries({ queryKey: ['announcements'] })
+  }
+  const save = useMutation({
+    mutationFn: () => saveAnnouncement(form, editing?.id, admin?.id),
+    onSuccess: () => {
+      toast.success(editing ? 'Announcement updated' : 'Announcement posted')
+      setEditing(null)
+      setForm(EMPTY)
+      refresh()
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
+  const remove = useMutation({ mutationFn: deleteAnnouncement, onSuccess: refresh, onError: (e: Error) => toast.error(e.message) })
+
+  return (
+    <Panel title="Notice board">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (!form.title.trim() || !form.body.trim()) return toast.error('Add a title and message.')
+          save.mutate()
+        }}
+        className="space-y-3 mb-6"
+      >
+        <Input label="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+        <label className="flex flex-col gap-1 text-sm font-semibold">
+          Message
+          <textarea rows={4} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} className={textareaClass} />
+        </label>
+        <div className="flex flex-wrap items-end gap-4">
+          <label className="flex flex-col gap-1 text-sm font-semibold">
+            Priority
+            <select value={form.severity} onChange={(e) => setForm({ ...form, severity: e.target.value as AnnouncementSeverity })} className={selectClass}>
+              <option value="normal">Normal</option>
+              <option value="important">Important</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </label>
+          <label className="flex items-center gap-2 text-sm font-semibold">
+            <input type="checkbox" checked={form.is_pinned} onChange={(e) => setForm({ ...form, is_pinned: e.target.checked })} className="w-4 h-4 accent-[var(--color-primary)]" /> Pinned
+          </label>
+          <label className="flex items-center gap-2 text-sm font-semibold">
+            <input type="checkbox" checked={form.is_published} onChange={(e) => setForm({ ...form, is_published: e.target.checked })} className="w-4 h-4 accent-[var(--color-primary)]" /> Published
+          </label>
+        </div>
+        <div className="flex gap-2">
+          <Button type="submit" isLoading={save.isPending}>
+            {editing ? 'Save changes' : 'Post'}
+          </Button>
+          {editing && (
+            <Button type="button" variant="outline" onClick={() => { setEditing(null); setForm(EMPTY) }}>
+              Cancel
+            </Button>
+          )}
+        </div>
+      </form>
+
+      {isLoading ? (
+        <Skeleton className="h-40 w-full" />
+      ) : items.length === 0 ? (
+        <Muted>No announcements yet.</Muted>
+      ) : (
+        <ul className="space-y-3">
+          {items.map((a) => (
+            <li key={a.id} className="rounded-xl border-2 border-ink/20 p-3">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="font-semibold flex items-center gap-1.5">
+                    {a.is_pinned && <Pin className="w-3.5 h-3.5 text-primary" aria-label="Pinned" />}
+                    {a.title}
+                  </p>
+                  <div className="flex gap-1.5 mt-1">
+                    <Badge variant={a.severity === 'urgent' ? 'red' : a.severity === 'important' ? 'yellow' : 'outline'}>{a.severity}</Badge>
+                    {!a.is_published && <Badge variant="closed">Draft</Badge>}
+                  </div>
+                </div>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => {
+                      setEditing(a)
+                      setForm({ title: a.title, body: a.body, severity: a.severity, is_pinned: a.is_pinned, is_published: a.is_published })
+                    }}
+                    aria-label={`Edit ${a.title}`}
+                    className="p-1.5 text-ink/50 hover:text-ink"
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => window.confirm(`Delete "${a.title}"?`) && remove.mutate(a.id)}
+                    aria-label={`Delete ${a.title}`}
+                    className="p-1.5 text-ink/50 hover:text-comic-red-deep"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+              <p className="text-sm text-ink/70 mt-2 whitespace-pre-line">{a.body}</p>
+              <p className="text-[11px] text-ink/40 mt-1">{formatDateTime(a.created_at)}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Panel>
+  )
+}
+
+function NotificationsPanel() {
+  const { admin } = useAuth()
+  const queryClient = useQueryClient()
+  const { data: events = [] } = useAdminEvents()
+  const { data: sent = [], isLoading } = useQuery({ queryKey: ['admin-notifications'], queryFn: () => listSentNotifications() })
+  const [title, setTitle] = useState('')
+  const [body, setBody] = useState('')
+  const [link, setLink] = useState('')
+  const [eventId, setEventId] = useState('')
+
+  const send = useMutation({
+    mutationFn: () => sendNotification({ title, body, link: link || null, audience: eventId ? 'event' : 'all', event_id: eventId || null }, admin!.id),
+    onSuccess: () => {
+      toast.success('Notification sent')
+      setTitle('')
+      setBody('')
+      setLink('')
+      queryClient.invalidateQueries({ queryKey: ['admin-notifications'] })
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
+  const remove = useMutation({
+    mutationFn: deleteNotification,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-notifications'] }),
+    onError: (e: Error) => toast.error(e.message),
+  })
+
+  return (
+    <Panel title="Send a notification">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (!title.trim() || !body.trim()) return toast.error('Add a title and message.')
+          if (link && !link.startsWith('/')) return toast.error('Link must be a site path such as /events/quiz')
+          const who = eventId ? `everyone registered for ${events.find((x) => x.id === eventId)?.title}` : 'every student'
+          if (window.confirm(`Send to ${who}?`)) send.mutate()
+        }}
+        className="space-y-3 mb-6"
+      >
+        <EventSelect value={eventId} onChange={setEventId} includeAll label="Send to" id="notify-event" />
+        <p className="text-xs text-ink/50 -mt-2">"All events" sends to every signed-in student.</p>
+        <Input label="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <label className="flex flex-col gap-1 text-sm font-semibold">
+          Message
+          <textarea rows={3} value={body} onChange={(e) => setBody(e.target.value)} className={textareaClass} />
+        </label>
+        <Input label="Link (optional)" placeholder="/events/quiz" value={link} onChange={(e) => setLink(e.target.value)} />
+        <Button type="submit" isLoading={send.isPending}>
+          <Send className="w-4 h-4" /> Send
+        </Button>
+      </form>
+
+      <h3 className="font-display text-lg mb-2">Recently sent</h3>
+      {isLoading ? (
+        <Skeleton className="h-32 w-full" />
+      ) : sent.length === 0 ? (
+        <Muted>Nothing sent yet.</Muted>
+      ) : (
+        <ul className="space-y-2">
+          {sent.map((n) => (
+            <li key={n.id} className="rounded-xl border-2 border-ink/20 p-3 flex justify-between gap-2">
+              <div>
+                <p className="font-semibold text-sm">{n.title}</p>
+                <p className="text-xs text-ink/70">{n.body}</p>
+                <p className="text-[11px] text-ink/40 mt-1">
+                  {n.audience === 'all' ? 'All students' : `Registered for ${events.find((e) => e.id === n.event_id)?.title ?? 'an event'}`} ·{' '}
+                  {formatDateTime(n.created_at)}
+                </p>
+              </div>
+              <button onClick={() => window.confirm('Delete this notification for everyone?') && remove.mutate(n.id)} aria-label="Delete notification" className="p-1.5 self-start text-ink/50 hover:text-comic-red-deep">
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Panel>
   )
 }

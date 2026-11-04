@@ -9,7 +9,8 @@ import {
   TheatreIllustration,
 } from '@/components/comic/CategoryIllustrations'
 import { EventCardSkeleton } from '@/components/ui/Skeleton'
-import { cn, formatSlot } from '@/lib/utils'
+import { cn } from '@/lib/utils'
+import { slotLabel } from '@/lib/eventDisplay'
 import type { Event } from '@/types'
 
 interface ArenaCategory {
@@ -86,7 +87,7 @@ function EventPanel({ event, onRegister }: { event: Event; onRegister: (id: stri
       <dl className="mt-auto pt-3 text-[13px] font-semibold text-neutral-700 space-y-0.5">
         <div>
           <dt className="sr-only">When</dt>
-          <dd>{firstSlot?.starts_at ? formatSlot(firstSlot.starts_at, firstSlot.ends_at) : 'Date to be announced'}</dd>
+          <dd>{firstSlot ? slotLabel(firstSlot) : 'Date to be announced'}</dd>
         </div>
         <div>
           <dt className="sr-only">Where</dt>

@@ -1,88 +1,107 @@
 import { useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import toast from 'react-hot-toast'
+import { CheckCircle2 } from 'lucide-react'
 import { DisplayText, ComicPanel } from '@/components/comic/ComicPrimitives'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import { getActiveStudent, logoutStudent } from '@/lib/auth/authStore'
-import { useNavigate } from 'react-router-dom'
-import toast from 'react-hot-toast'
+import { saveProfilePhone, signOut, useAuth } from '@/lib/auth/authStore'
 
 export default function ProfilePage() {
   const navigate = useNavigate()
-  const student = getActiveStudent()
-  const [mobile, setMobile] = useState(() => {
-    return localStorage.getItem(`blossoms_mobile_${student?.rollNumber}`) || ''
-  })
+  const [searchParams] = useSearchParams()
+  const { student } = useAuth()
+  const [phone, setPhone] = useState(student?.phone ?? '')
+  const [error, setError] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
 
-  if (!student) {
-    navigate('/login?role=student', { replace: true })
-    return null
-  }
+  if (!student) return null
+  const next = searchParams.get('next')
 
-  function handleLogout() {
-    logoutStudent()
-    navigate('/login?role=student', { replace: true })
-  }
-
-  function handleSave(e: React.FormEvent) {
+  async function handleSave(e: React.FormEvent) {
     e.preventDefault()
-    if (student) {
-      localStorage.setItem(`blossoms_mobile_${student.rollNumber}`, mobile)
-    }
-    toast.success('Mobile contact saved successfully!')
+    setError(null)
+    setSaving(true)
+    const res = await saveProfilePhone(phone)
+    setSaving(false)
+    if (!res.ok) return setError(res.message ?? 'Could not save.')
+    toast.success('Profile saved')
+    if (next && next.startsWith('/')) navigate(next)
   }
+
+  async function handleLogout() {
+    await signOut()
+    navigate('/login?role=student', { replace: true })
+  }
+
+  const rows = [
+    { label: 'Register number', value: student.registerNumber },
+    { label: 'Class', value: student.className ?? '—' },
+    { label: 'Programme', value: student.programme ? `${student.programme}${student.yearOfStudy ? ` · Year ${student.yearOfStudy}` : ''}` : '—' },
+    { label: 'Department', value: student.department ?? 'Department of Commerce' },
+    { label: 'Campus', value: student.campus ?? 'Central Campus' },
+    { label: 'Email', value: student.email ?? '—' },
+  ]
 
   return (
     <div className="mx-auto max-w-[600px] px-4 py-6 space-y-6">
-      <DisplayText as="h1" className="text-4xl">My Profile</DisplayText>
+      <DisplayText as="h1" className="text-4xl">My profile</DisplayText>
 
       <ComicPanel>
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-16 h-16 rounded-full bg-primary border-2 border-ink flex items-center justify-center text-paper font-display text-3xl">
+          <div className="w-16 h-16 rounded-full bg-primary border-2 border-ink flex items-center justify-center text-paper font-display text-3xl" aria-hidden="true">
             {student.name.charAt(0)}
           </div>
           <div>
             <h2 className="font-display text-2xl">{student.name}</h2>
-            <p className="text-sm text-ink/60 tabular-nums font-bold">Roll #{student.rollNumber}</p>
+            {student.profileComplete ? (
+              <Badge variant="registered" className="mt-1">
+                <CheckCircle2 className="w-3 h-3" /> Profile complete
+              </Badge>
+            ) : (
+              <Badge variant="soon" className="mt-1">Phone number needed</Badge>
+            )}
           </div>
         </div>
 
-        <dl className="space-y-3 mb-6">
-          {[
-            { label: 'Register Number', value: student.rollNumber,  locked: true },
-            { label: 'Class / Sec',     value: student.className || 'CHRIST Student', locked: true },
-            { label: 'Department',      value: student.department || 'Department of Commerce', locked: true },
-            { label: 'Campus',          value: student.campus || 'Central Campus Bangalore', locked: true },
-          ].map(({ label, value, locked }) => (
+        <dl className="space-y-1 mb-6">
+          {rows.map(({ label, value }) => (
             <div key={label} className="flex justify-between gap-3 py-2 border-b border-ink/10 last:border-0">
-              <dt className="text-sm text-ink/50 font-medium">{label}</dt>
-              <dd className="text-sm font-semibold text-ink flex items-center gap-2">
-                {value}
-                {locked && <Badge variant="outline" className="text-[10px] px-1.5">University record</Badge>}
-              </dd>
+              <dt className="text-sm text-ink/60 font-medium">{label}</dt>
+              <dd className="text-sm font-semibold text-ink text-right break-all">{value}</dd>
             </div>
           ))}
         </dl>
-
-        <p className="text-xs text-ink/40 mb-4">
-          Fields marked "University record" are sourced from the official student roster and cannot be edited here.
+        <p className="text-xs text-ink/50 mb-5">
+          These details come from the Department of Commerce student list. If something is wrong, tell your class rep or a
+          Blossoms admin.
         </p>
 
-        <form onSubmit={handleSave} className="space-y-4">
+        <form onSubmit={handleSave} className="space-y-4" noValidate>
           <Input
-            label="Mobile Number (optional)"
+            label="Mobile number"
             type="tel"
-            placeholder="+91 98765 43210"
-            value={mobile}
-            onChange={(e) => setMobile(e.target.value)}
-            hint="Only used for emergency event-specific coordination if needed."
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder="98765 43210"
+            value={phone}
+            onChange={(e) => {
+              setPhone(e.target.value)
+              setError(null)
+            }}
+            hint="Required to register. Event heads use it to reach you about your event."
+            error={error ?? undefined}
+            required
           />
-          <Button type="submit">Save Changes</Button>
+          <Button type="submit" isLoading={saving}>
+            {student.profileComplete ? 'Save changes' : next ? 'Save and continue' : 'Save'}
+          </Button>
         </form>
       </ComicPanel>
 
-      <Button variant="outline" className="w-full border-2 border-ink" onClick={handleLogout}>
-        Sign Out (Roll #{student.rollNumber})
+      <Button variant="outline" className="w-full" onClick={handleLogout}>
+        Sign out
       </Button>
     </div>
   )

@@ -30,3 +30,6 @@ tsconfig.tsbuildinfo
 *.njsproj
 *.sln
 *.sw?
+
+# Generated people data (students, reps, admin emails) — never commit
+supabase/private/

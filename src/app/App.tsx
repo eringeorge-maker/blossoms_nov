@@ -43,7 +43,10 @@ const AdminRegistrations  = lazy(() => import('@/features/admin/AdminRegistratio
 const AdminStudents       = lazy(() => import('@/features/admin/AdminStudents'))
 const AdminCoordinators   = lazy(() => import('@/features/admin/AdminCoordinators'))
 const AdminAnnouncements  = lazy(() => import('@/features/admin/AdminAnnouncements'))
-const AdminContent        = lazy(() => import('@/features/admin/AdminContent'))
+const AdminAttendance     = lazy(() => import('@/features/admin/AdminAttendance'))
+const AdminDefaulters     = lazy(() => import('@/features/admin/AdminDefaulters'))
+const AdminExports        = lazy(() => import('@/features/admin/AdminExports'))
+const AdminWinners        = lazy(() => import('@/features/admin/AdminWinners'))
 const AdminAudit          = lazy(() => import('@/features/admin/AdminAudit'))
 
 const queryClient = new QueryClient({
@@ -133,14 +136,18 @@ export default function App() {
             <Route path="admin" element={<AdminShell />}>
               <Route index element={<AdminOverview />} />
               <Route path="events" element={<AdminEventsPage />} />
-              <Route path="events/new" element={<AdminEventEditor />} />
+              <Route path="events/new" element={<Navigate to="/admin/events" replace />} />
               <Route path="events/:id" element={<AdminEventEditor />} />
               <Route path="schedule" element={<AdminSchedulePage />} />
               <Route path="registrations" element={<AdminRegistrations />} />
               <Route path="students" element={<AdminStudents />} />
               <Route path="coordinators" element={<AdminCoordinators />} />
               <Route path="announcements" element={<AdminAnnouncements />} />
-              <Route path="content" element={<AdminContent />} />
+              <Route path="attendance" element={<AdminAttendance />} />
+              <Route path="defaulters" element={<AdminDefaulters />} />
+              <Route path="exports" element={<AdminExports />} />
+              <Route path="winners" element={<AdminWinners />} />
+              <Route path="content" element={<Navigate to="/admin/winners" replace />} />
               <Route path="audit" element={<AdminAudit />} />
             </Route>
 

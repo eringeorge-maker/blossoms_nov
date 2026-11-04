@@ -1,60 +1,19 @@
 import { Link, useSearchParams } from 'react-router-dom'
 import { useEffect, useState, useMemo } from 'react'
-import { Search, Sparkles, CheckCircle2, Calendar, MapPin, Users, X, Info } from 'lucide-react'
+import { Search, Sparkles, Calendar, MapPin, Users, X } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
-import toast from 'react-hot-toast'
 import DesktopEventsShowcase from '@/components/comic/DesktopEventsShowcase'
 import { DisplayText, ComicCaptionBox, HalftoneAccent } from '@/components/comic/ComicPrimitives'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { EventCardSkeleton } from '@/components/ui/Skeleton'
-import { cn, formatSlot } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { getEvents, getCategories } from '@/lib/api/events'
-import { getActiveStudent, loginStudent, type StudentProfile } from '@/lib/auth/authStore'
-import { registerIndividualEvent } from '@/lib/api/registration'
+import { QuickRegisterBox } from '@/components/events/QuickRegisterBox'
+import { slotLabel, teamSizeLabel } from '@/lib/eventDisplay'
+import { eventOrderIndex } from '@/lib/eventOrder'
 import type { Event } from '@/types'
 
-// Predefined exact ordering matching user's reference screenshots
-const ORDER_MAP: Record<string, number> = {
-  // Arts
-  'Digital Poster Making': 1,
-  'Greeting Card': 2,
-  'Pot Art': 3,
-  'Pencil Sketching': 4,
-  'Reel Making': 5,
-  'Collage': 6,
-  'Mehendi Design': 7,
-  'Rangoli Design': 8,
-  'Painting': 9,
-  'Photography': 10,
-
-  // Literature
-  'Quiz': 1,
-  'Pot Pourri': 2,
-  'Extempore': 3,
-  'Dumb Charades': 4,
-  'Air Crash / Ship-Wreck': 5,
-  'Debate': 6,
-  'Jam': 7,
-  'Creative Writing': 8,
-
-  // Stage
-  'Indian Dance Classical (Group)': 1,
-  'Non Theme': 2,
-  'BOB (W)': 3,
-  'BOB (I)': 4,
-  'Indian Folk and Film Singing (Solo)': 5,
-  'Western Singing (Solo)': 6,
-  'Western Acapella': 7,
-  'Duet Dance': 8,
-
-  // Theatre
-  'Mono Act': 1,
-  'Proscenium': 2,
-  'Street Play': 3,
-  'Short Film Making': 4,
-  'Mime': 5,
-}
 
 export default function EventsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -62,8 +21,6 @@ export default function EventsPage() {
   const [search, setSearch] = useState('')
   const [viewMode, setViewMode] = useState<'matrix' | 'cards'>('matrix')
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
-  const [rollInput, setRollInput] = useState('')
-  const [student, setStudent] = useState<StudentProfile | null>(getActiveStudent())
 
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
@@ -93,8 +50,8 @@ export default function EventsPage() {
     // Sort according to user's screenshots
     Object.keys(grouped).forEach((key) => {
       grouped[key].sort((a, b) => {
-        const orderA = ORDER_MAP[a.title] ?? 99
-        const orderB = ORDER_MAP[b.title] ?? 99
+        const orderA = eventOrderIndex(a)
+        const orderB = eventOrderIndex(b)
         return orderA - orderB
       })
     })
@@ -125,40 +82,6 @@ export default function EventsPage() {
     }
     setSearchParams(searchParams)
     setSelectedEventId(null)
-  }
-
-  async function handleQuickRegister(event: Event) {
-    let currentStudent = student
-    if (!currentStudent) {
-      if (!rollInput || !/^\d{6,8}$/.test(rollInput.trim())) {
-        toast.error('Please enter your 7-digit register number to register.')
-        return
-      }
-      const res = loginStudent(rollInput)
-      if (!res.success || !res.student) {
-        toast.error(res.error || 'Invalid roll number.')
-        return
-      }
-      currentStudent = res.student
-      setStudent(currentStudent)
-      toast.success(`Logged in as #${currentStudent.rollNumber}`)
-    }
-
-    try {
-      const result = await registerIndividualEvent(event.id)
-      if (result.success) {
-        toast.success(`Registered #${currentStudent.rollNumber} for ${event.title}!`, {
-          
-          duration: 4000,
-        })
-      } else {
-        toast(result.message || 'Already registered for this event.', {
-          icon: 'ℹ️',
-        })
-      }
-    } catch {
-      toast.error('Registration failed. Please try again.')
-    }
   }
 
   // Detail sheet shared by the mobile catalogue and the desktop arena
@@ -205,7 +128,7 @@ export default function EventsPage() {
               <div key={slot.id} className="space-y-1">
                 <div className="flex items-center gap-1.5 font-bold text-[#151515]">
                   <Calendar className="w-4 h-4 text-[#793f98]" />
-                  <span>{formatSlot(slot.starts_at, slot.ends_at)}</span>
+                  <span>{slotLabel(slot)}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-ink/70">
                   <MapPin className="w-4 h-4 text-[#793f98]" />
@@ -222,61 +145,11 @@ export default function EventsPage() {
 
           <div className="flex items-center gap-1.5 text-ink/70 pt-1 border-t border-ink/10">
             <Users className="w-4 h-4 text-[#3478F6]" />
-            <span className="capitalize">{selectedEvent.event_format} Participation · Capacity: {selectedEvent.capacity || 'Open'}</span>
+            <span>{teamSizeLabel(selectedEvent)}</span>
           </div>
         </div>
 
-        {/* Quick 1-Tap 6-Digit Registration Flow */}
-        <div className="bg-[#FCE881]/60 border-2 border-[#151515] rounded-xl p-3 shadow-[2px_2px_0px_#151515] mb-3">
-          {student ? (
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-1 text-xs font-bold text-[#151515]">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Identified as Roll #{student.rollNumber}</span>
-                </div>
-                <span className="text-[11px] text-ink/70">
-                  {student.name} · {student.className} · TRINITY MERLIN A
-                </span>
-              </div>
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => handleQuickRegister(selectedEvent)}
-                className="font-display tracking-wider uppercase text-xs sm:text-sm bg-[#793f98] hover:bg-[#151515] text-white border-2 border-[#151515] shadow-[2px_2px_0px_#151515]"
-              >
-                Register with #{student.rollNumber}
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <div className="flex items-center gap-1 text-xs font-bold text-[#151515]">
-                <Info className="w-3.5 h-3.5 text-[#793f98]" />
-                <span>Quick Student Registration (7-digit register number)</span>
-              </div>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={7}
-                  placeholder="e.g. 2610101"
-                  value={rollInput}
-                  onChange={(e) => setRollInput(e.target.value.replace(/\D/g, '').slice(0, 7))}
-                  className="flex-1 bg-white border-2 border-[#151515] rounded-lg px-3 py-1.5 tabular-nums text-sm font-bold text-center shadow-[1.5px_1.5px_0px_#151515] focus:outline-none focus:border-[#793f98]"
-                />
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => handleQuickRegister(selectedEvent)}
-                  className="font-display tracking-wider uppercase text-xs bg-[#793f98] hover:bg-[#151515] text-white border-2 border-[#151515] shadow-[2px_2px_0px_#151515]"
-                >
-                  Register Now
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
+        <QuickRegisterBox event={selectedEvent} />
 
         <div className="flex justify-between items-center text-xs">
           <Link
@@ -574,7 +447,7 @@ export default function EventsPage() {
                   <div className="bg-[#FFF8E8] border border-ink/20 p-2.5 rounded-lg text-xs space-y-1 mb-4 font-medium">
                     <p className="text-ink flex items-center gap-1">
                       <span aria-hidden="true">★</span>
-                      <span>{firstSlot ? formatSlot(firstSlot.starts_at, firstSlot.ends_at) : 'Slot TBA'}</span>
+                      <span>{firstSlot ? slotLabel(firstSlot) : 'Slot TBA'}</span>
                     </p>
                     <p className="text-ink/70 flex items-center gap-1">
                       <span aria-hidden="true">★</span>
