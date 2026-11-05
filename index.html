@@ -4,13 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <meta name="theme-color" content="#793F98" />
-    <meta name="description" content="Official website for Blossoms cultural festival at CHRIST (Deemed to be University) Central Campus. Discover events, timetable, rules, and student registrations." />
+    <meta name="description" content="Official website for Blossoms cultural festival at CHRIST (Deemed to be University). Discover events, timetable, rules, and student registrations." />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <title>Blossoms — CHRIST University Central Campus</title>
+    <title>Blossoms — CHRIST University</title>
+    <style>
+      #boot-loader{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:#793F98;color:#fff;transition:opacity .45s ease,visibility .45s}
+      #boot-loader.done{opacity:0;visibility:hidden;pointer-events:none}
+      .bl-flower{position:relative;width:88px;height:88px;animation:bl-spin 6s linear infinite}
+      .bl-petal{position:absolute;left:50%;top:50%;width:26px;height:40px;margin:-40px 0 0 -13px;border:3px solid #151515;border-radius:50% 50% 50% 50%/65% 65% 35% 35%;transform-origin:50% 40px;animation:bl-pulse 1.4s ease-in-out infinite}
+      .bl-core{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:#FFD43B;border:3px solid #151515}
+      .bl-word{font-family:'Bangers','Impact',sans-serif;letter-spacing:.3em;font-size:22px;text-transform:uppercase;animation:bl-fade 1.4s ease-in-out infinite}
+      @keyframes bl-spin{to{transform:rotate(360deg)}}
+      @keyframes bl-pulse{0%,100%{opacity:.55;scale:.9}50%{opacity:1;scale:1.08}}
+      @keyframes bl-fade{0%,100%{opacity:.6}50%{opacity:1}}
+      @media (prefers-reduced-motion:reduce){.bl-flower,.bl-petal,.bl-word{animation:none}}
+    </style>
   </head>
   <body>
+    <div id="boot-loader" role="status" aria-label="Loading Blossoms"><div class="bl-flower"><span class="bl-petal" style="transform:rotate(0deg);background:#FFD43B;animation-delay:0.00s"></span><span class="bl-petal" style="transform:rotate(45deg);background:#FF8FB1;animation-delay:0.12s"></span><span class="bl-petal" style="transform:rotate(90deg);background:#7FD6FF;animation-delay:0.24s"></span><span class="bl-petal" style="transform:rotate(135deg);background:#FFFFFF;animation-delay:0.36s"></span><span class="bl-petal" style="transform:rotate(180deg);background:#FFD43B;animation-delay:0.48s"></span><span class="bl-petal" style="transform:rotate(225deg);background:#FF8FB1;animation-delay:0.60s"></span><span class="bl-petal" style="transform:rotate(270deg);background:#7FD6FF;animation-delay:0.72s"></span><span class="bl-petal" style="transform:rotate(315deg);background:#FFFFFF;animation-delay:0.84s"></span><span class="bl-core"></span></div><div class="bl-word">Blossoms</div></div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

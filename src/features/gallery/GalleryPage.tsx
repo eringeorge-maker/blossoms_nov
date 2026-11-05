@@ -9,6 +9,32 @@ import {
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { FESTIVAL_PHOTOS, type GalleryPhoto } from './galleryData'
+import './gallery.css'
+
+// Panels per comic row, repeating; the last row takes whatever is left.
+const ROW_SIZES = [2, 3, 2, 3]
+// A panel's share of its row follows the photo's shape, so portraits stay narrow and landscapes wide.
+const WEIGHT: Record<GalleryPhoto['aspect'], number> = { landscape: 1.5, square: 1.1, portrait: 0.85 }
+// Sound effects that burst out of the gutter between rows.
+const SFX = [
+  { word: 'WHAM!', color: '#F8CA16' },
+  { word: 'POW!', color: '#FF5A36' },
+  { word: 'CRASH!', color: '#F8CA16' },
+  { word: 'ZAP!', color: '#7FD6FF' },
+  { word: 'BOOM!', color: '#FF8FB1' },
+  { word: 'WHOOSH!', color: '#F8CA16' },
+]
+
+function chunkRows(photos: GalleryPhoto[]) {
+  const rows: { photo: GalleryPhoto; index: number }[][] = []
+  let cursor = 0
+  for (let r = 0; cursor < photos.length; r++) {
+    const size = Math.min(ROW_SIZES[r % ROW_SIZES.length], photos.length - cursor)
+    rows.push(photos.slice(cursor, cursor + size).map((photo, i) => ({ photo, index: cursor + i })))
+    cursor += size
+  }
+  return rows
+}
 
 export default function GalleryPage() {
   const [activePhotoIndex, setActivePhotoIndex] = useState<number | null>(null)
@@ -60,32 +86,37 @@ export default function GalleryPage() {
 
   return (
     <div className="min-h-screen bg-[#faf8f5] text-ink pb-20">
-      {/* ── Photo Masonry Grid: Only images are displayed ────────────────── */}
+      {/* ── Comic page: slanted panels split by cream gutters ───────────── */}
       <main className="mx-auto max-w-[1240px] px-4 pt-6 md:pt-10">
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
-          {FESTIVAL_PHOTOS.map((photo, index) => (
-            <motion.div
-              key={photo.id}
-              layout
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.03 }}
-              className="break-inside-avoid group cursor-pointer"
-              onClick={() => setActivePhotoIndex(index)}
-            >
-              <div className="relative bg-white border-3 border-ink rounded-[16px] overflow-hidden shadow-comic-md transition-all duration-200 group-hover:translate-y-[-4px] group-hover:shadow-comic-lg">
-                {/* Photo frame - Pure image display */}
-                <div className="overflow-hidden bg-[#e5e5e5]">
-                  <img
-                    src={photo.src}
-                    alt={photo.title}
-                    loading="lazy"
-                    className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                  />
-                </div>
+        <h1 className="sr-only">Photo gallery</h1>
+        <div className="gallery-page">
+          {chunkRows(FESTIVAL_PHOTOS).map((row, rowIndex) => {
+            const sfx = SFX[rowIndex % SFX.length]
+            return (
+              <div key={rowIndex} className="gallery-row">
+                {row.map(({ photo, index }, position) => {
+                  const edge = row.length === 1 ? 'solo' : position === 0 ? 'first' : position === row.length - 1 ? 'last' : 'mid'
+                  return (
+                    <div key={photo.id} className="gallery-cell" style={{ flexGrow: WEIGHT[photo.aspect] }}>
+                      <button type="button" onClick={() => setActivePhotoIndex(index)} aria-label={`Open ${photo.title}`} className={`gallery-panel gallery-panel--${edge}`}>
+                        <img src={photo.src} alt={photo.title} loading="lazy" />
+                        <span aria-hidden="true" className="gallery-tone" />
+                      </button>
+                    </div>
+                  )
+                })}
+                {rowIndex < chunkRows(FESTIVAL_PHOTOS).length - 1 && (
+                  <span
+                    aria-hidden="true"
+                    className={`gallery-sfx font-comic-display ${rowIndex % 2 ? 'gallery-sfx--right' : 'gallery-sfx--left'}`}
+                    style={{ color: sfx.color }}
+                  >
+                    {sfx.word}
+                  </span>
+                )}
               </div>
-            </motion.div>
-          ))}
+            )
+          })}
         </div>
       </main>
 

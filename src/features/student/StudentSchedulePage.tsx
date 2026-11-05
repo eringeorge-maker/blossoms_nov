@@ -120,7 +120,7 @@ export default function StudentSchedulePage() {
                 <h2 className="font-display text-2xl text-ink leading-tight">{slot.event.title}</h2>
                 <p className="text-xs text-ink/60 flex items-center gap-1 mt-1 font-medium">
                   <MapPin className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
-                  {slot.venue?.name || 'Central Campus'}
+                  {slot.venue?.name || 'Venue to be announced'}
                   {slot.venue?.room && ` (${slot.venue.room})`}
                 </p>
                 <div className="mt-2">

@@ -18,6 +18,7 @@ import {
 import { useAuth } from '@/lib/auth/authStore'
 import { formatDateTime } from '@/lib/eventDisplay'
 import type { Announcement, AnnouncementSeverity } from '@/types'
+import { RecapsPanel } from './AdminRecaps'
 import { EventSelect, Muted, PageHeader, Panel, selectClass, useAdminEvents } from './AdminUI'
 
 const EMPTY: AnnouncementInput = { title: '', body: '', severity: 'normal', is_pinned: false, is_published: true }
@@ -27,11 +28,12 @@ const textareaClass = 'rounded-xl border-2 border-ink bg-paper px-3 py-2 text-sm
 export default function AdminAnnouncements() {
   return (
     <div className="space-y-6">
-      <PageHeader title="Announcements" description="Notice-board posts are public. Notifications go to signed-in students: everyone, or just those registered for one event." />
+      <PageHeader title="Announcements" description="Notice-board posts and weekly comic-strip recaps are public. Notifications go to signed-in students: everyone, or just those registered for one event." />
       <div className="grid xl:grid-cols-2 gap-6 items-start">
         <AnnouncementsPanel />
         <NotificationsPanel />
       </div>
+      <RecapsPanel />
     </div>
   )
 }

@@ -1,7 +1,7 @@
 // Admin data access. Permissions are enforced in the database (RLS + checks inside each
 // function); a non-admin calling these gets an error, not data.
 import { supabase } from '@/lib/supabase/client'
-import type { Announcement, AnnouncementSeverity, Event, UserRole } from '@/types'
+import type { Announcement, AnnouncementSeverity, Event, RecapPanel, UserRole, WeeklyRecap } from '@/types'
 
 async function rpc<T>(name: string, args?: Record<string, unknown>): Promise<T> {
   const { data, error } = await supabase.rpc(name, args)
@@ -259,6 +259,33 @@ export async function saveAnnouncement(input: AnnouncementInput, id?: string, cr
 
 export async function deleteAnnouncement(id: string): Promise<void> {
   const { error } = await supabase.from('announcements').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+}
+
+// ── Weekly recaps (comic strips) ──────────────────────────────────────────────
+export async function listAllRecaps(): Promise<WeeklyRecap[]> {
+  const { data, error } = await supabase.from('weekly_recaps').select('*').order('created_at', { ascending: false })
+  if (error) throw new Error(error.message)
+  return (data ?? []) as WeeklyRecap[]
+}
+
+export interface RecapInput {
+  week_label: string
+  title: string
+  panels: RecapPanel[]
+  is_published: boolean
+}
+
+export async function saveRecap(input: RecapInput, id?: string, createdBy?: string): Promise<void> {
+  const row = { ...input, updated_at: new Date().toISOString(), published_at: input.is_published ? new Date().toISOString() : null }
+  const { error } = id
+    ? await supabase.from('weekly_recaps').update(row).eq('id', id)
+    : await supabase.from('weekly_recaps').insert({ ...row, created_by: createdBy ?? null })
+  if (error) throw new Error(error.message)
+}
+
+export async function deleteRecap(id: string): Promise<void> {
+  const { error } = await supabase.from('weekly_recaps').delete().eq('id', id)
   if (error) throw new Error(error.message)
 }
 

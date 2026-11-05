@@ -185,6 +185,25 @@ export interface EventRegistration {
   team?: Team
 }
 
+export type RecapTone = 'yellow' | 'purple' | 'blue' | 'red' | 'green' | 'cream'
+
+export interface RecapPanel {
+  caption: string
+  speech?: string
+  sfx?: string
+  tone: RecapTone
+}
+
+export interface WeeklyRecap {
+  id: string
+  week_label: string
+  title: string
+  panels: RecapPanel[]
+  is_published: boolean
+  published_at: string | null
+  created_at: string
+}
+
 export interface Announcement {
   id: string
   title: string

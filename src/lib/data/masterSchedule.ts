@@ -23,7 +23,7 @@ export const MASTER_SCHEDULE: MasterScheduleEntry[] = [
     isoDate: '2026-11-12',
     day: 'Thursday',
     eventName: 'SWO Inauguration',
-    venue: 'Central Campus Auditorium',
+    venue: 'Auditorium',
     timings: 'Morning Session',
     division: 'Inauguration',
     teachers: 'Student Welfare Office',

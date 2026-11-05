@@ -4,7 +4,7 @@ import { ChevronDown } from 'lucide-react'
 import { createScope, createTimeline, stagger } from 'animejs'
 import { ClashScene } from '@/features/public/landing/ClashScene'
 import { ComicFlipStory } from '@/features/public/landing/ComicFlipStory'
-import { LASER_TITLE_ID, LaserTitle } from '@/features/public/landing/LaserTitle'
+import { ScrollFx } from '@/features/public/landing/ScrollFx'
 import { preloadLanding } from '@/features/public/landing/preloadLanding'
 import { scrollTimeline, useScrollScene } from '@/features/public/landing/useScrollScene'
 import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.png'
@@ -56,7 +56,7 @@ function LandingHero({ animateIn, ready, onOpenSchedule }: Omit<HomeLandingProps
         </h1>
         <p className="landing-caption font-comic-sub">Your campus. Your story.</p>
         <p className="landing-hero-lede">
-          The annual cultural festival of CHRIST (Deemed to be University), Central Campus. Arts, literature, stage
+          The annual cultural festival of CHRIST (Deemed to be University). Arts, literature, stage
           and theatre, with an event for every student.
         </p>
         <div className="landing-actions">
@@ -88,7 +88,7 @@ function LandingHero({ animateIn, ready, onOpenSchedule }: Omit<HomeLandingProps
 
 function TrailerAndAbout({ onOpenSchedule, onOpenAnnouncements }: Pick<HomeLandingProps, 'onOpenSchedule' | 'onOpenAnnouncements'>) {
   return (
-    <section className="landing-about" aria-labelledby={LASER_TITLE_ID}>
+    <section className="landing-about" aria-label="Trailer and festival details">
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none halftone-dots-light" />
 
       <div className="landing-about-grid">
@@ -119,7 +119,7 @@ function TrailerAndAbout({ onOpenSchedule, onOpenAnnouncements }: Pick<HomeLandi
             <article className="landing-panel landing-panel--tilt">
               <h3 className="font-comic-display">Who can take part?</h3>
               <p>
-                Every current student of CHRIST University, Central Campus. Events are open across departments, so
+                Every current student of CHRIST University. Events are open across departments, so
                 yours never limits what you register for. Some events set their own team sizes.
               </p>
             </article>
@@ -153,10 +153,10 @@ export default function HomeLanding({ animateIn, ready, onOpenSchedule, onOpenAn
 
   return (
     <main className="landing">
+      <ScrollFx />
       <LandingHero animateIn={animateIn} ready={ready} onOpenSchedule={onOpenSchedule} />
       <ClashScene />
       <ComicFlipStory />
-      <LaserTitle />
       <TrailerAndAbout onOpenSchedule={onOpenSchedule} onOpenAnnouncements={onOpenAnnouncements} />
     </main>
   )

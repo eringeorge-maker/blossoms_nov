@@ -1,6 +1,5 @@
 import { useRef } from 'react'
 import { scrollTimeline, useScrollScene } from '@/features/public/landing/useScrollScene'
-import boltsUrl from '@/assets/brand/lightning-bolts.png'
 
 const BURST_POINTS = Array.from({ length: 18 }, (_, index) => {
   const angle = (index / 18) * Math.PI * 2
@@ -53,27 +52,44 @@ function Hammer() {
   )
 }
 
+const STAR_POINTS = Array.from({ length: 10 }, (_, index) => {
+  const angle = -Math.PI / 2 + (index * Math.PI) / 5
+  const radius = index % 2 === 0 ? 52 : 21
+  return `${(150 + Math.cos(angle) * radius).toFixed(1)},${(150 + Math.sin(angle) * radius).toFixed(1)}`
+}).join(' ')
+
+// Captain America's shield: red, white, red, then a blue field with a white star.
 function Shield() {
   return (
     <svg viewBox="0 0 300 300" aria-hidden="true">
-      <circle cx="150" cy="150" r="140" fill="#793F98" stroke="#0f0f0f" strokeWidth="8" />
-      <circle cx="150" cy="150" r="112" fill="#F8CA16" stroke="#0f0f0f" strokeWidth="6" />
-      <circle cx="150" cy="150" r="84" fill="#FDFAF0" stroke="#0f0f0f" strokeWidth="6" />
-      <circle cx="150" cy="150" r="58" fill="#793F98" stroke="#0f0f0f" strokeWidth="6" />
-      <text
-        x="150"
-        y="178"
-        textAnchor="middle"
-        fontFamily="Bangers, Impact, sans-serif"
-        fontSize="84"
-        fill="#F8CA16"
-        stroke="#0f0f0f"
-        strokeWidth="5"
-        paintOrder="stroke"
-      >
-        B
-      </text>
-      <path d="M58 92 A110 110 0 0 1 122 40" fill="none" stroke="#ffffff" strokeOpacity="0.55" strokeWidth="10" strokeLinecap="round" />
+      <circle cx="150" cy="150" r="140" fill="#C8202F" stroke="#0f0f0f" strokeWidth="8" />
+      <circle cx="150" cy="150" r="112" fill="#FDFAF0" stroke="#0f0f0f" strokeWidth="5" />
+      <circle cx="150" cy="150" r="88" fill="#C8202F" stroke="#0f0f0f" strokeWidth="5" />
+      <circle cx="150" cy="150" r="62" fill="#1F4FA3" stroke="#0f0f0f" strokeWidth="5" />
+      <polygon points={STAR_POINTS} fill="#FDFAF0" stroke="#0f0f0f" strokeWidth="3" strokeLinejoin="round" />
+      <path d="M52 96 A108 108 0 0 1 112 44" fill="none" stroke="#ffffff" strokeOpacity="0.5" strokeWidth="9" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+// One jagged bolt pointing along +x from the origin.
+const BOLT = 'M0 -6 L54 -26 L42 -5 L108 -24 L70 10 L84 7 L24 30 L40 5 L4 8 Z'
+const BOLT_ANGLES = [0, 40, 80, 125, 170, 215, 255, 300]
+
+/** Forked lightning that cracks outwards from the impact. */
+function Bolts() {
+  return (
+    <svg className="clash-bolts" viewBox="0 0 340 340" aria-hidden="true">
+      {BOLT_ANGLES.map((angle, index) => {
+        const scale = index % 2 === 0 ? 1 : 0.72
+        const transform = `translate(170 170) rotate(${angle}) translate(48 0) scale(${scale})`
+        return (
+          <g key={angle} transform={transform}>
+            <path d={BOLT} fill="#FFFFFF" stroke="#0f0f0f" strokeWidth="7" strokeLinejoin="round" />
+            <path d="M8 -2 L50 -16 L44 -4 L90 -16" fill="none" stroke="#F8CA16" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+          </g>
+        )
+      })}
     </svg>
   )
 }
@@ -96,7 +112,7 @@ export function ClashScene() {
           <svg className="clash-burst" viewBox="0 0 320 320" aria-hidden="true">
             <polygon points={BURST_POINTS} fill="#F8CA16" stroke="#0f0f0f" strokeWidth="8" strokeLinejoin="round" />
           </svg>
-          <img className="clash-bolts" src={boltsUrl} alt="" />
+          <Bolts />
           <div className="clash-hammer">
             <Hammer />
           </div>

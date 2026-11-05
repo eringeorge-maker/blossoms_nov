@@ -39,8 +39,6 @@ export default function ProfilePage() {
     { label: 'Register number', value: student.registerNumber },
     { label: 'Class', value: student.className ?? '—' },
     { label: 'Programme', value: student.programme ? `${student.programme}${student.yearOfStudy ? ` · Year ${student.yearOfStudy}` : ''}` : '—' },
-    { label: 'Department', value: student.department ?? 'Department of Commerce' },
-    { label: 'Campus', value: student.campus ?? 'Central Campus' },
     { label: 'Email', value: student.email ?? '—' },
   ]
 

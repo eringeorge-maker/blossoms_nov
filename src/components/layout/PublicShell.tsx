@@ -14,9 +14,7 @@ export function PublicShell() {
         <Outlet />
       </main>
       {!isEvents && (
-        <div className="hidden md:block">
-          <Footer />
-        </div>
+        <Footer />
       )}
     </div>
   )

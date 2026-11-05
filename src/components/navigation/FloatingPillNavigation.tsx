@@ -49,7 +49,6 @@ export function FloatingPillNavigation({
     if (path.startsWith('/winners') || path.startsWith('/results')) return 'Results'
     if (path.startsWith('/gallery')) return 'Gallery'
     if (path.startsWith('/announcements') || path.startsWith('/notice-board')) return 'Notice Board'
-    if (path.startsWith('/about')) return 'About'
 
     const matched = items.find((item) => item.href === path)
     return matched ? matched.label : items[0]?.label || 'Home'

@@ -11,3 +11,16 @@ createRoot(container).render(
     <App />
   </StrictMode>
 )
+
+// Fade out the boot loader (index.html) once the app has painted, after a short minimum so it never flashes.
+const loader = document.getElementById('boot-loader')
+if (loader) {
+  const shown = performance.now()
+  const hide = () => {
+    loader.classList.add('done')
+    window.setTimeout(() => loader.remove(), 600)
+  }
+  const wait = Math.max(0, 900 - shown)
+  window.addEventListener('load', () => window.setTimeout(hide, wait), { once: true })
+  if (document.readyState === 'complete') window.setTimeout(hide, wait)
+}

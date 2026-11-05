@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import {
   CalendarDays,
   MapPin,
@@ -9,9 +10,12 @@ import {
   LayoutGrid,
   Filter,
   ChevronRight,
-  SlidersHorizontal,
 } from 'lucide-react'
 import { MASTER_SCHEDULE } from '@/lib/data/masterSchedule'
+import { EventSheet } from '@/components/events/EventSheet'
+import { getEvents } from '@/lib/api/events'
+import { primarySlot, slotDate } from '@/lib/eventDisplay'
+import type { Event } from '@/types'
 
 type MonthFilter = 'all' | 'nov' | 'dec'
 
@@ -25,13 +29,34 @@ const DIVISION_COLORS: Record<string, { bg: string; text: string; border: string
   Holiday: { bg: 'bg-amber-100', text: 'text-amber-800', border: 'border-amber-300' },
 }
 
+/** Buttons that open the shared event popup for the events running on a schedule day. */
+function EventButtons({ isoDate, events, onOpen }: { isoDate: string; events: Event[]; onOpen: (e: Event) => void }) {
+  const today = events.filter((e) => slotDate(primarySlot(e)) === isoDate)
+  if (today.length === 0) return null
+  return (
+    <div className="flex flex-wrap gap-1.5 mt-2.5">
+      {today.map((e) => (
+        <button
+          key={e.id}
+          type="button"
+          onClick={() => onOpen(e)}
+          className="inline-flex items-center gap-1 rounded-full border-[1.5px] border-ink bg-blossoms-yellow px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-ink shadow-[1.5px_1.5px_0px_var(--color-ink)] hover:bg-white active:translate-y-px"
+        >
+          {e.registration_enabled === false ? 'Details' : 'Details & register'}: {e.title}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export default function SchedulePage() {
+  const { data: events = [] } = useQuery({ queryKey: ['events', 'all'], queryFn: () => getEvents() })
+  const [openEvent, setOpenEvent] = useState<Event | null>(null)
   const [monthFilter, setMonthFilter] = useState<MonthFilter>('all')
   const [divisionFilter, setDivisionFilter] = useState<string>('all')
   const [selectedDate, setSelectedDate] = useState<string>('')
   const [viewMode, setViewMode] = useState<'timeline' | 'table'>('timeline')
   const [search, setSearch] = useState('')
-  const [hideOffDays, setHideOffDays] = useState(false)
   const scrollerRef = useRef<HTMLDivElement>(null)
 
   // Unique dates for horizontal date picker in mobile
@@ -62,9 +87,6 @@ export default function SchedulePage() {
       // 2. Division filter (Mobile & Desktop)
       if (divisionFilter !== 'all' && entry.division !== divisionFilter) return false
 
-      // 3. Hide off days toggle
-      if (hideOffDays && (entry.isOffDay || entry.isHoliday)) return false
-
       // 4. Search query
       if (search.trim()) {
         const query = search.toLowerCase()
@@ -80,7 +102,7 @@ export default function SchedulePage() {
 
       return true
     })
-  }, [monthFilter, divisionFilter, hideOffDays, search])
+  }, [monthFilter, divisionFilter, search])
 
   function handleScrollRight() {
     if (scrollerRef.current) {
@@ -196,17 +218,6 @@ export default function SchedulePage() {
             </div>
           </div>
 
-          {/* Sliders / Filter icon */}
-          <button
-            onClick={() => setHideOffDays(!hideOffDays)}
-            className={`w-9 h-9 rounded-2xl border-2 border-ink flex items-center justify-center shadow-[1.5px_1.5px_0px_#151515] transition-colors ${
-              hideOffDays ? 'bg-[#FFD43B]' : 'bg-white'
-            }`}
-            aria-label="Toggle off days"
-            title="Toggle off-days"
-          >
-            <SlidersHorizontal className="w-4 h-4 text-ink" />
-          </button>
         </div>
 
         {/* Horizontal Date Picker Cards Row */}
@@ -341,6 +352,7 @@ export default function SchedulePage() {
                           <span>Teacher in Charge:</span>
                           <strong className="text-black truncate font-bold ml-0.5">{entry.teachers}</strong>
                         </div>
+                        <EventButtons isoDate={entry.isoDate} events={events} onOpen={setOpenEvent} />
                       </>
                     )}
                   </div>
@@ -429,15 +441,6 @@ export default function SchedulePage() {
                 </button>
               ))}
 
-              <label className="ml-auto flex items-center gap-2 cursor-pointer text-xs font-bold text-ink/70">
-                <input
-                  type="checkbox"
-                  checked={hideOffDays}
-                  onChange={(e) => setHideOffDays(e.target.checked)}
-                  className="rounded border-ink text-primary focus:ring-0"
-                />
-                <span>Hide Off Days &amp; Holidays</span>
-              </label>
             </div>
           </div>
         </section>
@@ -455,7 +458,6 @@ export default function SchedulePage() {
                 onClick={() => {
                   setSearch('')
                   setMonthFilter('all')
-                  setHideOffDays(false)
                 }}
                 className="mt-4 px-4 py-1.5 bg-comic-yellow text-ink text-xs font-bold rounded-full border-2 border-ink shadow-comic-sm"
               >
@@ -520,6 +522,7 @@ export default function SchedulePage() {
                           <span className="line-clamp-1">In charge: {entry.teachers}</span>
                         </div>
                       )}
+                      {!isNonEvent && <EventButtons isoDate={entry.isoDate} events={events} onOpen={setOpenEvent} />}
                     </div>
                   </div>
                 )
@@ -553,6 +556,7 @@ export default function SchedulePage() {
                         </td>
                         <td className="py-3 px-4 font-display text-sm text-ink font-bold">
                           {entry.eventName}
+                          {!(entry.isOffDay || entry.isHoliday) && <EventButtons isoDate={entry.isoDate} events={events} onOpen={setOpenEvent} />}
                         </td>
                         <td className="py-3 px-4">
                           <span className="font-bold">{entry.division}</span>
@@ -569,6 +573,7 @@ export default function SchedulePage() {
           )}
         </main>
       </div>
+      {openEvent && <EventSheet event={openEvent} onClose={() => setOpenEvent(null)} />}
     </div>
   )
 }

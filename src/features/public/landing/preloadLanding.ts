@@ -1,13 +1,12 @@
 import heroUrl from '@/assets/brand/hero-b.jpg'
-import burstUrl from '@/assets/brand/bg-purple-burst.png'
-import boltsUrl from '@/assets/brand/lightning-bolts.png'
+import burstUrl from '@/assets/brand/bg-purple-burst.svg'
 import lockupUrl from '@/assets/brand/blossoms-2026-27-lockup.png'
 import artsUrl from '@/assets/brand/panel-arts.png'
 import literatureUrl from '@/assets/brand/panel-literature.png'
 import stageUrl from '@/assets/brand/panel-stage.png'
 import theatreUrl from '@/assets/brand/panel-theatre.png'
 
-const LANDING_IMAGES = [heroUrl, burstUrl, boltsUrl, lockupUrl, artsUrl, literatureUrl, stageUrl, theatreUrl]
+const LANDING_IMAGES = [heroUrl, burstUrl, lockupUrl, artsUrl, literatureUrl, stageUrl, theatreUrl]
 
 let pending: Promise<void> | null = null
 

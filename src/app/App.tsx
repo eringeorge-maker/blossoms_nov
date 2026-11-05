@@ -15,11 +15,9 @@ import EventsPage        from '@/features/events/EventsPage'
 import EventDetailPage   from '@/features/events/EventDetailPage'
 import SchedulePage      from '@/features/schedule/SchedulePage'
 import AnnouncementsPage from '@/features/announcements/AnnouncementsPage'
-import AboutPage         from '@/features/public/AboutPage'
 import GalleryPage       from '@/features/gallery/GalleryPage'
 import WinnersPage       from '@/features/winners/WinnersPage'
 import TeamPage          from '@/features/public/TeamPage'
-import ContactPage       from '@/features/public/ContactPage'
 import LoginPage         from '@/features/auth/LoginPage'
 import { getCategories } from '@/lib/api/events'
 import { getAnnouncements } from '@/lib/api/announcements'
@@ -112,8 +110,8 @@ export default function App() {
               <Route path="schedule" element={<SchedulePage />} />
               <Route path="announcements" element={<AnnouncementsPage />} />
               <Route path="team" element={<TeamPage />} />
-              <Route path="contact" element={<ContactPage />} />
-              <Route path="about" element={<AboutPage />} />
+              <Route path="contact" element={<Navigate to="/" replace />} />
+              <Route path="about" element={<Navigate to="/" replace />} />
               <Route path="gallery" element={<GalleryPage />} />
               <Route path="winners" element={<WinnersPage />} />
               <Route path="results" element={<Navigate to="/winners" replace />} />

@@ -57,7 +57,7 @@
   align-items: center;
   gap: clamp(24px, 4vw, 64px);
   padding: clamp(28px, 4vw, 56px) clamp(16px, 5vw, 80px) 72px;
-  background: var(--color-blossoms-purple) url('../../../assets/brand/bg-purple-burst.png') center / cover no-repeat;
+  background: var(--color-blossoms-purple) url('../../../assets/brand/bg-purple-burst.svg') center / cover no-repeat;
 }
 
 .landing-hero-float {
@@ -253,8 +253,8 @@
 
 .flip-final {
   position: absolute;
-  right: clamp(16px, 8vw, 140px);
-  bottom: clamp(24px, 8vh, 90px);
+  left: clamp(16px, 4vw, 80px);
+  bottom: clamp(24px, 6vh, 70px);
   margin: 0;
   padding: 10px 22px;
   font-size: clamp(34px, 5vw, 72px);
@@ -266,6 +266,42 @@
   box-shadow: 6px 6px 0 var(--color-ink-deep);
   opacity: 0;
   z-index: 30;
+}
+
+/* About Blossoms, arriving beside the final comic page */
+.flip-about {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 clamp(16px, 5vw, 80px) 0 0;
+  opacity: 0;
+  z-index: 25;
+}
+
+.flip-about-title {
+  margin: 0;
+  font-size: clamp(48px, 6.4vw, 104px);
+  line-height: 0.94;
+  letter-spacing: 0.02em;
+}
+
+.flip-about-lede {
+  margin: 0;
+  max-width: 52ch;
+  padding: 14px 18px;
+  font-size: clamp(15px, 1.25vw, 19px);
+  line-height: 1.6;
+  color: var(--color-ink-deep);
+  background: var(--color-caption-cream);
+  border: 3px solid var(--color-ink-deep);
+  box-shadow: 6px 6px 0 var(--color-ink-deep);
+  transform: rotate(0.8deg);
 }
 
 /* Trailer and about */
@@ -388,7 +424,7 @@
   top: 64px;
   height: calc(100svh - 64px);
   overflow: hidden;
-  background: var(--color-blossoms-purple) url('../../../assets/brand/bg-purple-burst.png') center / cover no-repeat;
+  background: var(--color-blossoms-purple) url('../../../assets/brand/bg-purple-burst.svg') center / cover no-repeat;
 }
 
 .clash-shake {
@@ -458,9 +494,10 @@
 }
 
 .clash-bolts {
-  --bolts: calc(var(--clash-size) * 2.2);
+  --bolts: calc(var(--clash-size) * 3.3);
   width: var(--bolts);
-  height: auto;
+  height: var(--bolts);
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.9));
   margin: calc(var(--bolts) / -2) 0 0 calc(var(--bolts) / -2);
   opacity: 0;
   z-index: 2;
@@ -517,132 +554,6 @@
   z-index: 6;
 }
 
-/* Laser eyes burn the about heading in */
-.laser {
-  position: relative;
-  height: 480vh;
-  background: #2b1238;
-}
-
-.laser-stage {
-  position: sticky;
-  top: 64px;
-  height: calc(100svh - 64px);
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  align-items: center;
-  gap: clamp(24px, 4vw, 64px);
-  padding: 0 clamp(16px, 5vw, 80px);
-  overflow: hidden;
-}
-
-.laser-face {
-  position: relative;
-  justify-self: center;
-  width: min(100%, 420px, calc((100svh - 64px - 120px) * 0.8));
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  border: 4px solid var(--color-ink-deep);
-  box-shadow: 10px 10px 0 var(--color-ink-deep);
-  background: var(--color-ink-deep);
-  transform: rotate(-2deg);
-}
-
-.laser-face-art {
-  position: absolute;
-  width: 230%;
-  left: -62%;
-  top: -22%;
-}
-
-.laser-face-art img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.laser-eye {
-  position: absolute;
-  width: 5%;
-  aspect-ratio: 1;
-  margin: -2.5% 0 0 -2.5%;
-  border-radius: 50%;
-  background: radial-gradient(circle, #ffffff 0 22%, #ffd43b 40%, #ff3b1f 66%, transparent 72%);
-  opacity: 0;
-}
-
-.laser-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-}
-
-.laser-title {
-  position: relative;
-  align-self: flex-start;
-  margin: 0;
-  font-size: clamp(56px, 8.5vw, 136px);
-  line-height: 0.92;
-  letter-spacing: 0.02em;
-}
-
-.laser-cover {
-  position: absolute;
-  inset: -8px -14px;
-  background: #2b1238;
-  transform-origin: right center;
-}
-
-.laser-lede {
-  margin: 0;
-  max-width: 58ch;
-  font-size: clamp(16px, 1.3vw, 19px);
-  line-height: 1.6;
-  color: var(--color-caption-cream);
-  opacity: 0;
-}
-
-.laser-beams {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  pointer-events: none;
-  filter: drop-shadow(0 0 6px #ff3b1f) drop-shadow(0 0 16px #ff3b1f);
-  z-index: 5;
-}
-
-.laser-beam {
-  opacity: 0;
-  stroke-linecap: round;
-}
-
-.laser-beam--glow {
-  stroke: #ff2d1a;
-  stroke-width: 16;
-  stroke-opacity: 0.6;
-}
-
-.laser-beam--core {
-  stroke: #fff7c2;
-  stroke-width: 5;
-}
-
-.laser-spark {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 70px;
-  height: 70px;
-  margin: -35px 0 0 -35px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #ffffff 0 16%, #ffd43b 30%, rgba(255, 80, 20, 0.6) 55%, transparent 70%);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 6;
-}
-
 @media (max-width: 1023px) {
   .landing-about-grid {
     grid-template-columns: minmax(0, 1fr);
@@ -687,32 +598,37 @@
     transform: scale(0.82);
   }
 
+  .flip-about {
+    inset: auto 0 0 0;
+    width: auto;
+    height: 40%;
+    padding: 0 16px 12px;
+    gap: 10px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .flip-about-title {
+    font-size: clamp(36px, 11vw, 52px);
+  }
+
+  .flip-about-lede {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .flip-final {
+    display: none;
+  }
+
   .clash {
     height: 260vh;
   }
 
-  .laser {
-    height: 420vh;
-  }
 
-  .laser-stage {
-    grid-template-columns: minmax(0, 1fr);
-    align-content: center;
-    gap: 28px;
-  }
 
-  .laser-face {
-    width: min(58vw, 260px, calc((100svh - 64px) * 0.32));
-  }
 
-  .laser-title {
-    align-self: center;
-    text-align: center;
-  }
 
-  .laser-lede {
-    text-align: center;
-  }
 
   /* No room for an open spread on a phone: turned pages leave instead. */
   .flip-face--back {
@@ -757,23 +673,19 @@
     transform: rotate(-3deg);
   }
 
+  .flip-about {
+    position: relative;
+    width: auto;
+    height: auto;
+    opacity: 1;
+    padding: 24px 16px 0;
+  }
+
   /* Without motion, each scene shows its final frame. */
   .clash,
-  .laser {
-    height: auto;
-  }
 
   .clash-stage,
-  .laser-stage {
-    position: relative;
-    top: 0;
-  }
 
-  .laser-stage {
-    height: auto;
-    padding-block: 48px;
-    background: var(--color-blossoms-purple);
-  }
 
   .clash-hammer {
     transform: translateX(calc(var(--clash-size) * -0.72)) rotate(-26deg);
@@ -785,18 +697,97 @@
 
   .clash-burst,
   .clash-sfx,
-  .clash-caption,
-  .laser-lede {
+  .clash-caption {
     opacity: 1;
   }
 
   .clash-sfx {
     transform: rotate(-8deg);
   }
+}
 
-  .laser-cover,
-  .laser-beams,
-  .laser-spark {
+/* Scroll decoration: batarangs and a dangling spider */
+.scroll-fx {
+  position: fixed;
+  inset: 64px 0 0 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.scroll-fx-boomerang {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  filter: drop-shadow(4px 5px 0 rgba(15, 15, 15, 0.55));
+  will-change: transform;
+}
+
+.scroll-fx-boomerang svg {
+  display: block;
+  height: auto;
+}
+
+.scroll-fx-web {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: clamp(110px, 16vw, 220px);
+  height: auto;
+  opacity: 0.85;
+}
+
+.scroll-fx-thread {
+  --drop: 90px;
+  position: absolute;
+  top: 0;
+  right: clamp(60px, 9vw, 130px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-origin: top center;
+  animation: spider-sway 3.6s ease-in-out infinite;
+}
+
+.scroll-fx-line {
+  display: block;
+  width: 2px;
+  height: var(--drop);
+  background: #f4f1ff;
+  box-shadow: 0 0 4px rgba(244, 241, 255, 0.6);
+  transition: height 0.25s ease-out;
+}
+
+.scroll-fx-spider {
+  width: 38px;
+  height: 38px;
+  margin-top: -4px;
+}
+
+@keyframes spider-sway {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+@media (max-width: 767px) {
+  .scroll-fx-web {
+    width: 100px;
+  }
+
+  .scroll-fx-thread {
+    right: 54px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-fx-boomerang,
+  .scroll-fx-thread {
     display: none;
   }
 }
