@@ -21,7 +21,9 @@ export interface DashboardStats {
     attendance_marked: number
     students_present: number
     events: number
+    students_completed: number
   }
+  rules: { min_chosen: number; mandatory_total: number; mandatory_held: number }
   by_category: { category: string; slug: string; registrations: number; present: number }[]
   by_event: {
     event_id: string
@@ -30,6 +32,7 @@ export interface DashboardStats {
     category: string
     event_format: string
     event_date: string | null
+    is_mandatory: boolean
     registration_closed: boolean
     registration_enabled: boolean
     registrations: number
@@ -37,7 +40,7 @@ export interface DashboardStats {
     present: number
     absent: number
   }[]
-  by_class: { class_name: string; students: number; linked: number; registered: number; attended: number }[]
+  by_class: { class_name: string; students: number; linked: number; registered: number; attended: number; completed: number }[]
 }
 
 export const getDashboardStats = () => rpc<DashboardStats>('admin_dashboard_stats')
@@ -69,7 +72,7 @@ export const markAttendance = (eventId: string, studentIds: string[], status: 'p
   })
 
 // ── Defaulters ────────────────────────────────────────────────────────────────
-export type DefaulterKind = 'registered_not_attended' | 'attended_none' | 'registered_none'
+export type DefaulterKind = 'below_minimum' | 'registered_not_attended' | 'attended_none' | 'registered_none'
 
 export interface DefaulterRow {
   student_id: string
@@ -151,10 +154,12 @@ export interface ClassRow {
   class_name: string
   programme: string | null
   year_of_study: number | null
+  team_name: string | null
   students: number
   linked: number
   registered: number
   attended: number
+  completed: number
 }
 
 export const getClassList = () => rpc<ClassRow[]>('admin_class_list')
@@ -183,6 +188,7 @@ export type EventPatch = Partial<
     | 'max_team_size'
     | 'capacity'
     | 'cancellation_allowed'
+    | 'is_mandatory'
   >
 >
 
@@ -445,3 +451,71 @@ export async function listAuditLogs(limit = 200): Promise<AuditRow[]> {
   if (error) throw new Error(error.message)
   return (data ?? []) as AuditRow[]
 }
+
+// ── Participation rules and fest teams ────────────────────────────────────────
+export interface FestSettings {
+  min_chosen_events: number
+  leaderboard_public: boolean
+}
+
+export async function getFestSettings(): Promise<FestSettings> {
+  const { data, error } = await supabase.from('fest_settings').select('min_chosen_events, leaderboard_public').single()
+  if (error) throw new Error(error.message)
+  return data as FestSettings
+}
+
+export async function updateFestSettings(patch: FestSettings, updatedBy?: string): Promise<void> {
+  const { error } = await supabase
+    .from('fest_settings')
+    .update({ ...patch, updated_by: updatedBy ?? null, updated_at: new Date().toISOString() })
+    .eq('id', true)
+  if (error) throw new Error(error.message)
+}
+
+export interface FestTeam {
+  id: string
+  name: string
+  color: string
+  display_order: number
+}
+
+export async function listFestTeams(): Promise<FestTeam[]> {
+  const { data, error } = await supabase.from('fest_teams').select('id, name, color, display_order').order('display_order').order('name')
+  if (error) throw new Error(error.message)
+  return (data ?? []) as FestTeam[]
+}
+
+export async function saveFestTeam(input: Omit<FestTeam, 'id'>, id?: string): Promise<void> {
+  const { error } = id ? await supabase.from('fest_teams').update(input).eq('id', id) : await supabase.from('fest_teams').insert(input)
+  if (error) throw new Error(error.message)
+}
+
+export async function deleteFestTeam(id: string): Promise<void> {
+  const { error } = await supabase.from('fest_teams').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+}
+
+export async function listClassTeams(): Promise<{ class_name: string; fest_team_id: string }[]> {
+  const { data, error } = await supabase.from('class_team_assignments').select('class_name, fest_team_id')
+  if (error) throw new Error(error.message)
+  return data ?? []
+}
+
+/** Put a class in a team, or take it out with teamId = null. */
+export async function setClassTeam(className: string, teamId: string | null): Promise<void> {
+  const { error } = teamId
+    ? await supabase.from('class_team_assignments').upsert({ class_name: className, fest_team_id: teamId, assigned_at: new Date().toISOString() })
+    : await supabase.from('class_team_assignments').delete().eq('class_name', className)
+  if (error) throw new Error(error.message)
+}
+
+export interface TeamStanding {
+  team_id: string
+  name: string
+  color: string
+  classes: number
+  points: number
+}
+
+/** Empty for the public until an admin switches the standings on. */
+export const getTeamLeaderboard = () => rpc<TeamStanding[]>('get_team_leaderboard')

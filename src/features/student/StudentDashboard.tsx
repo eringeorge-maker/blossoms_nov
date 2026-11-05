@@ -62,7 +62,7 @@ export default function StudentDashboard() {
             {active.length === 0 ? 'Pick your first event' : 'Want to join more?'}
           </p>
           <Button size="sm" variant="outline" className="w-full font-display tracking-wider uppercase" asChild>
-            <Link to="/app/events">
+            <Link to="/events">
               <Compass className="w-4 h-4" /> Browse events
             </Link>
           </Button>

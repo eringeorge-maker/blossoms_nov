@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { ErrorState } from '@/components/ui/States'
 import { listAuditLogs } from '@/lib/api/admin'
 import { formatDateTime } from '@/lib/eventDisplay'
-import { DataTable, Muted, PageHeader, Panel, SearchBox } from './AdminUI'
+import { DataTable, Muted, PageHeader, Panel, SearchBox, SortTh, useSort } from './AdminUI'
 
 const ACTION_LABELS: Record<string, string> = {
   claim_account: 'Student signed in for the first time',
@@ -20,7 +20,12 @@ const ACTION_LABELS: Record<string, string> = {
 export default function AdminAudit() {
   const [q, setQ] = useState('')
   const { data: rows = [], isLoading, isError, error, refetch } = useQuery({ queryKey: ['admin-audit'], queryFn: () => listAuditLogs(300) })
-  const filtered = rows.filter((r) => !q || JSON.stringify(r).toLowerCase().includes(q.toLowerCase()))
+  const filtered = useMemo(() => rows.filter((r) => !q || JSON.stringify(r).toLowerCase().includes(q.toLowerCase())), [rows, q])
+  const { sorted, sort, toggle } = useSort(filtered, {
+    when: (r) => r.created_at,
+    who: (r) => r.actor_role,
+    action: (r) => ACTION_LABELS[r.action] ?? r.action,
+  })
 
   return (
     <div className="space-y-6">
@@ -39,14 +44,14 @@ export default function AdminAudit() {
           <DataTable>
             <thead>
               <tr>
-                <th>When</th>
-                <th>Who</th>
-                <th>Action</th>
+                <SortTh label="When" sortKey="when" sort={sort} onSort={toggle} />
+                <SortTh label="Who" sortKey="who" sort={sort} onSort={toggle} />
+                <SortTh label="Action" sortKey="action" sort={sort} onSort={toggle} />
                 <th>Detail</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map((r) => (
+              {sorted.map((r) => (
                 <tr key={r.id}>
                   <td className="text-xs whitespace-nowrap">{formatDateTime(r.created_at)}</td>
                   <td className="text-xs">{r.actor_role ?? '—'}</td>

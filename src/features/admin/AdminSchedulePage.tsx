@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Search, MapPin, Download, FileText } from 'lucide-react'
 import { MASTER_SCHEDULE } from '@/lib/data/masterSchedule'
+import { SortTh, useSort } from './AdminUI'
 
 export default function AdminSchedulePage() {
   const [search, setSearch] = useState('')
@@ -29,6 +30,14 @@ export default function AdminSchedulePage() {
       return true
     })
   }, [search, divisionFilter, monthFilter])
+
+  const { sorted, sort, toggle } = useSort(filteredEntries, {
+    date: (e) => e.dateStr,
+    event: (e) => e.eventName,
+    division: (e) => e.division,
+    venue: (e) => e.venue,
+    teachers: (e) => e.teachers,
+  })
 
   return (
     <div className="space-y-6">
@@ -123,15 +132,15 @@ export default function AdminSchedulePage() {
           <table className="w-full text-sm" role="table">
             <thead className="border-b-2 border-ink bg-[#FFF8E8]">
               <tr>
-                <th className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink">Date &amp; Day</th>
-                <th className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink">Competition Event</th>
-                <th className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink">Division</th>
-                <th className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink">Venue Allocation</th>
-                <th className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink">Faculty Coordinators</th>
+                <SortTh label="Date &amp; Day" sortKey="date" sort={sort} onSort={toggle} className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink" />
+                <SortTh label="Competition Event" sortKey="event" sort={sort} onSort={toggle} className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink" />
+                <SortTh label="Division" sortKey="division" sort={sort} onSort={toggle} className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink" />
+                <SortTh label="Venue Allocation" sortKey="venue" sort={sort} onSort={toggle} className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink" />
+                <SortTh label="Faculty Coordinators" sortKey="teachers" sort={sort} onSort={toggle} className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink" />
               </tr>
             </thead>
             <tbody>
-              {filteredEntries.map((entry) => (
+              {sorted.map((entry) => (
                 <tr key={entry.id} className="border-b border-ink/10 hover:bg-[#FFF8E8]/50 transition-colors">
                   <td className="px-4 py-3 whitespace-nowrap">
                     <p className="font-mono font-bold text-ink">{entry.dateStr}</p>

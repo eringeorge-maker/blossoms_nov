@@ -5,6 +5,7 @@ import { DisplayText, ComicPanel, ComicCaptionBox } from '@/components/comic/Com
 import { Badge } from '@/components/ui/Badge'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { supabase, isSupabaseConfigured } from '@/lib/supabase/client'
+import { getTeamLeaderboard, type TeamStanding } from '@/lib/api/admin'
 
 interface PublicWinner {
   event_id: string
@@ -27,6 +28,39 @@ async function getPublicWinners(): Promise<PublicWinner[]> {
 
 const PLACE = ['', '1st place', '2nd place', '3rd place']
 
+/** The four team totals. Renders nothing while the standings are switched off. */
+function TeamStandings() {
+  const { data: teams = [] } = useQuery({
+    queryKey: ['team-leaderboard'],
+    queryFn: () => (isSupabaseConfigured ? getTeamLeaderboard() : Promise.resolve([] as TeamStanding[])),
+  })
+  if (teams.length === 0) return null
+  const ranked = [...teams].sort((a, b) => b.points - a.points)
+  const top = Math.max(1, ...ranked.map((t) => t.points))
+  return (
+    <section aria-labelledby="team-standings" className="comic-card p-5 bg-white space-y-3">
+      <h2 id="team-standings" className="font-display text-2xl text-ink">Team standings</h2>
+      <ol className="space-y-2">
+        {ranked.map((t, i) => (
+          <li key={t.team_id} className="flex items-center gap-3">
+            <span className="w-6 font-display text-xl text-ink tabular-nums">{i + 1}</span>
+            <span className="h-4 w-4 rounded-full border-2 border-ink shrink-0" style={{ background: t.color }} aria-hidden="true" />
+            <div className="flex-1 min-w-0">
+              <div className="flex justify-between text-sm font-bold text-ink">
+                <span className="truncate">{t.name}</span>
+                <span className="tabular-nums">{t.points.toLocaleString()} pts</span>
+              </div>
+              <div className="mt-1 h-3 rounded-full border-2 border-ink bg-paper overflow-hidden">
+                <div className="h-full" style={{ width: `${(t.points / top) * 100}%`, background: t.color }} />
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
+}
+
 export default function WinnersPage() {
   const { data: winners = [], isLoading } = useQuery({ queryKey: ['public-winners'], queryFn: getPublicWinners })
 
@@ -42,6 +76,8 @@ export default function WinnersPage() {
         </div>
         <ComicCaptionBox>BLOSSOMS 2026–27</ComicCaptionBox>
       </div>
+
+      <TeamStandings />
 
       {isLoading ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

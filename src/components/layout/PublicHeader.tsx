@@ -4,6 +4,7 @@ import { Menu, X, User, LogOut, ShieldAlert } from 'lucide-react'
 import { FloatingPillNavigation, type NavItem } from '@/components/navigation/FloatingPillNavigation'
 import { signOut, useAuth } from '@/lib/auth/authStore'
 import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.webp'
+import { StudentTabs, STUDENT_TABS, isStudentTabActive } from './StudentTabs'
 
 const NAV_LINKS: NavItem[] = [
   { label: 'Home',         href: '/' },
@@ -37,9 +38,9 @@ export function PublicHeader() {
   }
 
   return (
-    <>
+    <div className="sticky top-0 z-50 w-full">
       <header
-        className="sticky top-0 z-50 w-full h-16 px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 select-none bg-primary border-b-[2.5px] border-[#0f0f0f]"
+        className="relative z-10 w-full h-16 px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 select-none bg-primary border-b-[2.5px] border-[#0f0f0f]"
       >
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#FFD43B] focus:text-[#151515] focus:rounded-lg focus:font-semibold">
         Skip to main content
@@ -76,7 +77,7 @@ export function PublicHeader() {
         {student ? (
           <div className="flex items-center gap-2">
             <Link
-              to="/app"
+              to="/app/profile"
               className="h-[44px] px-4 rounded-[18px] border-2 border-[#0f0f0f] shadow-comic-sm bg-[#FFD43B] hover:bg-[#FFE066] active:scale-95 text-[#151515] font-semibold text-[14px] flex items-center gap-2 cursor-pointer transition-all duration-150 focus-visible:outline-[#FFD43B] shadow-xs"
             >
               {!onLoginPage && <User className="w-[17px] h-[17px] stroke-[2.4]" />}
@@ -148,6 +149,7 @@ export function PublicHeader() {
         </button>
       </div>
       </header>
+      <StudentTabs />
 
       {/* ── Mobile Drawer Navigation ─────────────────────────────────── */}
       {menuOpen && (
@@ -179,14 +181,20 @@ export function PublicHeader() {
           <div className="mt-8 pt-6 border-t border-black/10 space-y-3">
             {student ? (
               <div className="space-y-2">
-                <Link
-                  to="/app"
-                  onClick={() => setMenuOpen(false)}
-                  className="w-full h-[46px] rounded-full bg-[#FFD43B] text-[#151515] font-semibold flex items-center justify-center gap-2"
-                >
-                  {!onLoginPage && <User className="w-4 h-4" />}
-                  <span>Student portal ({student.registerNumber})</span>
-                </Link>
+                <p className="text-xs font-bold uppercase tracking-wider text-[#151515]/60 px-1">Signed in · {student.registerNumber}</p>
+                {STUDENT_TABS.map(({ label, href, icon: Icon }) => (
+                  <Link
+                    key={href}
+                    to={href}
+                    onClick={() => setMenuOpen(false)}
+                    className={`w-full h-[46px] rounded-full border-2 border-[#0f0f0f] font-semibold flex items-center justify-center gap-2 ${
+                      isStudentTabActive(href, location.pathname) ? 'bg-[#FFD43B] text-[#151515]' : 'bg-white text-[#151515]'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" aria-hidden="true" />
+                    <span>{label}</span>
+                  </Link>
+                ))}
                 <button
                   type="button"
                   onClick={() => { handleLogout(); setMenuOpen(false); }}
@@ -228,7 +236,7 @@ export function PublicHeader() {
           </div>
         </div>
       )}
-    </>
+    </div>
   )
 }
 export default PublicHeader

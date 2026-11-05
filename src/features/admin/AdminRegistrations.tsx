@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { ErrorState } from '@/components/ui/States'
 import { getParticipationRows } from '@/lib/api/admin'
 import { formatDateTime } from '@/lib/eventDisplay'
-import { ClassSelect, DataTable, EventSelect, Muted, PageHeader, Panel, SearchBox, useAdminEvents } from './AdminUI'
+import { ClassSelect, DataTable, EventSelect, Muted, PageHeader, Panel, SearchBox, SortTh, useAdminEvents, useSort } from './AdminUI'
 
 const PAGE = 200
 
@@ -30,6 +30,15 @@ export default function AdminRegistrations() {
     )
   }, [rows, eventTitle, className, search])
 
+  const { sorted, sort, toggle } = useSort(filtered, {
+    student: (r) => r.full_name,
+    class: (r) => r.class_name,
+    event: (r) => r.event_title,
+    team: (r) => r.team_name,
+    registered: (r) => r.registered_at,
+    attendance: (r) => (r.attendance_status === 'present' ? 0 : r.attendance_status === 'absent' ? 1 : null),
+  })
+
   return (
     <div className="space-y-6">
       <PageHeader title="Registrations" description="Every active registration. Filter by event or class, or search by student or team." />
@@ -53,16 +62,16 @@ export default function AdminRegistrations() {
           <DataTable>
             <thead>
               <tr>
-                <th>Student</th>
-                <th>Class</th>
-                <th>Event</th>
-                <th>Team</th>
-                <th>Registered</th>
-                <th>Attendance</th>
+                <SortTh label="Student" sortKey="student" sort={sort} onSort={toggle} />
+                <SortTh label="Class" sortKey="class" sort={sort} onSort={toggle} />
+                <SortTh label="Event" sortKey="event" sort={sort} onSort={toggle} />
+                <SortTh label="Team" sortKey="team" sort={sort} onSort={toggle} />
+                <SortTh label="Registered" sortKey="registered" sort={sort} onSort={toggle} />
+                <SortTh label="Attendance" sortKey="attendance" sort={sort} onSort={toggle} />
               </tr>
             </thead>
             <tbody>
-              {filtered.slice(0, PAGE).map((r) => (
+              {sorted.slice(0, PAGE).map((r) => (
                 <tr key={`${r.event_title}-${r.register_number}`}>
                   <td>
                     <p className="font-semibold">{r.full_name}</p>

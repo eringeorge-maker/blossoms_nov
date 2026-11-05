@@ -12,7 +12,7 @@ import { registrationState } from '@/lib/api/events'
 import { slotLabel, teamSizeLabel } from '@/lib/eventDisplay'
 import { cn } from '@/lib/utils'
 import type { Event } from '@/types'
-import { DataTable, PageHeader, Panel, SearchBox, useAdminEvents } from './AdminUI'
+import { DataTable, PageHeader, Panel, SearchBox, SortTh, useAdminEvents, useSort } from './AdminUI'
 
 export default function AdminEventsPage() {
   const { data: events = [], isLoading, isError, error, refetch } = useAdminEvents()
@@ -25,6 +25,14 @@ export default function AdminEventsPage() {
       (category === 'all' || e.category?.slug === category) &&
       (!search || e.title.toLowerCase().includes(search.toLowerCase()))
   )
+
+  const { sorted, sort, toggle } = useSort(filtered, {
+    event: (e) => e.title,
+    category: (e) => e.category?.name,
+    when: (e) => e.schedule_slots?.[0]?.starts_at ?? e.schedule_slots?.[0]?.slot_date,
+    entry: (e) => e.max_team_size ?? 1,
+    registration: (e) => (e.registration_enabled === false ? 2 : registrationState(e).open ? 0 : 1),
+  })
 
   return (
     <div className="space-y-6">
@@ -61,16 +69,16 @@ export default function AdminEventsPage() {
           <DataTable>
             <thead>
               <tr>
-                <th>Event</th>
-                <th>When</th>
-                <th>Entry</th>
-                <th>Registration</th>
+                <SortTh label="Event" sortKey="event" sort={sort} onSort={toggle} />
+                <SortTh label="When" sortKey="when" sort={sort} onSort={toggle} />
+                <SortTh label="Entry" sortKey="entry" sort={sort} onSort={toggle} />
+                <SortTh label="Registration" sortKey="registration" sort={sort} onSort={toggle} />
                 <th>WhatsApp group</th>
                 <th />
               </tr>
             </thead>
             <tbody>
-              {filtered.map((e) => (
+              {sorted.map((e) => (
                 <EventRow key={e.id} event={e} />
               ))}
             </tbody>

@@ -1,5 +1,6 @@
 // Shared building blocks for admin pages, in the Blossoms comic design system.
 import * as React from 'react'
+import { ArrowDown, ArrowUp, ChevronsUpDown } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { DisplayText } from '@/components/comic/ComicPrimitives'
 import { getAllEventsForAdmin } from '@/lib/api/events'
@@ -140,4 +141,94 @@ export function Muted({ children }: { children: React.ReactNode }) {
 
 export function percent(n: number, d: number): string {
   return d ? `${Math.round((n / d) * 100)}%` : '—'
+}
+
+// ── Column sorting ────────────────────────────────────────────────────────────
+export type SortDir = 'asc' | 'desc'
+export interface SortState {
+  key: string
+  dir: SortDir
+}
+type SortValue = string | number | boolean | null | undefined
+
+const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
+
+function compareValues(a: SortValue, b: SortValue): number {
+  // Empty values always sink to the bottom, whichever way the column is sorted.
+  const aEmpty = a === null || a === undefined || a === ''
+  const bEmpty = b === null || b === undefined || b === ''
+  if (aEmpty || bEmpty) return aEmpty === bEmpty ? 0 : aEmpty ? 1 : -1
+  if (typeof a === 'number' && typeof b === 'number') return a - b
+  return collator.compare(String(a), String(b))
+}
+
+/**
+ * Click-to-sort for admin tables. Pass the rows and one accessor per sortable column;
+ * each header click cycles ascending, descending, then back to the original order.
+ */
+export function useSort<T>(rows: T[], accessors: Record<string, (row: T) => SortValue>, initial: SortState | null = null) {
+  const [sort, setSort] = React.useState<SortState | null>(initial)
+
+  const sorted = React.useMemo(() => {
+    const get = sort ? accessors[sort.key] : undefined
+    if (!sort || !get) return rows
+    const factor = sort.dir === 'asc' ? 1 : -1
+    return rows
+      .map((row, index) => ({ row, index }))
+      .sort((x, y) => {
+        const a = get(x.row)
+        const b = get(y.row)
+        const aEmpty = a === null || a === undefined || a === ''
+        const bEmpty = b === null || b === undefined || b === ''
+        const order = aEmpty || bEmpty ? compareValues(a, b) : compareValues(a, b) * factor
+        return order || x.index - y.index
+      })
+      .map((entry) => entry.row)
+    // accessors are defined inline by callers and only read by key, so they are not a dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows, sort])
+
+  const toggle = React.useCallback((key: string) => {
+    setSort((current) => {
+      if (!current || current.key !== key) return { key, dir: 'asc' }
+      if (current.dir === 'asc') return { key, dir: 'desc' }
+      return null
+    })
+  }, [])
+
+  return { sorted, sort, toggle }
+}
+
+/** A column header that sorts its table when clicked. Leave `sortKey` off for a plain header. */
+export function SortTh({
+  label,
+  sortKey,
+  sort,
+  onSort,
+  className,
+}: {
+  label: React.ReactNode
+  sortKey: string
+  sort: SortState | null
+  onSort: (key: string) => void
+  className?: string
+}) {
+  const active = sort?.key === sortKey
+  const Icon = !active ? ChevronsUpDown : sort.dir === 'asc' ? ArrowUp : ArrowDown
+  return (
+    <th className={className} aria-sort={active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'}>
+      <button
+        type="button"
+        onClick={() => onSort(sortKey)}
+        className={cn(
+          'inline-flex items-center gap-1 uppercase tracking-wider font-display hover:text-ink focus-visible:outline-2 focus-visible:outline-primary rounded',
+          active ? 'text-ink' : 'text-ink/60',
+          className?.includes('text-right') && 'flex-row-reverse'
+        )}
+      >
+        {label}
+        <Icon className={cn('w-3 h-3 shrink-0', !active && 'opacity-40')} aria-hidden="true" />
+      </button>
+    </th>
+  )
 }

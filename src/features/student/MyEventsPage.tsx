@@ -76,7 +76,7 @@ export default function MyEventsPage() {
             <>
               <p className="text-ink/60 text-sm mb-6">Every student takes part in at least one Blossoms event.</p>
               <Button asChild>
-                <Link to="/app/events">Find an event</Link>
+                <Link to="/events">Find an event</Link>
               </Button>
             </>
           )}

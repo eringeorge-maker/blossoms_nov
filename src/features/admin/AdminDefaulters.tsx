@@ -7,20 +7,28 @@ import { ErrorState } from '@/components/ui/States'
 import { getDefaulters, type DefaulterKind, type DefaulterRow } from '@/lib/api/admin'
 import { downloadCsv, toCsv } from '@/lib/csv'
 import { cn } from '@/lib/utils'
-import { ClassSelect, DataTable, Muted, PageHeader, Panel } from './AdminUI'
+import { ClassSelect, DataTable, Muted, PageHeader, Panel, SortTh, useSort } from './AdminUI'
 
 const KINDS: { kind: DefaulterKind; label: string; help: string }[] = [
-  { kind: 'registered_none', label: 'Registered for nothing', help: 'Students with no active registration. Every student must take part in at least one event.' },
+  { kind: 'below_minimum', label: 'Below the minimum', help: 'Attended fewer chosen events than the minimum set under Points & teams. Mandatory events are not counted.' },
+  { kind: 'registered_none', label: 'Registered for nothing', help: 'Students with no active registration. Mandatory events are not counted.' },
   { kind: 'registered_not_attended', label: 'Registered, did not attend', help: 'Registered for an event where attendance was taken, but not marked present.' },
   { kind: 'attended_none', label: 'Attended nothing', help: 'Not marked present at any event yet.' },
 ]
 
 export default function AdminDefaulters() {
-  const [kind, setKind] = useState<DefaulterKind>('registered_none')
+  const [kind, setKind] = useState<DefaulterKind>('below_minimum')
   const [className, setClassName] = useState('')
   const { data: rows = [], isLoading, isError, error, refetch } = useQuery({
     queryKey: ['admin-defaulters', kind, className],
     queryFn: () => getDefaulters(kind, className || null),
+  })
+  const { sorted, sort, toggle } = useSort(rows, {
+    student: (r) => r.full_name,
+    class: (r) => r.class_name,
+    phone: (r) => r.phone,
+    registered: (r) => r.registered_count,
+    attended: (r) => r.attended_count,
   })
   const current = KINDS.find((k) => k.kind === kind)!
 
@@ -75,16 +83,16 @@ export default function AdminDefaulters() {
             <DataTable>
               <thead>
                 <tr>
-                  <th>Student</th>
-                  <th>Class</th>
-                  <th>Phone</th>
-                  <th className="text-right">Registered</th>
-                  <th className="text-right">Attended</th>
+                  <SortTh label="Student" sortKey="student" sort={sort} onSort={toggle} />
+                  <SortTh label="Class" sortKey="class" sort={sort} onSort={toggle} />
+                  <SortTh label="Phone" sortKey="phone" sort={sort} onSort={toggle} />
+                  <SortTh label="Registered" sortKey="registered" sort={sort} onSort={toggle} className="text-right" />
+                  <SortTh label="Attended" sortKey="attended" sort={sort} onSort={toggle} className="text-right" />
                   {kind === 'registered_not_attended' && <th>Missed</th>}
                 </tr>
               </thead>
               <tbody>
-                {rows.slice(0, 500).map((r) => (
+                {sorted.slice(0, 500).map((r) => (
                   <tr key={r.student_id}>
                     <td>
                       <p className="font-semibold">{r.full_name}</p>

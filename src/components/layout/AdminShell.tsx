@@ -2,7 +2,7 @@ import { Link, Outlet, useLocation, Navigate, useNavigate } from 'react-router-d
 import { useState } from 'react'
 import {
   LayoutDashboard, CalendarDays, List, Users, UserCog, Megaphone, ScrollText, Menu, X, ChevronRight, LogOut,
-  ClipboardCheck, UserX, Download, Trophy, GraduationCap,
+  ClipboardCheck, UserX, Download, Trophy, GraduationCap, Medal,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -20,6 +20,7 @@ const ADMIN_NAV: NavItem[] = [
   { label: 'Exports', href: '/admin/exports', icon: Download },
   { label: 'Students & classes', href: '/admin/students', icon: GraduationCap },
   { label: 'Winners', href: '/admin/winners', icon: Trophy },
+  { label: 'Points & teams', href: '/admin/points', icon: Medal, roles: ['super_admin'] },
   { label: 'Announcements', href: '/admin/announcements', icon: Megaphone, roles: ['super_admin', 'content_editor'] },
   { label: 'Schedule', href: '/admin/schedule', icon: CalendarDays },
   { label: 'Admins & contacts', href: '/admin/coordinators', icon: UserCog, roles: ['super_admin'] },

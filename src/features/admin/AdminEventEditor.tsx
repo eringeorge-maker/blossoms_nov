@@ -42,6 +42,7 @@ export default function AdminEventEditor() {
       min_team_size: event.min_team_size,
       max_team_size: event.max_team_size,
       cancellation_allowed: event.cancellation_allowed,
+      is_mandatory: event.is_mandatory ?? false,
     })
   }, [event])
 
@@ -119,6 +120,13 @@ export default function AdminEventEditor() {
             <label className="flex items-center gap-2 text-sm font-semibold">
               <input type="checkbox" checked={!!form.cancellation_allowed} onChange={(e) => set('cancellation_allowed', e.target.checked)} className="w-4 h-4 accent-[var(--color-primary)]" />
               Students can cancel before registration closes
+            </label>
+            <label className="flex items-start gap-2 text-sm font-semibold sm:col-span-2">
+              <input type="checkbox" checked={!!form.is_mandatory} onChange={(e) => set('is_mandatory', e.target.checked)} className="w-4 h-4 mt-0.5 accent-[var(--color-primary)]" />
+              <span>
+                Mandatory for every student
+                <span className="block text-xs font-normal text-ink/60">No registration. Once held, every student counts as present unless marked absent. Not counted in the defaulter list.</span>
+              </span>
             </label>
           </div>
           {isTeam && (

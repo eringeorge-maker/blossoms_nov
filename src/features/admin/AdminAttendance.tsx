@@ -8,7 +8,7 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { ErrorState } from '@/components/ui/States'
 import { getEventRoster, markAttendance, type RosterRow } from '@/lib/api/admin'
 import { cn } from '@/lib/utils'
-import { DataTable, EventSelect, Muted, PageHeader, Panel, SearchBox } from './AdminUI'
+import { DataTable, EventSelect, Muted, PageHeader, Panel, SearchBox, SortTh, useSort } from './AdminUI'
 
 export default function AdminAttendance() {
   const [params, setParams] = useSearchParams()
@@ -39,9 +39,18 @@ export default function AdminAttendance() {
     )
   }, [roster, search])
 
+  const { sorted, sort, toggle } = useSort(filtered, {
+    student: (r) => r.full_name,
+    class: (r) => r.class_name,
+    team: (r) => r.team_name,
+    phone: (r) => r.phone,
+    attendance: (r) => (r.attendance_status === 'present' ? 0 : r.attendance_status === 'absent' ? 1 : 2),
+  })
+
   const present = roster.filter((r) => r.attendance_status === 'present').length
   const absent = roster.filter((r) => r.attendance_status === 'absent').length
   const unmarked = roster.length - present - absent
+  const mandatory = roster[0]?.registration_status === 'mandatory'
 
   function markRest(status: 'present' | 'absent') {
     const ids = roster.filter((r) => !r.attendance_status).map((r) => r.student_id)
@@ -76,13 +85,15 @@ export default function AdminAttendance() {
         <Muted>Nobody has registered for this event yet.</Muted>
       ) : (
         <Panel
-          title={`${roster.length} registered`}
+          title={mandatory ? `Mandatory event · all ${roster.length} students` : `${roster.length} registered`}
           actions={
             <div className="flex flex-wrap items-center gap-2 text-sm">
               <span className="font-semibold text-blossoms-green tabular-nums">{present} present</span>
               <span className="font-semibold text-comic-red-deep tabular-nums">{absent} absent</span>
-              <span className="font-semibold text-ink/60 tabular-nums">{unmarked} unmarked</span>
-              {unmarked > 0 && (
+              <span className="font-semibold text-ink/60 tabular-nums">
+                {unmarked} {mandatory ? 'unmarked (counted present)' : 'unmarked'}
+              </span>
+              {unmarked > 0 && !mandatory && (
                 <>
                   <Button size="sm" variant="outline" onClick={() => markRest('present')} disabled={mark.isPending}>
                     Rest present
@@ -95,18 +106,23 @@ export default function AdminAttendance() {
             </div>
           }
         >
+          {mandatory && (
+            <p className="text-sm text-ink/60 -mt-2 mb-3">
+              Everyone counts as present once the event is held. Only mark the students who were absent.
+            </p>
+          )}
           <DataTable>
             <thead>
               <tr>
-                <th>Student</th>
-                <th>Class</th>
-                <th>Team</th>
-                <th>Phone</th>
-                <th>Attendance</th>
+                <SortTh label="Student" sortKey="student" sort={sort} onSort={toggle} />
+                <SortTh label="Class" sortKey="class" sort={sort} onSort={toggle} />
+                <SortTh label="Team" sortKey="team" sort={sort} onSort={toggle} />
+                <SortTh label="Phone" sortKey="phone" sort={sort} onSort={toggle} />
+                <SortTh label="Attendance" sortKey="attendance" sort={sort} onSort={toggle} />
               </tr>
             </thead>
             <tbody>
-              {filtered.map((r) => (
+              {sorted.map((r) => (
                 <AttendanceRow key={r.student_id} row={r} busy={mark.isPending} onMark={(status) => mark.mutate({ ids: [r.student_id], status })} />
               ))}
             </tbody>

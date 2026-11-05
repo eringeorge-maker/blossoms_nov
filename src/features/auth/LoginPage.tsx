@@ -39,7 +39,10 @@ export default function LoginPage() {
     if (role === 'admin' && auth.admin) navigate(redirect ?? '/admin', { replace: true })
     else if (role === 'student' && auth.student) navigate(redirect ?? '/app', { replace: true })
     else if (auth.admin && !auth.student) navigate('/admin', { replace: true })
-    else if (auth.student && !auth.admin) navigate(redirect ?? '/app', { replace: true })
+    // A student opening an admin page stays here to sign in as admin; following the
+    // /admin redirect would bounce straight back and loop forever.
+    else if (auth.student && !auth.admin && role !== 'admin')
+      navigate(redirect && !redirect.startsWith('/admin') ? redirect : '/app', { replace: true })
     else if (auth.email && auth.linkError) {
       setError(auth.linkError)
       void signOut()

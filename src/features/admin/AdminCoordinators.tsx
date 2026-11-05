@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { Trash2, UserPlus } from 'lucide-react'
@@ -20,7 +20,7 @@ import {
 import { ROLE_LABELS, useAuth } from '@/lib/auth/authStore'
 import { formatDateTime } from '@/lib/eventDisplay'
 import type { UserRole } from '@/types'
-import { DataTable, EventSelect, Muted, PageHeader, Panel, SearchBox, selectClass, useAdminEvents } from './AdminUI'
+import { DataTable, EventSelect, Muted, PageHeader, Panel, SearchBox, SortTh, selectClass, useAdminEvents, useSort } from './AdminUI'
 
 const ROLES: UserRole[] = ['super_admin', 'content_editor', 'event_coordinator', 'analyst']
 const ROLE_HELP: Record<string, string> = {
@@ -45,6 +45,16 @@ function AdminsPanel() {
   const { admin } = useAuth()
   const queryClient = useQueryClient()
   const { data, isLoading } = useQuery({ queryKey: ['admin-accounts'], queryFn: listAdmins })
+  const accounts = useMemo(() => data?.accounts ?? [], [data])
+  const {
+    sorted: sortedAdmins,
+    sort: adminSort,
+    toggle: toggleAdminSort,
+  } = useSort(accounts, {
+    name: (a) => a.full_name,
+    role: (a) => ROLE_LABELS[a.role],
+    status: (a) => (a.is_active ? 0 : 1),
+  })
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [role, setRole] = useState<UserRole>('event_coordinator')
@@ -101,14 +111,14 @@ function AdminsPanel() {
         <DataTable>
           <thead>
             <tr>
-              <th>Admin</th>
-              <th>Role</th>
-              <th>Status</th>
+              <SortTh label="Admin" sortKey="name" sort={adminSort} onSort={toggleAdminSort} />
+              <SortTh label="Role" sortKey="role" sort={adminSort} onSort={toggleAdminSort} />
+              <SortTh label="Status" sortKey="status" sort={adminSort} onSort={toggleAdminSort} />
               <th />
             </tr>
           </thead>
           <tbody>
-            {(data?.accounts ?? []).map((a) => (
+            {sortedAdmins.map((a) => (
               <tr key={a.id}>
                 <td>
                   <p className="font-semibold">{a.full_name}</p>
@@ -243,6 +253,12 @@ function RepsPanel() {
   const { data: reps = [], isLoading } = useQuery({ queryKey: ['admin-reps'], queryFn: listClassReps })
   const [q, setQ] = useState('')
   const filtered = reps.filter((r) => !q || `${r.full_name} ${r.class_name} ${r.register_number ?? ''}`.toLowerCase().includes(q.toLowerCase()))
+  const { sorted, sort, toggle } = useSort(filtered, {
+    class: (r) => r.class_name,
+    rep: (r) => r.full_name,
+    register: (r) => r.register_number,
+    phone: (r) => r.phone,
+  })
   return (
     <Panel title={`Class representatives (${reps.length})`}>
       <div className="mb-3 max-w-sm">
@@ -254,14 +270,14 @@ function RepsPanel() {
         <DataTable>
           <thead>
             <tr>
-              <th>Class</th>
-              <th>Rep</th>
-              <th>Register no.</th>
-              <th>Phone</th>
+              <SortTh label="Class" sortKey="class" sort={sort} onSort={toggle} />
+              <SortTh label="Rep" sortKey="rep" sort={sort} onSort={toggle} />
+              <SortTh label="Register no." sortKey="register" sort={sort} onSort={toggle} />
+              <SortTh label="Phone" sortKey="phone" sort={sort} onSort={toggle} />
             </tr>
           </thead>
           <tbody>
-            {filtered.map((r) => (
+            {sorted.map((r) => (
               <tr key={r.id}>
                 <td className="font-semibold">{r.class_name}</td>
                 <td>{r.full_name}</td>

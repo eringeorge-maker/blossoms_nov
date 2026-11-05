@@ -26,7 +26,6 @@ const DesignSystemPage    = lazy(() => import('@/features/public/DesignSystemPag
 
 // Student pages (lazy loaded)
 const StudentDashboard    = lazy(() => import('@/features/student/StudentDashboard'))
-const StudentEventsPage   = lazy(() => import('@/features/student/StudentEventsPage'))
 const MyEventsPage        = lazy(() => import('@/features/student/MyEventsPage'))
 const StudentSchedulePage = lazy(() => import('@/features/student/StudentSchedulePage'))
 const ProfilePage         = lazy(() => import('@/features/student/ProfilePage'))
@@ -46,6 +45,7 @@ const AdminDefaulters     = lazy(() => import('@/features/admin/AdminDefaulters'
 const AdminExports        = lazy(() => import('@/features/admin/AdminExports'))
 const AdminWinners        = lazy(() => import('@/features/admin/AdminWinners'))
 const AdminAudit          = lazy(() => import('@/features/admin/AdminAudit'))
+const AdminPointsTeams    = lazy(() => import('@/features/admin/AdminPointsTeams'))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -118,16 +118,16 @@ export default function App() {
               <Route path="notice-board" element={<Navigate to="/announcements" replace />} />
               <Route path="login" element={<LoginPage />} />
               <Route path="design-system" element={<DesignSystemPage />} />
-            </Route>
 
-            {/* ── Student routes (auth required) ────────────── */}
-            <Route path="app" element={<StudentShell />}>
-              <Route index element={<StudentDashboard />} />
-              <Route path="events" element={<StudentEventsPage />} />
-              <Route path="my-events" element={<MyEventsPage />} />
-              <Route path="schedule" element={<StudentSchedulePage />} />
-              <Route path="profile" element={<ProfilePage />} />
-              <Route path="teams/:teamId" element={<StudentTeamPage />} />
+              {/* ── Student pages (sign-in required): same header, plus student tabs ── */}
+              <Route path="app" element={<StudentShell />}>
+                <Route index element={<StudentDashboard />} />
+                <Route path="events" element={<Navigate to="/events" replace />} />
+                <Route path="my-events" element={<MyEventsPage />} />
+                <Route path="schedule" element={<StudentSchedulePage />} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="teams/:teamId" element={<StudentTeamPage />} />
+              </Route>
             </Route>
 
             {/* ── Admin routes (auth + role required) ───────── */}
@@ -139,6 +139,7 @@ export default function App() {
               <Route path="schedule" element={<AdminSchedulePage />} />
               <Route path="registrations" element={<AdminRegistrations />} />
               <Route path="students" element={<AdminStudents />} />
+              <Route path="points" element={<AdminPointsTeams />} />
               <Route path="coordinators" element={<AdminCoordinators />} />
               <Route path="announcements" element={<AdminAnnouncements />} />
               <Route path="attendance" element={<AdminAttendance />} />

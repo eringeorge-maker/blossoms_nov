@@ -11,7 +11,7 @@ import { getClassList, getStudentDetail, searchStudentsAdmin, setStudentEmail } 
 import { useAuth } from '@/lib/auth/authStore'
 import { formatDateTime } from '@/lib/eventDisplay'
 import { cn } from '@/lib/utils'
-import { ClassSelect, DataTable, Muted, PageHeader, Panel, SearchBox, percent } from './AdminUI'
+import { ClassSelect, DataTable, Muted, PageHeader, Panel, SearchBox, SortTh, percent, useSort } from './AdminUI'
 
 type Tab = 'students' | 'classes'
 
@@ -59,6 +59,14 @@ function StudentSearch() {
     queryFn: () => searchStudentsAdmin(q.trim(), className || null, 200),
     enabled,
   })
+  const { sorted, sort, toggle } = useSort(rows, {
+    student: (r) => r.full_name,
+    class: (r) => r.class_name,
+    account: (r) => (r.linked ? 0 : 1),
+    phone: (r) => r.phone,
+    events: (r) => r.registered_count,
+    attended: (r) => r.attended_count,
+  })
 
   return (
     <>
@@ -79,16 +87,16 @@ function StudentSearch() {
           <DataTable>
             <thead>
               <tr>
-                <th>Student</th>
-                <th>Class</th>
-                <th>Account</th>
-                <th>Phone</th>
-                <th className="text-right">Events</th>
-                <th className="text-right">Attended</th>
+                <SortTh label="Student" sortKey="student" sort={sort} onSort={toggle} />
+                <SortTh label="Class" sortKey="class" sort={sort} onSort={toggle} />
+                <SortTh label="Account" sortKey="account" sort={sort} onSort={toggle} />
+                <SortTh label="Phone" sortKey="phone" sort={sort} onSort={toggle} />
+                <SortTh label="Events" sortKey="events" sort={sort} onSort={toggle} className="text-right" />
+                <SortTh label="Attended" sortKey="attended" sort={sort} onSort={toggle} className="text-right" />
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => (
+              {sorted.map((r) => (
                 <tr key={r.student_id} className="cursor-pointer hover:bg-paper" onClick={() => setOpenId(r.student_id)}>
                   <td>
                     <button type="button" className="text-left font-semibold hover:underline" onClick={() => setOpenId(r.student_id)}>
@@ -224,6 +232,16 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 
 function ClassList() {
   const { data: classes = [], isLoading, isError, error, refetch } = useQuery({ queryKey: ['admin-classes'], queryFn: getClassList })
+  const { sorted, sort, toggle } = useSort(classes, {
+    class: (c) => c.class_name,
+    programme: (c) => `${c.programme} ${c.year_of_study}`,
+    students: (c) => c.students,
+    linked: (c) => c.linked,
+    registered: (c) => c.registered,
+    attended: (c) => c.attended,
+    team: (c) => c.team_name,
+    completed: (c) => c.completed / c.students,
+  })
   if (isLoading) return <Skeleton className="h-96 w-full" />
   if (isError) return <ErrorState description={(error as Error).message} retry={() => refetch()} />
   const total = classes.reduce((a, c) => a + c.students, 0)
@@ -232,21 +250,24 @@ function ClassList() {
       <DataTable>
         <thead>
           <tr>
-            <th>Class</th>
-            <th>Programme</th>
-            <th className="text-right">Students</th>
-            <th className="text-right">Signed in</th>
-            <th className="text-right">Registered</th>
-            <th className="text-right">Attended</th>
+            <SortTh label="Class" sortKey="class" sort={sort} onSort={toggle} />
+            <SortTh label="Programme" sortKey="programme" sort={sort} onSort={toggle} />
+            <SortTh label="Team" sortKey="team" sort={sort} onSort={toggle} />
+            <SortTh label="Students" sortKey="students" sort={sort} onSort={toggle} className="text-right" />
+            <SortTh label="Signed in" sortKey="linked" sort={sort} onSort={toggle} className="text-right" />
+            <SortTh label="Registered" sortKey="registered" sort={sort} onSort={toggle} className="text-right" />
+            <SortTh label="Attended" sortKey="attended" sort={sort} onSort={toggle} className="text-right" />
+            <SortTh label="Completed" sortKey="completed" sort={sort} onSort={toggle} className="text-right" />
           </tr>
         </thead>
         <tbody>
-          {classes.map((c) => (
+          {sorted.map((c) => (
             <tr key={c.class_name}>
               <td className="font-semibold">{c.class_name}</td>
               <td className="text-xs">
                 {c.programme} · Year {c.year_of_study}
               </td>
+              <td className="text-xs">{c.team_name ?? <span className="text-ink/40">Unassigned</span>}</td>
               <td className="text-right tabular-nums">{c.students}</td>
               <td className="text-right tabular-nums">{c.linked}</td>
               <td className="text-right tabular-nums">
@@ -254,6 +275,9 @@ function ClassList() {
               </td>
               <td className="text-right tabular-nums">
                 {c.attended} <span className="text-ink/50">({percent(c.attended, c.students)})</span>
+              </td>
+              <td className="text-right tabular-nums">
+                {c.completed} <span className="text-ink/50">({percent(c.completed, c.students)})</span>
               </td>
             </tr>
           ))}

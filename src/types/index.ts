@@ -119,6 +119,8 @@ export interface Event {
   registration_closed?: boolean
   whatsapp_group_url?: string | null
   points?: number | null
+  /** every student must attend; no registration, counted present unless marked absent */
+  is_mandatory?: boolean
   finals_rule?: string | null
   contacts?: EventContact[]
   schedule_slots?: EventScheduleSlot[]

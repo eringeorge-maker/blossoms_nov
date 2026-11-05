@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowRight } from 'lucide-react'
@@ -7,7 +8,7 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { ErrorState } from '@/components/ui/States'
 import { getDashboardStats } from '@/lib/api/admin'
 import { formatDay } from '@/lib/eventDisplay'
-import { DataTable, PageHeader, Panel, StatTile, percent } from './AdminUI'
+import { DataTable, PageHeader, Panel, SortTh, StatTile, percent, useSort } from './AdminUI'
 
 export default function AdminOverview() {
   const { data, isLoading, isError, error, refetch } = useQuery({
@@ -16,12 +17,36 @@ export default function AdminOverview() {
     refetchInterval: 60_000,
   })
 
+  // Hooks stay above the early returns below.
+  const lowClasses = useMemo(
+    () => [...(data?.by_class ?? [])].sort((a, b) => a.registered / a.students - b.registered / b.students).slice(0, 8),
+    [data]
+  )
+  const openEvents = useMemo(() => (data?.by_event ?? []).filter((e) => e.registration_enabled), [data])
+  const classSort = useSort(lowClasses, {
+    class: (c) => c.class_name,
+    students: (c) => c.students,
+    linked: (c) => c.linked,
+    registered: (c) => c.registered / c.students,
+    attended: (c) => c.attended,
+    completed: (c) => c.completed / c.students,
+  })
+  const eventSort = useSort(openEvents, {
+    date: (e) => e.event_date,
+    event: (e) => e.title,
+    status: (e) => (e.registration_closed ? 1 : 0),
+    registered: (e) => e.registrations,
+    teams: (e) => (e.event_format === 'individual' ? null : e.teams),
+    present: (e) => e.present,
+    absent: (e) => e.absent,
+  })
+
   if (isLoading) {
     return (
       <div className="space-y-6">
         <Skeleton className="h-10 w-72" />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {[0, 1, 2, 3].map((i) => (
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          {[0, 1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-28" />
           ))}
         </div>
@@ -31,7 +56,6 @@ export default function AdminOverview() {
   if (isError || !data) return <ErrorState description={(error as Error)?.message} retry={() => refetch()} />
 
   const t = data.totals
-  const lowClasses = [...data.by_class].sort((a, b) => a.registered / a.students - b.registered / b.students).slice(0, 8)
 
   return (
     <div className="space-y-8">
@@ -45,11 +69,17 @@ export default function AdminOverview() {
         }
       />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <StatTile label="Students on the list" value={t.students.toLocaleString()} sub={`${t.accounts_linked.toLocaleString()} signed in · ${percent(t.accounts_linked, t.students)}`} tone="text-primary" />
         <StatTile label="Students registered" value={t.students_registered.toLocaleString()} sub={`${percent(t.students_registered, t.students)} of all students`} tone="text-blossoms-blue" />
         <StatTile label="Registrations" value={t.registrations.toLocaleString()} sub={`${t.teams} teams · ${t.events} events open`} tone="text-blossoms-pink" />
         <StatTile label="Students attended" value={t.students_present.toLocaleString()} sub={`${t.attendance_marked.toLocaleString()} attendance marks`} tone="text-blossoms-green" />
+        <StatTile
+          label="Completed requirement"
+          value={t.students_completed.toLocaleString()}
+          sub={`${data.rules.min_chosen} chosen + ${data.rules.mandatory_total} mandatory · ${percent(t.students_completed, t.students)}`}
+          tone="text-primary"
+        />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
@@ -89,15 +119,16 @@ export default function AdminOverview() {
           <DataTable>
             <thead>
               <tr>
-                <th>Class</th>
-                <th className="text-right">Students</th>
-                <th className="text-right">Signed in</th>
-                <th className="text-right">Registered</th>
-                <th className="text-right">Attended</th>
+                <SortTh label="Class" sortKey="class" sort={classSort.sort} onSort={classSort.toggle} />
+                <SortTh label="Students" sortKey="students" sort={classSort.sort} onSort={classSort.toggle} className="text-right" />
+                <SortTh label="Signed in" sortKey="linked" sort={classSort.sort} onSort={classSort.toggle} className="text-right" />
+                <SortTh label="Registered" sortKey="registered" sort={classSort.sort} onSort={classSort.toggle} className="text-right" />
+                <SortTh label="Attended" sortKey="attended" sort={classSort.sort} onSort={classSort.toggle} className="text-right" />
+                <SortTh label="Completed" sortKey="completed" sort={classSort.sort} onSort={classSort.toggle} className="text-right" />
               </tr>
             </thead>
             <tbody>
-              {lowClasses.map((c) => (
+              {classSort.sorted.map((c) => (
                 <tr key={c.class_name}>
                   <td className="font-semibold">{c.class_name}</td>
                   <td className="text-right tabular-nums">{c.students}</td>
@@ -106,6 +137,9 @@ export default function AdminOverview() {
                     {c.registered} <span className="text-ink/50">({percent(c.registered, c.students)})</span>
                   </td>
                   <td className="text-right tabular-nums">{c.attended}</td>
+                  <td className="text-right tabular-nums">
+                    {c.completed} <span className="text-ink/50">({percent(c.completed, c.students)})</span>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -117,20 +151,18 @@ export default function AdminOverview() {
         <DataTable>
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Event</th>
-              <th>Status</th>
-              <th className="text-right">Registered</th>
-              <th className="text-right">Teams</th>
-              <th className="text-right">Present</th>
-              <th className="text-right">Absent</th>
+              <SortTh label="Date" sortKey="date" sort={eventSort.sort} onSort={eventSort.toggle} />
+              <SortTh label="Event" sortKey="event" sort={eventSort.sort} onSort={eventSort.toggle} />
+              <SortTh label="Status" sortKey="status" sort={eventSort.sort} onSort={eventSort.toggle} />
+              <SortTh label="Registered" sortKey="registered" sort={eventSort.sort} onSort={eventSort.toggle} className="text-right" />
+              <SortTh label="Teams" sortKey="teams" sort={eventSort.sort} onSort={eventSort.toggle} className="text-right" />
+              <SortTh label="Present" sortKey="present" sort={eventSort.sort} onSort={eventSort.toggle} className="text-right" />
+              <SortTh label="Absent" sortKey="absent" sort={eventSort.sort} onSort={eventSort.toggle} className="text-right" />
               <th />
             </tr>
           </thead>
           <tbody>
-            {data.by_event
-              .filter((e) => e.registration_enabled)
-              .map((e) => (
+            {eventSort.sorted.map((e) => (
                 <tr key={e.event_id}>
                   <td className="whitespace-nowrap">{formatDay(e.event_date)}</td>
                   <td className="font-semibold">{e.title}</td>
