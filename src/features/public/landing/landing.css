@@ -590,12 +590,13 @@
     top: -4%;
   }
 
+  /* Phones: about half the scroll length of before, so each page turn needs a short swipe. */
   .flip-story {
-    height: 500vh;
+    height: 280vh;
   }
 
   .flip-book {
-    transform: scale(0.82);
+    transform: scale(0.95);
   }
 
   .flip-about {
@@ -622,9 +623,13 @@
   }
 
   .clash {
-    height: 260vh;
+    height: 150vh;
   }
 
+  /* The fade to dark left a blank screen on phones; the next section's own background takes over instead. */
+  .clash-dim {
+    display: none;
+  }
 
 
 
@@ -776,12 +781,23 @@
 }
 
 @media (max-width: 767px) {
+  /* Smaller and quieter on phones, tucked into the corner so it doesn't sit on text or buttons. */
+  .scroll-fx {
+    transition: opacity 0.3s ease;
+  }
+
   .scroll-fx-web {
-    width: 100px;
+    width: 64px;
+    opacity: 0.6;
   }
 
   .scroll-fx-thread {
-    right: 54px;
+    right: 22px;
+  }
+
+  .scroll-fx-spider {
+    width: 26px;
+    height: 26px;
   }
 }
 

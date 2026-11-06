@@ -37,7 +37,9 @@ export function scrollTimeline(section: HTMLElement, range: ScrollRange = 'pin')
     const target = progressOf(section, range)
     const elapsed = last ? now - last : 16
     last = now
-    current += (target - current) * (1 - Math.exp(-elapsed / CATCH_UP_MS))
+    // Phones catch up faster: a heavy lag reads as the page still moving after your finger stops.
+    const catchUp = window.innerWidth < 768 ? CATCH_UP_MS * 0.5 : CATCH_UP_MS
+    current += (target - current) * (1 - Math.exp(-elapsed / catchUp))
     if (Math.abs(target - current) < 0.0005) current = target
     timeline.seek(current * timeline.duration)
     frame = current === target ? 0 : window.requestAnimationFrame(step)
