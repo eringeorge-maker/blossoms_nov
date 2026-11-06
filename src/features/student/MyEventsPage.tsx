@@ -1,3 +1,4 @@
+import { confirmDialog } from '@/components/ui/ConfirmDialog'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -160,7 +161,7 @@ function RegistrationCard({ reg, onCancel, cancelling }: { reg: MyRegistration; 
             isLoading={cancelling}
             onClick={() => {
               const msg = reg.team ? `Withdraw team ${reg.team.team_name} from ${reg.event?.title}? Every member is removed.` : `Cancel your registration for ${reg.event?.title}?`
-              if (window.confirm(msg)) onCancel()
+              void confirmDialog(msg, { danger: true, title: reg.team ? 'Withdraw team' : 'Cancel registration', confirmLabel: reg.team ? 'Withdraw team' : 'Cancel registration', cancelLabel: 'Keep it' }).then((ok) => ok && onCancel())
             }}
           >
             {reg.team ? 'Withdraw team' : 'Cancel registration'}

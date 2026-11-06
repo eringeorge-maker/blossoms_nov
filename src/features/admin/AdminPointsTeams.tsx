@@ -1,3 +1,4 @@
+import { confirmDialog } from '@/components/ui/ConfirmDialog'
 import { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
@@ -131,7 +132,7 @@ function TeamsPanel() {
         <ul className="space-y-2 mb-4">
           {teams.length === 0 && <Muted>No teams yet. Add the four teams below.</Muted>}
           {teams.map((team) => (
-            <TeamRow key={team.id} team={team} onSave={(t) => update.mutate(t)} onDelete={() => window.confirm(`Delete ${team.name}? Its classes become unassigned.`) && remove.mutate(team.id)} />
+            <TeamRow key={team.id} team={team} onSave={(t) => update.mutate(t)} onDelete={async () => (await confirmDialog(`Delete ${team.name}? Its classes become unassigned.`, { danger: true, confirmLabel: 'Delete' })) && remove.mutate(team.id)} />
           ))}
         </ul>
       )}

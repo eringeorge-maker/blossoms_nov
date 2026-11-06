@@ -1,3 +1,4 @@
+import { confirmDialog } from '@/components/ui/ConfirmDialog'
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
@@ -206,7 +207,7 @@ export function RecapsPanel() {
                   <Pencil className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => window.confirm(`Delete "${r.title}"?`) && remove.mutate(r.id)}
+                  onClick={async () => (await confirmDialog(`Delete "${r.title}"?`, { danger: true, confirmLabel: 'Delete' })) && remove.mutate(r.id)}
                   aria-label={`Delete ${r.title}`}
                   className="p-1.5 text-ink/50 hover:text-comic-red-deep"
                 >

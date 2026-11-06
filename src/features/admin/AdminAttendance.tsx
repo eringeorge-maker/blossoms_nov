@@ -1,3 +1,4 @@
+import { confirmDialog } from '@/components/ui/ConfirmDialog'
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -55,7 +56,7 @@ export default function AdminAttendance() {
   function markRest(status: 'present' | 'absent') {
     const ids = roster.filter((r) => !r.attendance_status).map((r) => r.student_id)
     if (!ids.length) return
-    if (window.confirm(`Mark ${ids.length} unmarked students as ${status}?`)) mark.mutate({ ids, status })
+    void confirmDialog(`Mark ${ids.length} unmarked students as ${status}?`, { title: 'Mark the rest', confirmLabel: `Mark ${status}` }).then((ok) => ok && mark.mutate({ ids, status }))
   }
 
   return (

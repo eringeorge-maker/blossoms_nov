@@ -41,6 +41,8 @@ export default function AdminEventEditor() {
       whatsapp_group_url: event.whatsapp_group_url ?? null,
       min_team_size: event.min_team_size,
       max_team_size: event.max_team_size,
+      capacity: event.capacity,
+      waitlist_enabled: event.waitlist_enabled ?? false,
       cancellation_allowed: event.cancellation_allowed,
       is_mandatory: event.is_mandatory ?? false,
     })
@@ -76,11 +78,22 @@ export default function AdminEventEditor() {
       <Link to="/admin/events" className="inline-flex items-center gap-2 text-sm font-display uppercase tracking-wider hover:text-primary">
         <ArrowLeft className="w-4 h-4" /> Events
       </Link>
-      <PageHeader title={event.title} description={`${event.category?.name} · ${slotLabel(event.schedule_slots?.[0])} · ${event.schedule_slots?.[0]?.venue?.name ?? ''}`} />
+      <PageHeader
+        title={event.title}
+        description={[event.category?.name, slotLabel(event.schedule_slots?.[0]), event.schedule_slots?.[0]?.venue?.name].filter(Boolean).join(' · ')}
+      />
+      <p className="text-sm text-ink/70 -mt-3">
+        Date, time and venue are set on the{' '}
+        <Link to="/admin/schedule" className="font-semibold text-primary hover:underline">
+          Schedule
+        </Link>{' '}
+        page.
+      </p>
 
       <form
         onSubmit={(e) => {
           e.preventDefault()
+          if (form.capacity != null && form.capacity < 1) return toast.error('Capacity must be at least 1, or empty for no limit.')
           if (isTeam && form.min_team_size && form.max_team_size && form.max_team_size < form.min_team_size) {
             return toast.error('Maximum team size must be at least the minimum.')
           }
@@ -129,6 +142,21 @@ export default function AdminEventEditor() {
               </span>
             </label>
           </div>
+          <div className="grid sm:grid-cols-2 gap-4 mt-4">
+            <Input
+              label={isTeam ? 'Capacity (teams)' : 'Capacity (students)'}
+              type="number"
+              min={1}
+              placeholder="No limit"
+              value={form.capacity ?? ''}
+              onChange={(e) => set('capacity', e.target.value ? Number(e.target.value) : null)}
+              hint="Leave empty for no limit."
+            />
+            <label className="flex items-center gap-2 text-sm font-semibold sm:mt-7">
+              <input type="checkbox" checked={!!form.waitlist_enabled} onChange={(e) => set('waitlist_enabled', e.target.checked)} className="w-4 h-4 accent-[var(--color-primary)]" />
+              Waitlist when full
+            </label>
+          </div>
           {isTeam && (
             <div className="grid grid-cols-2 gap-4 mt-4">
               <Input label="Min team size" type="number" min={2} value={form.min_team_size ?? ''} onChange={(e) => set('min_team_size', e.target.value ? Number(e.target.value) : null)} />
@@ -156,7 +184,7 @@ export default function AdminEventEditor() {
             </label>
             <label className="flex flex-col gap-1 text-sm font-semibold">
               Rules (one per line)
-              <textarea rows={10} value={form.rules_markdown ?? ''} onChange={(e) => set('rules_markdown', e.target.value)} className="rounded-xl border-2 border-ink bg-paper px-3 py-2 text-sm font-normal font-mono focus:outline-none focus:border-primary" />
+              <textarea rows={10} value={form.rules_markdown ?? ''} onChange={(e) => set('rules_markdown', e.target.value)} className="rounded-xl border-2 border-ink bg-paper px-3 py-2 text-sm font-normal focus:outline-none focus:border-primary" />
             </label>
           </div>
         </Panel>

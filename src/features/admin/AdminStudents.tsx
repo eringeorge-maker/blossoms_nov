@@ -1,3 +1,4 @@
+import { confirmDialog } from '@/components/ui/ConfirmDialog'
 import { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
@@ -205,7 +206,7 @@ function StudentDrawer({ id, onClose }: { id: string; onClose: () => void }) {
                       variant="danger"
                       disabled={update.isPending}
                       onClick={() => {
-                        if (window.confirm('Unlink this account? The student signs in again with their own email.')) update.mutate({ unlink: true })
+                        void confirmDialog('Unlink this account? The student signs in again with their own email.', { danger: true, confirmLabel: 'Unlink' }).then((ok) => ok && update.mutate({ unlink: true }))
                       }}
                     >
                       Unlink account

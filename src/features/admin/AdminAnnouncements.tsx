@@ -1,3 +1,4 @@
+import { confirmDialog } from '@/components/ui/ConfirmDialog'
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
@@ -135,7 +136,7 @@ function AnnouncementsPanel() {
                     <Pencil className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={() => window.confirm(`Delete "${a.title}"?`) && remove.mutate(a.id)}
+                    onClick={async () => (await confirmDialog(`Delete "${a.title}"?`, { danger: true, confirmLabel: 'Delete' })) && remove.mutate(a.id)}
                     aria-label={`Delete ${a.title}`}
                     className="p-1.5 text-ink/50 hover:text-comic-red-deep"
                   >
@@ -188,7 +189,7 @@ function NotificationsPanel() {
           if (!title.trim() || !body.trim()) return toast.error('Add a title and message.')
           if (link && !link.startsWith('/')) return toast.error('Link must be a site path such as /events/quiz')
           const who = eventId ? `everyone registered for ${events.find((x) => x.id === eventId)?.title}` : 'every student'
-          if (window.confirm(`Send to ${who}?`)) send.mutate()
+          void confirmDialog(`Send to ${who}?`, { title: 'Send notification', confirmLabel: 'Send' }).then((ok) => ok && send.mutate())
         }}
         className="space-y-3 mb-6"
       >
@@ -222,7 +223,7 @@ function NotificationsPanel() {
                   {formatDateTime(n.created_at)}
                 </p>
               </div>
-              <button onClick={() => window.confirm('Delete this notification for everyone?') && remove.mutate(n.id)} aria-label="Delete notification" className="p-1.5 self-start text-ink/50 hover:text-comic-red-deep">
+              <button onClick={async () => (await confirmDialog('Delete this notification for everyone?', { danger: true, confirmLabel: 'Delete' })) && remove.mutate(n.id)} aria-label="Delete notification" className="p-1.5 self-start text-ink/50 hover:text-comic-red-deep">
                 <Trash2 className="w-4 h-4" />
               </button>
             </li>

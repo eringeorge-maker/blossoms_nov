@@ -17,6 +17,29 @@ const ACTION_LABELS: Record<string, string> = {
   set_student_email: 'Changed a student sign-in',
 }
 
+const TABLE_LABELS: Record<string, string> = {
+  events: 'event',
+  event_schedule_slots: 'schedule slot',
+  announcements: 'notice',
+  notifications: 'notification',
+  weekly_recaps: 'weekly recap',
+  fest_teams: 'fest team',
+  class_team_assignments: 'class team',
+  fest_settings: 'participation rules',
+  admin_profiles: 'admin',
+  admin_invites: 'admin invite',
+  event_coordinator_assignments: 'coordinator assignment',
+}
+const VERB: Record<string, string> = { insert: 'Added', update: 'Edited', delete: 'Deleted' }
+
+/** "events_update" -> "Edited event"; falls back to the raw action name. */
+function actionLabel(action: string): string {
+  if (ACTION_LABELS[action]) return ACTION_LABELS[action]
+  const m = action.match(/^(.+)_(insert|update|delete)$/)
+  if (m && TABLE_LABELS[m[1]]) return `${VERB[m[2]]} ${TABLE_LABELS[m[1]]}`
+  return action
+}
+
 export default function AdminAudit() {
   const [q, setQ] = useState('')
   const { data: rows = [], isLoading, isError, error, refetch } = useQuery({ queryKey: ['admin-audit'], queryFn: () => listAuditLogs(300) })
@@ -24,12 +47,12 @@ export default function AdminAudit() {
   const { sorted, sort, toggle } = useSort(filtered, {
     when: (r) => r.created_at,
     who: (r) => r.actor_role,
-    action: (r) => ACTION_LABELS[r.action] ?? r.action,
+    action: (r) => actionLabel(r.action),
   })
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Audit log" description="The latest 300 actions recorded by the database: sign-ins, registrations, attendance and winners." />
+      <PageHeader title="Audit log" description="The latest 300 actions recorded by the database: sign-ins, registrations, attendance, winners and every admin edit." />
       <div className="max-w-md">
         <SearchBox value={q} onChange={setQ} placeholder="Action, role or detail" />
       </div>
@@ -55,7 +78,7 @@ export default function AdminAudit() {
                 <tr key={r.id}>
                   <td className="text-xs whitespace-nowrap">{formatDateTime(r.created_at)}</td>
                   <td className="text-xs">{r.actor_role ?? '—'}</td>
-                  <td className="text-sm font-semibold">{ACTION_LABELS[r.action] ?? r.action}</td>
+                  <td className="text-sm font-semibold">{actionLabel(r.action)}</td>
                   <td className="text-xs text-ink/60 font-mono break-all max-w-[420px]">{r.detail ? JSON.stringify(r.detail) : ''}</td>
                 </tr>
               ))}

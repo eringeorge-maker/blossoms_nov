@@ -84,7 +84,9 @@ export function EventSheet({ event, onClose }: { event: Event; onClose: () => vo
               <span>
                 {event.registration_closed || !reg.open
                   ? reg.label
-                  : `Registration closes ${formatDateTime(event.registration_closes_at)}`}
+                  : event.registration_closes_at
+                    ? `Registration closes ${formatDateTime(event.registration_closes_at)}`
+                    : 'Registration open'}
               </span>
             </div>
           )}

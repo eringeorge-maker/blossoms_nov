@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Suspense, lazy, useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
+import { ConfirmHost } from '@/components/ui/ConfirmDialog'
 
 // Layouts
 import { PublicShell }  from '@/components/layout/PublicShell'
@@ -155,6 +156,7 @@ export default function App() {
           </Routes>
         </Suspense>
       </BrowserRouter>
+      <ConfirmHost />
       <Toaster
         position="top-right"
         toastOptions={{
