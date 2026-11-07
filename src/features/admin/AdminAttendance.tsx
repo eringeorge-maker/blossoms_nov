@@ -1,3 +1,4 @@
+import { confirmDialog } from '@/components/ui/ConfirmDialog'
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { ErrorState } from '@/components/ui/States'
 import { getEventRoster, markAttendance, type RosterRow } from '@/lib/api/admin'
+import { formatTime } from '@/lib/eventDisplay'
 import { cn } from '@/lib/utils'
 import { DataTable, EventSelect, Muted, PageHeader, Panel, SearchBox, SortTh, useSort } from './AdminUI'
 
@@ -31,19 +33,29 @@ export default function AdminAttendance() {
     onError: (e: Error) => toast.error(e.message),
   })
 
+  // Events held twice (12:45 PM and 3:45 PM): filter the list to one session while taking attendance.
+  const [session, setSession] = useState('all')
+  const sessions = useMemo(
+    () => [...new Set(roster.map((r) => r.session_starts_at).filter((s): s is string => Boolean(s)))].sort(),
+    [roster]
+  )
+  const showSessions = sessions.length > 1 || (sessions.length === 1 && roster.some((r) => !r.session_starts_at))
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
-    if (!q) return roster
     return roster.filter(
-      (r) => r.full_name.toLowerCase().includes(q) || r.register_number.startsWith(q) || (r.team_name ?? '').toLowerCase().includes(q)
+      (r) =>
+        (session === 'all' || (session === 'none' ? !r.session_starts_at : r.session_starts_at === session)) &&
+        (!q || r.full_name.toLowerCase().includes(q) || r.register_number.startsWith(q) || (r.team_name ?? '').toLowerCase().includes(q))
     )
-  }, [roster, search])
+  }, [roster, search, session])
 
   const { sorted, sort, toggle } = useSort(filtered, {
     student: (r) => r.full_name,
     class: (r) => r.class_name,
     team: (r) => r.team_name,
     phone: (r) => r.phone,
+    session: (r) => r.session_starts_at,
     attendance: (r) => (r.attendance_status === 'present' ? 0 : r.attendance_status === 'absent' ? 1 : 2),
   })
 
@@ -55,7 +67,7 @@ export default function AdminAttendance() {
   function markRest(status: 'present' | 'absent') {
     const ids = roster.filter((r) => !r.attendance_status).map((r) => r.student_id)
     if (!ids.length) return
-    if (window.confirm(`Mark ${ids.length} unmarked students as ${status}?`)) mark.mutate({ ids, status })
+    void confirmDialog(`Mark ${ids.length} unmarked students as ${status}?`, { title: 'Mark the rest', confirmLabel: `Mark ${status}` }).then((ok) => ok && mark.mutate({ ids, status }))
   }
 
   return (
@@ -69,10 +81,30 @@ export default function AdminAttendance() {
             onChange={(id) => {
               setParams(id ? { event: id } : {})
               setSearch('')
+              setSession('all')
             }}
           />
         </div>
         {eventId && <SearchBox value={search} onChange={setSearch} placeholder="Name, register number or team" />}
+        {showSessions && (
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Session">
+            {[['all', 'All sessions'], ...sessions.map((s) => [s, `${formatTime(s).toUpperCase()} session`]), ...(roster.some((r) => !r.session_starts_at) ? [['none', 'No session']] : [])].map(
+              ([value, label]) => (
+                <button
+                  key={value}
+                  onClick={() => setSession(value)}
+                  aria-pressed={session === value}
+                  className={cn(
+                    'px-3 py-1.5 rounded-full border-2 border-ink text-sm font-semibold',
+                    session === value ? 'bg-ink text-paper' : 'bg-paper hover:bg-gutter'
+                  )}
+                >
+                  {label}
+                </button>
+              )
+            )}
+          </div>
+        )}
       </div>
 
       {!eventId ? (
@@ -115,15 +147,22 @@ export default function AdminAttendance() {
             <thead>
               <tr>
                 <SortTh label="Student" sortKey="student" sort={sort} onSort={toggle} />
-                <SortTh label="Class" sortKey="class" sort={sort} onSort={toggle} />
-                <SortTh label="Team" sortKey="team" sort={sort} onSort={toggle} />
-                <SortTh label="Phone" sortKey="phone" sort={sort} onSort={toggle} />
+                <SortTh label="Class" sortKey="class" sort={sort} onSort={toggle} className="hidden sm:table-cell" />
+                <SortTh label="Team" sortKey="team" sort={sort} onSort={toggle} className="hidden sm:table-cell" />
+                <SortTh label="Phone" sortKey="phone" sort={sort} onSort={toggle} className="hidden sm:table-cell" />
+                {showSessions && <SortTh label="Session" sortKey="session" sort={sort} onSort={toggle} className="hidden sm:table-cell" />}
                 <SortTh label="Attendance" sortKey="attendance" sort={sort} onSort={toggle} />
               </tr>
             </thead>
             <tbody>
               {sorted.map((r) => (
-                <AttendanceRow key={r.student_id} row={r} busy={mark.isPending} onMark={(status) => mark.mutate({ ids: [r.student_id], status })} />
+                <AttendanceRow
+                  key={r.student_id}
+                  row={r}
+                  showSession={showSessions}
+                  busy={mark.isPending}
+                  onMark={(status) => mark.mutate({ ids: [r.student_id], status })}
+                />
               ))}
             </tbody>
           </DataTable>
@@ -133,22 +172,38 @@ export default function AdminAttendance() {
   )
 }
 
-function AttendanceRow({ row, busy, onMark }: { row: RosterRow; busy: boolean; onMark: (s: 'present' | 'absent' | 'clear') => void }) {
+function AttendanceRow({
+  row,
+  showSession,
+  busy,
+  onMark,
+}: {
+  row: RosterRow
+  showSession: boolean
+  busy: boolean
+  onMark: (s: 'present' | 'absent' | 'clear') => void
+}) {
   const btn = 'inline-flex items-center gap-1 rounded-lg border-2 px-2.5 py-1 text-xs font-bold disabled:opacity-50'
+  const session = row.session_starts_at ? formatTime(row.session_starts_at).toUpperCase() : 'Not chosen'
   return (
     <tr className={cn(row.attendance_status === 'present' && 'bg-blossoms-green/10', row.attendance_status === 'absent' && 'bg-comic-red-deep/5')}>
       <td>
         <p className="font-semibold">{row.full_name}</p>
         <p className="text-xs text-ink/50 tabular-nums">{row.register_number}</p>
+        {/* Phones: class, team and phone sit under the name so Present / Absent stay on screen. */}
+        <p className="sm:hidden text-xs text-ink/60 mt-0.5">
+          {[showSession && session, row.class_name, row.team_name && `${row.team_name}${row.is_leader ? ' (leader)' : ''}`, row.phone].filter(Boolean).join(' · ')}
+        </p>
       </td>
-      <td className="text-xs">{row.class_name}</td>
-      <td className="text-xs">
+      <td className="hidden sm:table-cell text-xs">{row.class_name}</td>
+      <td className="hidden sm:table-cell text-xs">
         {row.team_name ?? '—'}
         {row.is_leader && <span className="ml-1 font-bold text-primary">(leader)</span>}
       </td>
-      <td className="text-xs tabular-nums">{row.phone ?? '—'}</td>
+      <td className="hidden sm:table-cell text-xs tabular-nums">{row.phone ?? '—'}</td>
+      {showSession && <td className="hidden sm:table-cell text-xs font-semibold whitespace-nowrap">{session}</td>}
       <td>
-        <div className="flex gap-1.5">
+        <div className="flex flex-wrap gap-1.5">
           <button
             type="button"
             disabled={busy}

@@ -40,7 +40,7 @@ export function EventSheet({ event, onClose }: { event: Event; onClose: () => vo
         aria-modal="true"
         aria-label={event.title}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-xl bg-paper border-[3px] md:border-[4px] border-ink rounded-2xl shadow-[6px_6px_0px_var(--color-ink)] p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto"
+        className="event-sheet w-full max-w-xl bg-paper border-[3px] md:border-[4px] border-ink rounded-2xl shadow-[6px_6px_0px_var(--color-ink)] p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto"
       >
         <button
           onClick={onClose}
@@ -84,7 +84,9 @@ export function EventSheet({ event, onClose }: { event: Event; onClose: () => vo
               <span>
                 {event.registration_closed || !reg.open
                   ? reg.label
-                  : `Registration closes ${formatDateTime(event.registration_closes_at)}`}
+                  : event.registration_closes_at
+                    ? `Registration closes ${formatDateTime(event.registration_closes_at)}`
+                    : 'Registration open'}
               </span>
             </div>
           )}

@@ -50,8 +50,9 @@ export function FloatingPillNavigation({
     if (path.startsWith('/gallery')) return 'Gallery'
     if (path.startsWith('/announcements') || path.startsWith('/notice-board')) return 'Notice Board'
 
-    const matched = items.find((item) => item.href === path)
-    return matched ? matched.label : items[0]?.label || 'Home'
+    // Pages outside the menu (student portal, login, …) highlight nothing.
+    const matched = items.find((item) => item.href !== '/' && path.startsWith(item.href))
+    return matched?.label ?? ''
   }
 
   const realActive = getActiveLabel()

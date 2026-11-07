@@ -1,7 +1,10 @@
 import { useEffect, type RefObject } from 'react'
 import { createScope, createTimeline, type Timeline } from 'animejs'
 
-const HEADER_HEIGHT = 64
+// Height of the sticky site header, which grows when a student is signed in (set by PublicHeader).
+function headerHeight() {
+  return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--site-header-h')) || 64
+}
 // How long the animation takes to catch up with the scroll position. Higher feels heavier and slower.
 const CATCH_UP_MS = 260
 
@@ -14,6 +17,7 @@ export type ScrollRange = 'pin' | 'exit'
 let pendingCleanups: Array<() => void> | null = null
 
 function progressOf(section: HTMLElement, range: ScrollRange) {
+  const HEADER_HEIGHT = headerHeight()
   const { top, height } = section.getBoundingClientRect()
   const travel = range === 'pin' ? height - (window.innerHeight - HEADER_HEIGHT) : height
   if (travel <= 0) return top <= HEADER_HEIGHT ? 1 : 0
@@ -25,7 +29,11 @@ function progressOf(section: HTMLElement, range: ScrollRange) {
  * there, so one flick of the wheel glides rather than snaps, and it always settles exactly where the scroll is.
  * Only call it inside a `useScrollScene` build.
  */
-export function scrollTimeline(section: HTMLElement, range: ScrollRange = 'pin'): Timeline {
+export function scrollTimeline(
+  section: HTMLElement,
+  range: ScrollRange = 'pin',
+  { catchUpMs = CATCH_UP_MS }: { catchUpMs?: number } = {}
+): Timeline {
   // No composition: anime's shared-property bookkeeping skips tweens that start later when scrubbing backwards,
   // leaving them stuck. Every follow-up tween on a property therefore states its own from value.
   const timeline = createTimeline({ autoplay: false, defaults: { ease: 'inOutSine', composition: 'none' } })
@@ -37,7 +45,9 @@ export function scrollTimeline(section: HTMLElement, range: ScrollRange = 'pin')
     const target = progressOf(section, range)
     const elapsed = last ? now - last : 16
     last = now
-    current += (target - current) * (1 - Math.exp(-elapsed / CATCH_UP_MS))
+    // Phones catch up faster: a heavy lag reads as the page still moving after your finger stops.
+    const catchUp = window.innerWidth < 768 ? catchUpMs * 0.5 : catchUpMs
+    current += (target - current) * (1 - Math.exp(-elapsed / catchUp))
     if (Math.abs(target - current) < 0.0005) current = target
     timeline.seek(current * timeline.duration)
     frame = current === target ? 0 : window.requestAnimationFrame(step)

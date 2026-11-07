@@ -19,6 +19,8 @@ export interface RegisterTeamParams {
   teamName: string
   /** Register numbers of the other members; the signed-in student is added as leader. */
   memberRegisterNumbers: string[]
+  /** Chosen session, for events held more than once. */
+  slotId?: string | null
 }
 
 export interface TeamMemberSummary {
@@ -39,6 +41,8 @@ export interface MyTeam {
 export interface MyRegistration {
   id: string
   event_id: string
+  /** Session chosen for events held more than once; null otherwise or if not chosen yet. */
+  slot_id: string | null
   registration_status: RegistrationStatus
   registered_at: string
   cancelled_at: string | null
@@ -67,8 +71,8 @@ async function callRpc(name: string, args: Record<string, unknown>): Promise<Reg
   return data as RegistrationResult
 }
 
-export function registerIndividualEvent(eventId: string): Promise<RegistrationResult> {
-  return callRpc('register_individual_event', { p_event_id: eventId })
+export function registerIndividualEvent(eventId: string, slotId?: string | null): Promise<RegistrationResult> {
+  return callRpc('register_individual_event', { p_event_id: eventId, p_slot_id: slotId ?? null })
 }
 
 export function registerTeamEvent(params: RegisterTeamParams): Promise<RegistrationResult> {
@@ -76,7 +80,13 @@ export function registerTeamEvent(params: RegisterTeamParams): Promise<Registrat
     p_event_id: params.eventId,
     p_team_name: params.teamName,
     p_member_register_numbers: params.memberRegisterNumbers,
+    p_slot_id: params.slotId ?? null,
   })
+}
+
+/** Move a registration (or, for a team leader, the whole team) to another session of the same event. */
+export function changeSession(registrationId: string, slotId: string): Promise<RegistrationResult> {
+  return callRpc('change_my_session', { p_registration_id: registrationId, p_slot_id: slotId })
 }
 
 export function cancelRegistration(registrationId: string, reason?: string): Promise<RegistrationResult> {

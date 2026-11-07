@@ -5,9 +5,9 @@ import { useAuth } from '@/lib/auth/authStore'
 import { NotificationBell } from './NotificationBell'
 
 export const STUDENT_TABS = [
-  { label: 'My page', href: '/app', icon: Home },
-  { label: 'My events', href: '/app/my-events', icon: BookMarked },
-  { label: 'Profile', href: '/app/profile', icon: User },
+  { label: 'My page', short: 'My page', href: '/app', icon: Home },
+  { label: 'My events', short: 'My events', href: '/app/my-events', icon: BookMarked },
+  { label: 'Profile', short: 'Profile', href: '/app/profile', icon: User },
 ]
 
 export function isStudentTabActive(href: string, pathname: string) {
@@ -23,25 +23,30 @@ export function StudentTabs() {
   return (
     <>
       <div className="w-full bg-[#FFF8E8] border-b-2 border-[#0f0f0f]">
-        <div className="mx-auto max-w-[1240px] px-3 sm:px-6 flex items-center gap-2 h-12">
-          <nav aria-label="Student" className="flex-1 min-w-0 overflow-x-auto">
-            <ul className="flex items-center gap-1.5 w-max">
-              {STUDENT_TABS.map(({ label, href, icon: Icon }) => {
+        <div className="mx-auto max-w-[1240px] px-2 sm:px-6 flex items-center gap-1.5 sm:gap-2 h-14 sm:h-12">
+          <nav aria-label="Student" className="flex-1 min-w-0">
+            {/* Phones: equal columns, icon over a short label, so nothing scrolls sideways or hides under the bell. */}
+            <ul className="grid grid-cols-3 gap-1 sm:flex sm:items-center sm:gap-1.5">
+              {STUDENT_TABS.map(({ label, short, href, icon: Icon }) => {
                 const active = isStudentTabActive(href, pathname)
                 return (
-                  <li key={href}>
+                  <li key={href} className="min-w-0">
                     <Link
                       to={href}
                       aria-current={active ? 'page' : undefined}
+                      aria-label={label}
                       className={cn(
-                        'h-8 px-3 rounded-full border-2 text-[13px] font-semibold flex items-center gap-1.5 whitespace-nowrap transition-colors',
+                        'rounded-xl sm:rounded-full border-2 font-semibold flex items-center justify-center transition-colors',
+                        'h-11 flex-col gap-0.5 px-1 text-[11px] leading-none',
+                        'sm:h-8 sm:flex-row sm:gap-1.5 sm:px-3 sm:text-[13px] sm:whitespace-nowrap',
                         active
                           ? 'bg-[#FFD43B] border-[#0f0f0f] text-[#151515]'
                           : 'border-transparent text-[#151515]/70 hover:text-[#151515] hover:border-[#0f0f0f]/30'
                       )}
                     >
-                      <Icon className="w-4 h-4" aria-hidden="true" />
-                      {label}
+                      <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
+                      <span className="truncate max-w-full sm:hidden">{short}</span>
+                      <span className="hidden sm:inline">{label}</span>
                     </Link>
                   </li>
                 )
@@ -54,8 +59,8 @@ export function StudentTabs() {
       </div>
       {!student.profileComplete && pathname !== '/app/profile' && (
         <div className="w-full bg-blossoms-yellow border-b-2 border-ink">
-          <div className="mx-auto max-w-[1240px] px-3 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2 text-sm font-semibold text-ink">
-            <span className="inline-flex items-center gap-2">
+          <div className="mx-auto max-w-[1240px] px-3 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[13px] sm:text-sm font-semibold text-ink">
+            <span className="inline-flex items-start gap-2">
               <Phone className="w-4 h-4" aria-hidden="true" /> Add your phone number to finish your profile. You need it to register for
               events.
             </span>

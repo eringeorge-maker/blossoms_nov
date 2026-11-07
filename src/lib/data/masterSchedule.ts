@@ -43,7 +43,7 @@ export const MASTER_SCHEDULE: MasterScheduleEntry[] = [
     day: 'Tuesday',
     eventName: 'Pot Pourri',
     venue: 'Panel Room, Block 2',
-    timings: '12:45 PM & 3:45 PM',
+    timings: '12:45 PM',
     division: 'Literature',
   },
   {
@@ -53,8 +53,8 @@ export const MASTER_SCHEDULE: MasterScheduleEntry[] = [
     day: 'Tuesday',
     eventName: 'Mono Acting',
     venue: 'Panel Room, Block 2',
-    timings: '12:45 PM & 3:45 PM',
-    division: 'Literature',
+    timings: '3:45 PM',
+    division: 'Theatre',
   },
   {
     id: 'sch-05',

@@ -28,9 +28,18 @@ const DIVISION_COLORS: Record<string, { bg: string; text: string; border: string
   Holiday: { bg: 'bg-amber-100', text: 'text-amber-800', border: 'border-amber-300' },
 }
 
-/** Buttons that open the shared event popup for the events running on a schedule day. */
-function EventButtons({ isoDate, events, onOpen }: { isoDate: string; events: Event[]; onOpen: (e: Event) => void }) {
-  const today = events.filter((e) => slotDate(primarySlot(e)) === isoDate)
+const normaliseTitle = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, '')
+
+/**
+ * The button that opens the shared event popup for one schedule row. Rows are matched to events by title,
+ * so two events on the same day each get only their own button.
+ */
+function EventButtons({ name, isoDate, events, onOpen }: { name: string; isoDate: string; events: Event[]; onOpen: (e: Event) => void }) {
+  const wanted = normaliseTitle(name)
+  const byTitle = events.filter((e) => normaliseTitle(e.title) === wanted)
+  // Prefer the event on this row's date if two share a title; fall back to the title match alone.
+  const onDay = byTitle.filter((e) => slotDate(primarySlot(e)) === isoDate)
+  const today = onDay.length > 0 ? onDay : byTitle
   if (today.length === 0) return null
   return (
     <div className="flex flex-wrap gap-1.5 mt-2.5">
@@ -341,7 +350,7 @@ export default function SchedulePage() {
                           )}
                         </div>
 
-                        <EventButtons isoDate={entry.isoDate} events={events} onOpen={setOpenEvent} />
+                        <EventButtons name={entry.eventName} isoDate={entry.isoDate} events={events} onOpen={setOpenEvent} />
                       </>
                     )}
                   </div>
@@ -506,7 +515,7 @@ export default function SchedulePage() {
                         )}
                       </div>
 
-                      {!isNonEvent && <EventButtons isoDate={entry.isoDate} events={events} onOpen={setOpenEvent} />}
+                      {!isNonEvent && <EventButtons name={entry.eventName} isoDate={entry.isoDate} events={events} onOpen={setOpenEvent} />}
                     </div>
                   </div>
                 )
@@ -539,7 +548,7 @@ export default function SchedulePage() {
                         </td>
                         <td className="py-3 px-4 font-display text-sm text-ink font-normal tracking-[0.05em] [word-spacing:0.1em]">
                           {entry.eventName}
-                          {!(entry.isOffDay || entry.isHoliday) && <EventButtons isoDate={entry.isoDate} events={events} onOpen={setOpenEvent} />}
+                          {!(entry.isOffDay || entry.isHoliday) && <EventButtons name={entry.eventName} isoDate={entry.isoDate} events={events} onOpen={setOpenEvent} />}
                         </td>
                         <td className="py-3 px-4">
                           <span className="font-bold">{entry.division}</span>
