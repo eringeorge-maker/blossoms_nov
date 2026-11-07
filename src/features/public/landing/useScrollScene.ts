@@ -1,7 +1,10 @@
 import { useEffect, type RefObject } from 'react'
 import { createScope, createTimeline, type Timeline } from 'animejs'
 
-const HEADER_HEIGHT = 64
+// Height of the sticky site header, which grows when a student is signed in (set by PublicHeader).
+function headerHeight() {
+  return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--site-header-h')) || 64
+}
 // How long the animation takes to catch up with the scroll position. Higher feels heavier and slower.
 const CATCH_UP_MS = 260
 
@@ -14,6 +17,7 @@ export type ScrollRange = 'pin' | 'exit'
 let pendingCleanups: Array<() => void> | null = null
 
 function progressOf(section: HTMLElement, range: ScrollRange) {
+  const HEADER_HEIGHT = headerHeight()
   const { top, height } = section.getBoundingClientRect()
   const travel = range === 'pin' ? height - (window.innerHeight - HEADER_HEIGHT) : height
   if (travel <= 0) return top <= HEADER_HEIGHT ? 1 : 0

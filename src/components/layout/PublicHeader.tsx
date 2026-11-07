@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Menu, X, User, LogOut, ShieldAlert } from 'lucide-react'
 import { FloatingPillNavigation, type NavItem } from '@/components/navigation/FloatingPillNavigation'
 import { signOut, useAuth } from '@/lib/auth/authStore'
@@ -25,6 +25,23 @@ export function PublicHeader() {
   const navigate = useNavigate()
   const onLoginPage = location.pathname === '/login'
 
+  // The header grows when a student is signed in (tabs, profile banner). Pinned page sections read
+  // --site-header-h so they sit below all of it instead of assuming 64px.
+  const barRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const bar = barRef.current
+    if (!bar) return
+    const root = document.documentElement
+    const update = () => root.style.setProperty('--site-header-h', `${Math.round(bar.getBoundingClientRect().height)}px`)
+    update()
+    const observer = new ResizeObserver(update)
+    observer.observe(bar)
+    return () => {
+      observer.disconnect()
+      root.style.removeProperty('--site-header-h')
+    }
+  }, [])
+
   function handleLogout() {
     void signOut()
   }
@@ -38,7 +55,7 @@ export function PublicHeader() {
   }
 
   return (
-    <div className="sticky top-0 z-50 w-full">
+    <div ref={barRef} className="sticky top-0 z-50 w-full">
       <header
         className="relative z-10 w-full h-16 px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 select-none bg-[#571f8b] border-b-[2.5px] border-[#0f0f0f]"
       >

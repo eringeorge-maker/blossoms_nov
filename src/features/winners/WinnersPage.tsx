@@ -117,9 +117,7 @@ export default function WinnersPage() {
                 <Badge variant="outline">{list[0].category}</Badge>
                 <Trophy className="w-5 h-5 text-blossoms-yellow" aria-hidden="true" />
               </div>
-              <Link to={`/events/${list[0].event_slug}`} className="font-display text-xl text-ink hover:text-primary block">
-                {list[0].event_title}
-              </Link>
+              <h2 className="font-display text-xl text-ink">{list[0].event_title}</h2>
               <ol className="space-y-2">
                 {list.map((w) => (
                   <li key={w.position} className="p-3 bg-paper rounded-xl border border-ink">
