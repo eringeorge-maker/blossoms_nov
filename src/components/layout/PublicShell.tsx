@@ -6,9 +6,10 @@ import { Footer } from './Footer'
 export function PublicShell() {
   const location = useLocation()
   const isEvents = location.pathname.startsWith('/events')
+  const isStippled = /^\/(gallery|announcements|notice-board)/.test(location.pathname)
 
   return (
-    <div className={`min-h-screen flex flex-col ${isEvents ? 'bg-primary' : 'bg-paper'}`}>
+    <div className={`min-h-screen flex flex-col ${isEvents ? 'bg-[#0f0f0f]' : isStippled ? 'page-stipple' : 'bg-paper'}`}>
       <PublicHeader />
       <main id="main-content" className="flex-1">
         <Outlet />

@@ -40,7 +40,7 @@ export function PublicHeader() {
   return (
     <div className="sticky top-0 z-50 w-full">
       <header
-        className="relative z-10 w-full h-16 px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 select-none bg-primary border-b-[2.5px] border-[#0f0f0f]"
+        className="relative z-10 w-full h-16 px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2 select-none bg-[#571f8b] border-b-[2.5px] border-[#0f0f0f]"
       >
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#FFD43B] focus:text-[#151515] focus:rounded-lg focus:font-semibold">
         Skip to main content
@@ -52,7 +52,7 @@ export function PublicHeader() {
           <img
             src={blossomsLogoUrl}
             alt="Blossoms: Be the best, 2026–27"
-            className="w-[200px] h-auto"
+            className="w-[200px] h-auto drop-shadow-[2px_3px_0_rgba(15,15,15,0.55)]"
             loading="eager"
           />
         </Link>

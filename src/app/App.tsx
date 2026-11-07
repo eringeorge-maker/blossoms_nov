@@ -28,7 +28,6 @@ const DesignSystemPage    = lazy(() => import('@/features/public/DesignSystemPag
 // Student pages (lazy loaded)
 const StudentDashboard    = lazy(() => import('@/features/student/StudentDashboard'))
 const MyEventsPage        = lazy(() => import('@/features/student/MyEventsPage'))
-const StudentSchedulePage = lazy(() => import('@/features/student/StudentSchedulePage'))
 const ProfilePage         = lazy(() => import('@/features/student/ProfilePage'))
 const StudentTeamPage     = lazy(() => import('@/features/student/TeamPage'))
 
@@ -125,7 +124,7 @@ export default function App() {
                 <Route index element={<StudentDashboard />} />
                 <Route path="events" element={<Navigate to="/events" replace />} />
                 <Route path="my-events" element={<MyEventsPage />} />
-                <Route path="schedule" element={<StudentSchedulePage />} />
+                <Route path="schedule" element={<Navigate to="/app/my-events" replace />} />
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="teams/:teamId" element={<StudentTeamPage />} />
               </Route>

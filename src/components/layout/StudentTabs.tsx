@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { BookMarked, CalendarDays, Home, Phone, User } from 'lucide-react'
+import { BookMarked, Home, Phone, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/lib/auth/authStore'
 import { NotificationBell } from './NotificationBell'
@@ -7,7 +7,6 @@ import { NotificationBell } from './NotificationBell'
 export const STUDENT_TABS = [
   { label: 'My page', short: 'My page', href: '/app', icon: Home },
   { label: 'My events', short: 'My events', href: '/app/my-events', icon: BookMarked },
-  { label: 'My schedule', short: 'Schedule', href: '/app/schedule', icon: CalendarDays },
   { label: 'Profile', short: 'Profile', href: '/app/profile', icon: User },
 ]
 
@@ -26,8 +25,8 @@ export function StudentTabs() {
       <div className="w-full bg-[#FFF8E8] border-b-2 border-[#0f0f0f]">
         <div className="mx-auto max-w-[1240px] px-2 sm:px-6 flex items-center gap-1.5 sm:gap-2 h-14 sm:h-12">
           <nav aria-label="Student" className="flex-1 min-w-0">
-            {/* Phones: four equal columns, icon over a short label, so nothing scrolls sideways or hides under the bell. */}
-            <ul className="grid grid-cols-4 gap-1 sm:flex sm:items-center sm:gap-1.5">
+            {/* Phones: equal columns, icon over a short label, so nothing scrolls sideways or hides under the bell. */}
+            <ul className="grid grid-cols-3 gap-1 sm:flex sm:items-center sm:gap-1.5">
               {STUDENT_TABS.map(({ label, short, href, icon: Icon }) => {
                 const active = isStudentTabActive(href, pathname)
                 return (

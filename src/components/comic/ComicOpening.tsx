@@ -5,14 +5,33 @@ import cover2Url from '@/assets/covers/cover-2.jpg'
 import cover3Url from '@/assets/covers/cover-3.jpg'
 import cover4Url from '@/assets/covers/cover-4.jpg'
 import cover5Url from '@/assets/covers/cover-5.jpg'
+import cover6Url from '@/assets/covers/cover-6.jpg'
+import cover7Url from '@/assets/covers/cover-7.jpg'
+import cover8Url from '@/assets/covers/cover-8.jpg'
+import cover9Url from '@/assets/covers/cover-9.jpg'
+import cover10Url from '@/assets/covers/cover-10.jpg'
+import cover11Url from '@/assets/covers/cover-11.jpg'
 import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.webp'
 import backdropUrl from '@/assets/brand/opening-backdrop.webp'
 
-const COVERS = [cover1Url, cover2Url, cover3Url, cover4Url, cover5Url]
-const FIRST_TURN_MS = 500
-const TURN_GAP_MS = 300
-const LEAVE_AT_MS = FIRST_TURN_MS + TURN_GAP_MS * COVERS.length + 200
+const COVERS = [
+  cover1Url,
+  cover2Url,
+  cover3Url,
+  cover4Url,
+  cover5Url,
+  cover6Url,
+  cover7Url,
+  cover8Url,
+  cover9Url,
+  cover10Url,
+  cover11Url,
+]
+const FIRST_TURN_MS = 250
+const TURN_GAP_MS = 190
 const LEAVE_MS = 300
+// The whole opening runs 3s. The last flip ends around 2.51s, then a short hold on the logo and the fade out.
+const LEAVE_AT_MS = 3000 - LEAVE_MS
 const PRELOAD_LIMIT_MS = 2000
 
 // Resets on every full page load, so in-app navigation back to home doesn't replay it.

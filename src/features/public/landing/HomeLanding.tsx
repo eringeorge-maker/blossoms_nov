@@ -14,6 +14,18 @@ import './landing.css'
 const TRAILER_EMBED_URL = 'https://www.instagram.com/reel/DfSQot_yvaz/embed/'
 const TRAILER_URL = 'https://www.instagram.com/reel/DfSQot_yvaz/'
 
+const WHY_PARTICIPATE = [
+  'Develop leadership and organizational skills.',
+  'Build team spirit and improve relationships among students.',
+  'Explore new interests and rediscover hidden talents.',
+  'Develop punctuality, discipline, collaboration and adaptability.',
+  'Share ideas, practice diligently and work as a team.',
+  "Experience healthy competition, respect and appreciation for others' skills.",
+  'Develop emotional intelligence and resilience.',
+  'Showcase diverse talents and unique strengths.',
+  'Create unforgettable memories and lasting friendships.',
+]
+
 interface HomeLandingProps {
   /** True when the page should play its entrance (first load, motion allowed). */
   animateIn: boolean
@@ -121,6 +133,18 @@ function TrailerAndAbout({ onOpenSchedule, onOpenAnnouncements }: Pick<HomeLandi
               <p>
                 Every current student of CHRIST University. Events are open across departments, so
                 yours never limits what you register for. Some events set their own team sizes.
+              </p>
+            </article>
+            <article className="landing-panel landing-panel--wide">
+              <h3 className="font-comic-display">Why should you participate in Blossoms?</h3>
+              <ul className="landing-why-list">
+                {WHY_PARTICIPATE.map((reason) => (
+                  <li key={reason}>{reason}</li>
+                ))}
+              </ul>
+              <p className="landing-why-summary">
+                In short: Blossoms offers every student a chance to shine, contribute and take pride in representing
+                their department.
               </p>
             </article>
           </div>
