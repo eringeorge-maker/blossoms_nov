@@ -1,9 +1,9 @@
 import { useRef } from 'react'
 import { scrollTimeline, useScrollScene } from '@/features/public/landing/useScrollScene'
-import artsUrl from '@/assets/brand/panel-arts.png'
-import literatureUrl from '@/assets/brand/panel-literature.png'
-import stageUrl from '@/assets/brand/panel-stage.png'
-import theatreUrl from '@/assets/brand/panel-theatre.png'
+import artsUrl from '@/assets/brand/panel-arts.webp'
+import literatureUrl from '@/assets/brand/panel-literature.webp'
+import stageUrl from '@/assets/brand/panel-stage.webp'
+import theatreUrl from '@/assets/brand/panel-theatre.webp'
 import heroUrl from '@/assets/brand/hero-b.jpg'
 
 export const ABOUT_TITLE_ID = 'landing-about-title'

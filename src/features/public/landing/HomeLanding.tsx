@@ -7,7 +7,7 @@ import { ComicFlipStory } from '@/features/public/landing/ComicFlipStory'
 import { ScrollFx } from '@/features/public/landing/ScrollFx'
 import { preloadLanding } from '@/features/public/landing/preloadLanding'
 import { scrollTimeline, useScrollScene } from '@/features/public/landing/useScrollScene'
-import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.png'
+import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.webp'
 import heroUrl from '@/assets/brand/hero-b.jpg'
 import './landing.css'
 

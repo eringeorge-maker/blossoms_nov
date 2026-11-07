@@ -233,6 +233,7 @@
 .flip-page {
   transform-origin: left center;
   transform-style: preserve-3d;
+  will-change: transform;
 }
 
 .flip-face {
@@ -455,9 +456,10 @@
 }
 
 /* Hammer meets shield */
+/* Tall enough that a quick wheel flick or trackpad swipe still lands mid-throw rather than past the hit. */
 .clash {
   position: relative;
-  height: 320vh;
+  height: 440vh;
   background: var(--color-blossoms-purple);
 }
 
@@ -473,6 +475,7 @@
 .clash-shake {
   position: absolute;
   inset: 0;
+  will-change: transform;
 }
 
 .clash-lines {
@@ -499,6 +502,8 @@
   margin: calc(var(--clash-size) / -2) 0 0 calc(var(--clash-size) / -2);
   z-index: 3;
   filter: drop-shadow(8px 8px 0 var(--color-ink-deep));
+  /* Own layer: the drop shadow is drawn once and the spin only moves the layer, instead of repainting every frame. */
+  will-change: transform;
 }
 
 .clash-hammer {
@@ -542,6 +547,7 @@
   height: var(--bolts);
   filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.9));
   margin: calc(var(--bolts) / -2) 0 0 calc(var(--bolts) / -2);
+  will-change: transform, opacity;
   opacity: 0;
   z-index: 2;
 }

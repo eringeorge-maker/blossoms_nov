@@ -25,7 +25,11 @@ function progressOf(section: HTMLElement, range: ScrollRange) {
  * there, so one flick of the wheel glides rather than snaps, and it always settles exactly where the scroll is.
  * Only call it inside a `useScrollScene` build.
  */
-export function scrollTimeline(section: HTMLElement, range: ScrollRange = 'pin'): Timeline {
+export function scrollTimeline(
+  section: HTMLElement,
+  range: ScrollRange = 'pin',
+  { catchUpMs = CATCH_UP_MS }: { catchUpMs?: number } = {}
+): Timeline {
   // No composition: anime's shared-property bookkeeping skips tweens that start later when scrubbing backwards,
   // leaving them stuck. Every follow-up tween on a property therefore states its own from value.
   const timeline = createTimeline({ autoplay: false, defaults: { ease: 'inOutSine', composition: 'none' } })
@@ -38,7 +42,7 @@ export function scrollTimeline(section: HTMLElement, range: ScrollRange = 'pin')
     const elapsed = last ? now - last : 16
     last = now
     // Phones catch up faster: a heavy lag reads as the page still moving after your finger stops.
-    const catchUp = window.innerWidth < 768 ? CATCH_UP_MS * 0.5 : CATCH_UP_MS
+    const catchUp = window.innerWidth < 768 ? catchUpMs * 0.5 : catchUpMs
     current += (target - current) * (1 - Math.exp(-elapsed / catchUp))
     if (Math.abs(target - current) < 0.0005) current = target
     timeline.seek(current * timeline.duration)

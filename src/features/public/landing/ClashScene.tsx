@@ -19,7 +19,8 @@ function buildClash(section: HTMLElement) {
   // Hammer head and shield rim meet at the centre line.
   const meet = size * 0.44
 
-  scrollTimeline(section)
+  // Heavier catch-up than the other scenes: a fast flick still plays the throw and hit instead of jumping past them.
+  scrollTimeline(section, 'pin', { catchUpMs: 480 })
     .add('.clash-hammer', { x: [-offscreen, -meet], y: [-size * 1.2 * rise, 0], rotate: [-620, 18], ease: 'inQuad', duration: IMPACT }, 0)
     .add('.clash-shield', { x: [offscreen, meet], y: [size * 0.5 * rise, 0], rotate: [480, 0], ease: 'inQuad', duration: IMPACT }, 0)
     .add('.clash-lines', { opacity: [0, 0.9, 0], duration: IMPACT }, 0)
