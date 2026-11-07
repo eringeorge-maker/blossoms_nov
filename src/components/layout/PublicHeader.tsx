@@ -5,6 +5,7 @@ import { FloatingPillNavigation, type NavItem } from '@/components/navigation/Fl
 import { signOut, useAuth } from '@/lib/auth/authStore'
 import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.webp'
 import { StudentTabs, STUDENT_TABS, isStudentTabActive } from './StudentTabs'
+import { SHOW_RESULTS } from '@/lib/features'
 
 const NAV_LINKS: NavItem[] = [
   { label: 'Home',         href: '/' },
@@ -14,7 +15,7 @@ const NAV_LINKS: NavItem[] = [
   { label: 'Gallery',      href: '/gallery' },
   { label: 'Notice Board', href: '/announcements' },
   { label: 'Meet the Team', href: '/team' },
-]
+].filter((link) => SHOW_RESULTS || link.href !== '/winners')
 
 export function PublicHeader() {
   const [menuOpen, setMenuOpen] = useState(false)
