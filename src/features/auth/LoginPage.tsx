@@ -140,6 +140,7 @@ export default function LoginPage() {
                   ? 'Enter your 7-digit register number to sign in.'
                   : 'Enter the email you were invited with. We email you a 6-digit code.'}
               </p>
+              {role === 'admin' && <SpamNote />}
 
               {role === 'student' && (
                 <Input
@@ -196,6 +197,7 @@ export default function LoginPage() {
                   You can also open the link in that email on this device.
                 </p>
               </div>
+              <SpamNote />
 
               <Input
                 label="6-digit code"
@@ -252,6 +254,16 @@ export default function LoginPage() {
         </ComicPanel>
       </div>
     </div>
+  )
+}
+
+/** Login codes come from a Gmail address through Brevo, so the first ones often land in spam. */
+function SpamNote() {
+  return (
+    <p className="rounded-xl border-2 border-dashed border-ink/40 bg-blossoms-yellow/30 px-3 py-2 text-xs text-ink">
+      <strong>Can&apos;t find the email?</strong> Check your <strong>Spam</strong> or <strong>Promotions</strong> folder.
+      It comes from docblossoms2026@gmail.com. Mark it &ldquo;Not spam&rdquo; so the next code lands in your inbox.
+    </p>
   )
 }
 
