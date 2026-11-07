@@ -11,7 +11,7 @@ import cover8Url from '@/assets/covers/cover-8.jpg'
 import cover9Url from '@/assets/covers/cover-9.jpg'
 import cover10Url from '@/assets/covers/cover-10.jpg'
 import cover11Url from '@/assets/covers/cover-11.jpg'
-import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.webp'
+import { ComicCover, comicCoverImages } from '@/components/comic/ComicCover'
 import backdropUrl from '@/assets/brand/opening-backdrop.webp'
 
 const COVERS = [
@@ -30,8 +30,9 @@ const COVERS = [
 const FIRST_TURN_MS = 250
 const TURN_GAP_MS = 190
 const LEAVE_MS = 300
-// The whole opening runs 3s. The last flip ends around 2.51s, then a short hold on the logo and the fade out.
-const LEAVE_AT_MS = 3000 - LEAVE_MS
+// The last flip ends around 2.51s, then the cover holds for 2s before the fade out (about 4.8s in all).
+const COVER_HOLD_MS = 2000
+const LEAVE_AT_MS = FIRST_TURN_MS + TURN_GAP_MS * (COVERS.length - 1) + 360 + COVER_HOLD_MS
 const PRELOAD_LIMIT_MS = 2000
 
 // Resets on every full page load, so in-app navigation back to home doesn't replay it.
@@ -59,7 +60,7 @@ export function ComicOpening({ onDone }: { onDone: () => void }) {
     }
     const limit = window.setTimeout(start, PRELOAD_LIMIT_MS)
     Promise.all(
-      [backdropUrl, ...COVERS].map(
+      [backdropUrl, ...comicCoverImages, ...COVERS].map(
         (src) =>
           new Promise((resolve) => {
             const image = new Image()
@@ -95,7 +96,7 @@ export function ComicOpening({ onDone }: { onDone: () => void }) {
     >
       <div className="comic-opening-book" aria-hidden="true">
         <div className="comic-opening-page comic-opening-page--last">
-          <img src={blossomsLogoUrl} alt="" />
+          <ComicCover />
         </div>
         {COVERS.map((src, index) => (
           <div
