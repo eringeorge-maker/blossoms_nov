@@ -1605,3 +1605,19 @@ button:disabled {
     transform: none;
   }
 }
+
+/* Event popup (details, rules, register box, session picker, team builder): everything in Bangers, which reads
+   more easily than the body face at these sizes. Bangers has one weight, so bold is not faked. */
+.event-sheet,
+.event-sheet * {
+  font-family: var(--font-display) !important;
+  font-weight: 400 !important;
+  font-synthesis: none;
+  letter-spacing: 0.04em;
+}
+.event-sheet p,
+.event-sheet li,
+.event-sheet dd,
+.event-sheet span {
+  line-height: 1.45;
+}

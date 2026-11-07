@@ -317,8 +317,9 @@
   max-width: 1180px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(280px, 400px) minmax(0, 1fr);
-  gap: clamp(32px, 5vw, 72px);
+  /* The trailer is 16:9, so it takes its own row above the panels. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(40px, 5vw, 64px);
   align-items: start;
 }
 
@@ -331,6 +332,8 @@
   border-radius: 14px;
   box-shadow: 10px 10px 0 var(--color-festival-yellow);
   transform: rotate(-1.5deg);
+  width: min(880px, 100%);
+  justify-self: center;
 }
 
 .landing-trailer-tab {
@@ -345,13 +348,13 @@
   border: 3px solid var(--color-ink-deep);
 }
 
-.landing-trailer iframe {
+.landing-trailer video {
   display: block;
   width: 100%;
-  height: 640px;
-  border: 0;
+  aspect-ratio: 16 / 9;
   border-radius: 8px;
-  background: var(--color-caption-cream);
+  background: var(--color-ink-deep);
+  object-fit: cover;
 }
 
 .landing-trailer-link {
@@ -608,10 +611,6 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .landing-trailer {
-    width: min(400px, 100%);
-    justify-self: center;
-  }
 }
 
 @media (max-width: 767px) {

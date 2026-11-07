@@ -11,7 +11,9 @@ import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.webp'
 import heroUrl from '@/assets/brand/hero-b.jpg'
 import './landing.css'
 
-const TRAILER_EMBED_URL = 'https://www.instagram.com/reel/DfSQot_yvaz/embed/'
+// 720p H.264 MP4 (plays everywhere, hardware-decoded), fast-start so it begins before it has fully downloaded.
+const TRAILER_VIDEO = '/media/blossoms-trailer-720p.mp4'
+const TRAILER_POSTER = '/media/blossoms-trailer-poster.webp'
 const TRAILER_URL = 'https://www.instagram.com/reel/DfSQot_yvaz/'
 
 const WHY_PARTICIPATE = [
@@ -106,13 +108,10 @@ function TrailerAndAbout({ onOpenSchedule, onOpenAnnouncements }: Pick<HomeLandi
       <div className="landing-about-grid">
         <figure className="landing-trailer">
           <figcaption className="landing-trailer-tab font-comic-display">Official trailer</figcaption>
-          <iframe
-            src={TRAILER_EMBED_URL}
-            title="Blossoms 2026–27 official trailer"
-            loading="lazy"
-            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-            allowFullScreen
-          />
+          {/* preload="none": only the poster loads with the page; the 9 MB 720p file streams once play is pressed. */}
+          <video controls playsInline preload="none" poster={TRAILER_POSTER} aria-label="Blossoms 2026–27 official trailer">
+            <source src={TRAILER_VIDEO} type="video/mp4" />
+          </video>
           <a href={TRAILER_URL} target="_blank" rel="noreferrer" className="landing-trailer-link font-comic-sub">
             Watch on Instagram
           </a>

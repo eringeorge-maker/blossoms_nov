@@ -6,6 +6,23 @@ import docAnalyticaUrl from '@/assets/brand/doc-analytica.webp'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
+/** Instagram camera mark (lucide no longer ships brand icons). */
+function InstagramGlyph() {
+  return (
+    <span
+      aria-hidden="true"
+      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] border-2 border-ink"
+      style={{ background: 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285AEB 90%)' }}
+    >
+      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round">
+        <rect x="3" y="3" width="18" height="18" rx="5" />
+        <circle cx="12" cy="12" r="4.2" />
+        <circle cx="17.4" cy="6.6" r="0.6" fill="#fff" />
+      </svg>
+    </span>
+  )
+}
+
 export function Footer() {
   return (
     <footer className="border-t-[2.5px] border-ink bg-primary text-white mt-20 relative overflow-hidden">
@@ -75,6 +92,19 @@ export function Footer() {
           <p className="text-xs text-white/80 mt-3 leading-relaxed">
             Questions about an event? Its event heads are listed on the event&apos;s page.
           </p>
+          <a
+            href="https://www.instagram.com/doc_blossoms/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Blossoms updates on Instagram, @doc_blossoms (opens in a new tab)"
+            className="mt-4 inline-flex items-center gap-2.5 bg-white text-ink border-2 border-ink rounded-[14px] shadow-comic-sm px-3.5 py-2 hover:-translate-y-0.5 transition-transform"
+          >
+            <InstagramGlyph />
+            <span className="leading-tight">
+              <span className="block text-[11px] text-ink/60">Blossoms updates</span>
+              <span className="block text-sm font-bold">@doc_blossoms</span>
+            </span>
+          </a>
         </div>
       </div>
 
