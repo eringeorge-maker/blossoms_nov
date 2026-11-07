@@ -7,9 +7,22 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { registerTeamEvent, searchStudents, type StudentSearchResult } from '@/lib/api/registration'
 import { useAuth } from '@/lib/auth/authStore'
+import { sessionLabel } from '@/lib/eventDisplay'
 import type { Event } from '@/types'
 
-export function TeamRegistrationModal({ event, onClose, onSuccess }: { event: Event; onClose: () => void; onSuccess: () => void }) {
+export function TeamRegistrationModal({
+  event,
+  slotId,
+  onClose,
+  onSuccess,
+}: {
+  event: Event
+  /** Session already picked in the register box, for events held more than once. */
+  slotId?: string | null
+  onClose: () => void
+  onSuccess: () => void
+}) {
+  const session = slotId ? event.schedule_slots?.find((s) => s.id === slotId) : undefined
   const auth = useAuth()
   const me = auth.student!
   const min = event.min_team_size ?? 2
@@ -69,6 +82,7 @@ export function TeamRegistrationModal({ event, onClose, onSuccess }: { event: Ev
       eventId: event.id,
       teamName: teamName.trim(),
       memberRegisterNumbers: members.map((m) => m.register_number),
+      slotId,
     })
     setSubmitting(false)
     if (res.success) {
@@ -103,6 +117,11 @@ export function TeamRegistrationModal({ event, onClose, onSuccess }: { event: Ev
           {min === max ? `Exactly ${min}` : `${min} to ${max}`} members, including you. Everyone you add is registered and
           notified.
         </p>
+        {session && (
+          <p className="-mt-2 mb-4 inline-flex items-center rounded-full border-2 border-ink bg-blossoms-yellow px-3 py-0.5 text-xs font-bold text-ink">
+            Whole team: {sessionLabel(session)}
+          </p>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label="Team name" required maxLength={60} placeholder="e.g. The Ledger Lions" value={teamName} onChange={(e) => setTeamName(e.target.value)} />

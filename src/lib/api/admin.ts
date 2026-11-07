@@ -58,6 +58,9 @@ export interface RosterRow {
   team_id: string | null
   team_name: string | null
   is_leader: boolean | null
+  /** Chosen session for events held more than once. */
+  slot_id: string | null
+  session_starts_at: string | null
   attendance_status: 'present' | 'absent' | null
   marked_at: string | null
 }

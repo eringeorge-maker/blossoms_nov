@@ -10,14 +10,21 @@ import { Button } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { ErrorState } from '@/components/ui/States'
 import { cn } from '@/lib/utils'
-import { getStudentRegistrations, cancelRegistration, type MyRegistration } from '@/lib/api/registration'
-import { formatDateTime, slotDate, slotLabel } from '@/lib/eventDisplay'
+import { SessionPicker } from '@/components/events/SessionPicker'
+import { registrationState } from '@/lib/api/events'
+import { getStudentRegistrations, cancelRegistration, changeSession, type MyRegistration } from '@/lib/api/registration'
+import { chosenSlot, formatDateTime, formatDay, hasSessions, sessionLabel, slotDate, slotLabel } from '@/lib/eventDisplay'
 
 type Filter = 'active' | 'cancelled'
 
+/** The slot this registration is in: its chosen session, else the event's first slot. */
+function slotOf(reg: MyRegistration) {
+  return chosenSlot(reg.event, reg.slot_id) ?? reg.event?.schedule_slots?.[0]
+}
+
 /** When the event starts, for ordering. Events with no date yet go last. */
 function startTime(reg: MyRegistration): number {
-  const slot = reg.event?.schedule_slots?.[0]
+  const slot = slotOf(reg)
   if (slot?.starts_at) return new Date(slot.starts_at).getTime()
   const day = slotDate(slot)
   return day ? new Date(`${day}T00:00:00+05:30`).getTime() : Infinity
@@ -27,7 +34,7 @@ function startTime(reg: MyRegistration): number {
 function findClashes(registrations: MyRegistration[]): Set<string> {
   const timed = registrations
     .filter((r) => r.registration_status === 'confirmed')
-    .map((r) => ({ id: r.id, slot: r.event?.schedule_slots?.[0] }))
+    .map((r) => ({ id: r.id, slot: slotOf(r) }))
     .filter((x) => x.slot?.starts_at && x.slot?.ends_at && x.slot.status !== 'cancelled')
     .map((x) => ({ id: x.id, start: new Date(x.slot!.starts_at!).getTime(), end: new Date(x.slot!.ends_at!).getTime() }))
   const clashes = new Set<string>()
@@ -122,9 +129,25 @@ export default function MyEventsPage() {
 }
 
 function RegistrationCard({ reg, clash, onCancel, cancelling }: { reg: MyRegistration; clash: boolean; onCancel: () => void; cancelling: boolean }) {
-  const slot = reg.event?.schedule_slots?.[0]
+  const queryClient = useQueryClient()
+  const multi = hasSessions(reg.event)
+  const chosen = chosenSlot(reg.event, reg.slot_id)
+  const slot = slotOf(reg)
   const active = reg.registration_status !== 'cancelled'
   const canCancel = active && (!reg.team || reg.team.is_leader)
+  const canSwitch = multi && active && (!reg.team || reg.team.is_leader) && Boolean(reg.event && registrationState(reg.event).open)
+
+  const switchSession = useMutation({
+    mutationFn: (slotId: string) => changeSession(reg.id, slotId),
+    onSuccess: (res) => {
+      if (res.success) {
+        toast.success(res.message)
+        queryClient.invalidateQueries({ queryKey: ['my-registrations'] })
+      } else {
+        toast.error(res.message)
+      }
+    },
+  })
 
   return (
     <li className="comic-card p-5">
@@ -132,7 +155,12 @@ function RegistrationCard({ reg, clash, onCancel, cancelling }: { reg: MyRegistr
         <div>
           <Badge variant="outline">{reg.event?.category?.name ?? 'Event'}</Badge>
           <h2 className="font-display text-2xl text-ink mt-2">{reg.event?.title ?? 'Event'}</h2>
-          <p className="text-sm text-ink/70 mt-1">{slotLabel(slot)}</p>
+          <p className="text-sm text-ink/70 mt-1">{multi && !chosen ? formatDay(slotDate(slot)) : slotLabel(slot)}</p>
+          {multi && (
+            <p className={cn('text-sm font-bold', chosen ? 'text-ink' : 'text-comic-red-deep')}>
+              {chosen ? sessionLabel(chosen) : 'Session not chosen yet'}
+            </p>
+          )}
           {slot?.venue && (
             <p className="text-sm text-ink/70 flex items-center gap-1">
               <MapPin className="w-3.5 h-3.5" aria-hidden="true" /> {slot.venue.name}
@@ -171,6 +199,21 @@ function RegistrationCard({ reg, clash, onCancel, cancelling }: { reg: MyRegistr
             ))}
           </ul>
         </div>
+      )}
+
+      {canSwitch && reg.event && (
+        <div className="mb-3">
+          <SessionPicker
+            slots={reg.event.schedule_slots ?? []}
+            value={chosen?.id ?? null}
+            onChange={(id) => id !== chosen?.id && switchSession.mutate(id)}
+            label={chosen ? (reg.team ? 'Switch your team’s session' : 'Switch session') : 'Pick your session'}
+            disabled={switchSession.isPending}
+          />
+        </div>
+      )}
+      {multi && active && !canSwitch && reg.team && !reg.team.is_leader && (
+        <p className="mb-3 text-xs text-ink/50">Your team leader picks the team’s session.</p>
       )}
 
       <div className="flex gap-2 flex-wrap pt-2 border-t border-ink/10">

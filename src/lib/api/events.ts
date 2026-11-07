@@ -19,6 +19,10 @@ function normalise(events: Event[]): Event[] {
   return events
     .map((e) => ({
       ...e,
+      // Sessions in time order, so the 12:45 PM session comes before the 3:45 PM one.
+      schedule_slots: [...(e.schedule_slots ?? [])].sort((a, b) =>
+        (a.starts_at ?? a.slot_date ?? '').localeCompare(b.starts_at ?? b.slot_date ?? '')
+      ),
       contacts: [...(e.contacts ?? [])].sort((a, b) =>
         a.role === b.role ? a.display_order - b.display_order : a.role === 'faculty_coordinator' ? -1 : 1
       ),

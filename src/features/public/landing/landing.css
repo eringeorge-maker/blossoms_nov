@@ -665,8 +665,9 @@
     display: none;
   }
 
+  /* Long enough that the throw, impact and caption each get a beat; 150vh scrolled past before the hit registered. */
   .clash {
-    height: 150vh;
+    height: 240vh;
   }
 
   /* The fade to dark left a blank screen on phones; the next section's own background takes over instead. */
