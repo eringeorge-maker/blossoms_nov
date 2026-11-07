@@ -73,7 +73,7 @@ export function Footer() {
             </a>
           </p>
           <p className="text-xs text-white/80 mt-3 leading-relaxed">
-            Questions about an event? Its faculty coordinator and event heads are listed on the event&apos;s page.
+            Questions about an event? Its event heads are listed on the event&apos;s page.
           </p>
         </div>
       </div>

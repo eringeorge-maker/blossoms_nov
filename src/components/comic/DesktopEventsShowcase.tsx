@@ -21,6 +21,7 @@ import {
 const TRANSITION_DURATION_MS = 650
 
 
+// Boxes fill the whole layout (the art was drawn bleeding 6% past each side), so the full panels show.
 const DESKTOP_COMIC_PANELS: ComicPanelConfig[] = [
   {
     id: 'panel-1-arts',
@@ -31,13 +32,13 @@ const DESKTOP_COMIC_PANELS: ComicPanelConfig[] = [
     accentColor: '#E52B27',
     isExpansionEnabled: true,
     styleBox: {
-      left: '-6.25%',
-      top: '-1.2%',
-      width: '36.462%',
-      height: '112.5%',
+      left: '0%',
+      top: '0%',
+      width: '32.411%',
+      height: '100%',
     },
     outerClipPath: 'polygon(0% 0%, 68.044% 0%, 100% 100%, 0% 100%)',
-    innerClipPath: 'polygon(1.93% 0.99%, 66.12% 0.99%, 97.74% 99.01%, 1.93% 99.01%)',
+    innerClipPath: 'polygon(0.965% 0.495%, 67.082% 0.495%, 98.87% 99.505%, 0.965% 99.505%)',
   },
   {
     id: 'panel-2-literature',
@@ -48,13 +49,13 @@ const DESKTOP_COMIC_PANELS: ComicPanelConfig[] = [
     accentColor: '#F28A24',
     isExpansionEnabled: true,
     styleBox: {
-      left: '20.067%',
-      top: '-1.2%',
-      width: '53.4375%',
-      height: '62.642%',
+      left: '23.393%',
+      top: '0%',
+      width: '47.5%',
+      height: '55.682%',
     },
     outerClipPath: 'polygon(0% 0%, 100% 0%, 80.639% 100%, 10.714% 89.286%)',
-    innerClipPath: 'polygon(1.54% 1.79%, 98.35% 1.79%, 79.66% 98.06%, 11.84% 87.68%)',
+    innerClipPath: 'polygon(0.77% 0.895%, 99.175% 0.895%, 80.15% 99.03%, 11.277% 88.483%)',
   },
   {
     id: 'panel-3-stage',
@@ -65,13 +66,13 @@ const DESKTOP_COMIC_PANELS: ComicPanelConfig[] = [
     accentColor: '#087BC4',
     isExpansionEnabled: true,
     styleBox: {
-      left: '64.7656%',
-      top: '-1.2%',
-      width: '41.4844%',
-      height: '70.3125%',
+      left: '63.125%',
+      top: '0%',
+      width: '36.875%',
+      height: '62.5%',
     },
     outerClipPath: 'polygon(24.939% 0%, 100% 0%, 100% 100%, 0% 89.545%)',
-    innerClipPath: 'polygon(26.25% 1.59%, 98.31% 1.59%, 98.31% 98.23%, 2.11% 88.14%)',
+    innerClipPath: 'polygon(25.595% 0.795%, 99.155% 0.795%, 99.155% 99.115%, 1.055% 88.843%)',
   },
   {
     id: 'panel-4-theatre',
@@ -82,13 +83,13 @@ const DESKTOP_COMIC_PANELS: ComicPanelConfig[] = [
     accentColor: '#F5C51B',
     isExpansionEnabled: true,
     styleBox: {
-      left: '26.0938%',
-      top: '57.1274%',
-      width: '80.1563%',
-      height: '54.1726%',
+      left: '28.75%',
+      top: '51.842%',
+      width: '71.25%',
+      height: '48.158%',
     },
     outerClipPath: 'polygon(0% 0%, 100% 26.549%, 100% 100%, 6.892% 100%)',
-    innerClipPath: 'polygon(1.04% 2.33%, 99.12% 28.38%, 99.12% 97.94%, 7.64% 97.94%)',
+    innerClipPath: 'polygon(0.52% 1.165%, 99.56% 27.465%, 99.56% 98.97%, 7.266% 98.97%)',
   },
 ]
 

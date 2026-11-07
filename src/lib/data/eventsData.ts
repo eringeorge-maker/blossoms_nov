@@ -18,7 +18,7 @@ export const VENUES: Record<string, Venue> = {
     "id": "b7078db2-7090-5a1c-8d23-cce685ab0db5",
     "name": "Seminar Hall",
     "campus_id": null,
-    "building": "Central Campus",
+    "building": "Block 2",
     "room": null,
     "capacity": null,
     "maps_url": null,
@@ -28,7 +28,7 @@ export const VENUES: Record<string, Venue> = {
     "id": "e0768fb8-8654-51be-89eb-e8c263c9da50",
     "name": "Assembly Hall",
     "campus_id": null,
-    "building": "Central Campus",
+    "building": "Block 2",
     "room": null,
     "capacity": null,
     "maps_url": null,
@@ -38,7 +38,7 @@ export const VENUES: Record<string, Venue> = {
     "id": "c2b71b25-3f5c-5305-9a78-01bdf067d1bf",
     "name": "Panel Room",
     "campus_id": null,
-    "building": "Central Campus",
+    "building": "Block 2",
     "room": null,
     "capacity": null,
     "maps_url": null,
@@ -54,9 +54,9 @@ export const VENUES: Record<string, Venue> = {
     "maps_url": null,
     "created_at": "2026-11-04T00:00:00+05:30"
   },
-  "gazebo-bb-court": {
-    "id": "c6adb3dd-bb4a-5723-8e46-fefe89fe6c5a",
-    "name": "Gazebo / BB Court",
+  "basketball-court": {
+    "id": "8074dc1f-4820-5a2e-8a1f-a428195c03cd",
+    "name": "Basketball Court",
     "campus_id": null,
     "building": "Central Campus",
     "room": null,
@@ -64,9 +64,9 @@ export const VENUES: Record<string, Venue> = {
     "maps_url": null,
     "created_at": "2026-11-04T00:00:00+05:30"
   },
-  "b2-inside": {
-    "id": "5ca9f82f-4214-5e86-acc7-62de11b7fc0a",
-    "name": "Block 2 (inside)",
+  "b2-entrance": {
+    "id": "ae68eea1-be3a-5a79-af22-2cbd033928da",
+    "name": "Block 2 Entrance, Kiosk side",
     "campus_id": null,
     "building": "Block 2",
     "room": null,
@@ -84,21 +84,11 @@ export const VENUES: Record<string, Venue> = {
     "maps_url": null,
     "created_at": "2026-11-04T00:00:00+05:30"
   },
-  "classrooms-seminar-hall": {
-    "id": "97459620-1779-5ae0-ae22-29c22ad3d2c3",
-    "name": "Classrooms / Seminar Hall",
-    "campus_id": null,
-    "building": "Central Campus",
-    "room": null,
-    "capacity": null,
-    "maps_url": null,
-    "created_at": "2026-11-04T00:00:00+05:30"
-  },
   "ke-audi": {
     "id": "5278bff5-9a98-5f1b-963e-af32ef3c4bf5",
     "name": "KE Auditorium",
     "campus_id": null,
-    "building": "Central Campus",
+    "building": "Block 4",
     "room": null,
     "capacity": null,
     "maps_url": null,
@@ -118,17 +108,7 @@ export const VENUES: Record<string, Venue> = {
     "id": "6d4defd1-c827-5e1e-9826-ef1d5524c98d",
     "name": "Campus View",
     "campus_id": null,
-    "building": "Central Campus",
-    "room": null,
-    "capacity": null,
-    "maps_url": null,
-    "created_at": "2026-11-04T00:00:00+05:30"
-  },
-  "gazebo-classrooms": {
-    "id": "6ed61981-82b6-598b-8b1f-95d582f1732e",
-    "name": "Gazebo / Classrooms",
-    "campus_id": null,
-    "building": "Central Campus",
+    "building": "Central Block",
     "room": null,
     "capacity": null,
     "maps_url": null,
@@ -322,11 +302,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Sandeep Kumar Singh",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
         "name": "Dhanush V",
         "display_order": 0
@@ -391,11 +366,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Greeshma Benny Thadikara",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
         "name": "Ragani",
         "display_order": 0
@@ -437,7 +407,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
   },
   {
     "id": "a2e26e6e-6a36-5485-be7a-088edaf2b078",
-    "title": "Mixed Media Pot Art",
+    "title": "Mixed Media Pot",
     "slug": "pot-art",
     "category_id": "cat-arts",
     "description": "Decorate a pot in mixed media on a theme given on the spot.",
@@ -448,7 +418,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": null,
     "max_team_size": null,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-11-18T12:45:00+05:30",
+    "registration_closes_at": "2026-11-18T15:45:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -465,13 +435,8 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Vijayalakshmi S",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
-        "name": "Harshil",
+        "name": "Harsheel",
         "display_order": 0
       },
       {
@@ -484,16 +449,16 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
       {
         "id": "a10fe8ce-cf20-53a7-8887-40bd0b696a79",
         "event_id": "a2e26e6e-6a36-5485-be7a-088edaf2b078",
-        "venue_id": "c6adb3dd-bb4a-5723-8e46-fefe89fe6c5a",
+        "venue_id": "8074dc1f-4820-5a2e-8a1f-a428195c03cd",
         "slot_title": null,
         "slot_date": "2026-11-18",
-        "starts_at": "2026-11-18T12:45:00+05:30",
+        "starts_at": "2026-11-18T15:45:00+05:30",
         "ends_at": "2026-11-18T18:30:00+05:30",
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
         "venue": {
-          "id": "c6adb3dd-bb4a-5723-8e46-fefe89fe6c5a",
-          "name": "Gazebo / BB Court",
+          "id": "8074dc1f-4820-5a2e-8a1f-a428195c03cd",
+          "name": "Basketball Court",
           "campus_id": null,
           "building": "Central Campus",
           "room": null,
@@ -517,7 +482,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": null,
     "max_team_size": null,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-12-03T12:45:00+05:30",
+    "registration_closes_at": "2026-12-03T09:00:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -534,16 +499,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Minnu Baby Maria",
-        "display_order": 0
-      },
-      {
-        "role": "faculty_coordinator",
-        "name": "Mahesh S",
-        "display_order": 1
-      },
-      {
         "role": "student_head",
         "name": "Hariharan",
         "display_order": 0
@@ -558,19 +513,19 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
       {
         "id": "8c519441-1782-51d1-80d2-e5610714869a",
         "event_id": "8ab1c1cc-20f0-5ced-8dd4-a2c6c82816e5",
-        "venue_id": "42bde1c3-7b51-5b07-8709-b37169cef28e",
+        "venue_id": "7e27b443-ecee-57d2-aca2-4ceb908e801d",
         "slot_title": null,
         "slot_date": "2026-12-03",
-        "starts_at": "2026-12-03T12:45:00+05:30",
-        "ends_at": "2026-12-03T17:30:00+05:30",
+        "starts_at": null,
+        "ends_at": null,
         "timezone": "Asia/Kolkata",
-        "status": "scheduled",
+        "status": "tbd",
         "venue": {
-          "id": "42bde1c3-7b51-5b07-8709-b37169cef28e",
-          "name": "Garden Street",
+          "id": "7e27b443-ecee-57d2-aca2-4ceb908e801d",
+          "name": "Classrooms",
           "campus_id": null,
           "building": "Central Campus",
-          "room": null,
+          "room": "Allotted classrooms",
           "capacity": null,
           "maps_url": null,
           "created_at": "2026-11-04T00:00:00+05:30"
@@ -607,11 +562,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "points": 7,
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
-      {
-        "role": "faculty_coordinator",
-        "name": "Lijeesh P",
-        "display_order": 0
-      },
       {
         "role": "student_head",
         "name": "Trinity Merlin A",
@@ -660,7 +610,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": 4,
     "max_team_size": 4,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-12-12T12:45:00+05:30",
+    "registration_closes_at": "2026-12-12T15:45:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -677,11 +627,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Hemangine Rai",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
         "name": "Anjali",
         "display_order": 0
@@ -696,23 +641,14 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
       {
         "id": "a34ee294-ccb8-5230-b178-99afbe43e1aa",
         "event_id": "38aae608-c2fe-53e8-b960-39069cfae559",
-        "venue_id": "6ed61981-82b6-598b-8b1f-95d582f1732e",
+        "venue_id": null,
         "slot_title": null,
         "slot_date": "2026-12-12",
-        "starts_at": "2026-12-12T12:45:00+05:30",
+        "starts_at": "2026-12-12T15:45:00+05:30",
         "ends_at": "2026-12-12T18:30:00+05:30",
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
-        "venue": {
-          "id": "6ed61981-82b6-598b-8b1f-95d582f1732e",
-          "name": "Gazebo / Classrooms",
-          "campus_id": null,
-          "building": "Central Campus",
-          "room": null,
-          "capacity": null,
-          "maps_url": null,
-          "created_at": "2026-11-04T00:00:00+05:30"
-        }
+        "venue": null
       }
     ]
   },
@@ -745,11 +681,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "points": 7,
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
-      {
-        "role": "faculty_coordinator",
-        "name": "Sruthi N R",
-        "display_order": 0
-      },
       {
         "role": "student_head",
         "name": "Bhavini Rathi",
@@ -803,7 +734,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": 4,
     "max_team_size": 4,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-11-19T15:45:00+05:30",
+    "registration_closes_at": "2026-11-19T12:45:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -819,11 +750,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "points": 7,
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
-      {
-        "role": "faculty_coordinator",
-        "name": "Kavitha R",
-        "display_order": 0
-      },
       {
         "role": "student_head",
         "name": "Prarthana",
@@ -844,16 +770,16 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
       {
         "id": "18f22da1-72f5-5558-8259-89066917c8cd",
         "event_id": "5e1986a4-a4d2-58a6-a1c3-ed9a5d5c97a5",
-        "venue_id": "5ca9f82f-4214-5e86-acc7-62de11b7fc0a",
+        "venue_id": "ae68eea1-be3a-5a79-af22-2cbd033928da",
         "slot_title": null,
         "slot_date": "2026-11-19",
-        "starts_at": "2026-11-19T15:45:00+05:30",
+        "starts_at": "2026-11-19T12:45:00+05:30",
         "ends_at": "2026-11-19T19:00:00+05:30",
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
         "venue": {
-          "id": "5ca9f82f-4214-5e86-acc7-62de11b7fc0a",
-          "name": "Block 2 (inside)",
+          "id": "ae68eea1-be3a-5a79-af22-2cbd033928da",
+          "name": "Block 2 Entrance, Kiosk side",
           "campus_id": null,
           "building": "Block 2",
           "room": null,
@@ -893,11 +819,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "points": 7,
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
-      {
-        "role": "faculty_coordinator",
-        "name": "Vidya C M",
-        "display_order": 0
-      },
       {
         "role": "student_head",
         "name": "Kaushal",
@@ -963,11 +884,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Smita Kavatekar",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
         "name": "Naomi D'silva",
         "display_order": 0
@@ -1031,11 +947,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "points": 7.5,
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
-      {
-        "role": "faculty_coordinator",
-        "name": "Krishna Prasath S",
-        "display_order": 0
-      },
       {
         "role": "student_head",
         "name": "Olin Joy",
@@ -1101,16 +1012,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Jayakrishna Y",
-        "display_order": 0
-      },
-      {
-        "role": "faculty_coordinator",
-        "name": "Sanjay Sunny",
-        "display_order": 1
-      },
-      {
         "role": "student_head",
         "name": "Jayden",
         "display_order": 0
@@ -1136,7 +1037,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
           "id": "c2b71b25-3f5c-5305-9a78-01bdf067d1bf",
           "name": "Panel Room",
           "campus_id": null,
-          "building": "Central Campus",
+          "building": "Block 2",
           "room": null,
           "capacity": null,
           "maps_url": null,
@@ -1174,11 +1075,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "points": 7.5,
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
-      {
-        "role": "faculty_coordinator",
-        "name": "Lijeesh P",
-        "display_order": 0
-      },
       {
         "role": "student_head",
         "name": "Neeti Deora",
@@ -1227,7 +1123,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": 3,
     "max_team_size": 3,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-12-02T12:45:00+05:30",
+    "registration_closes_at": "2026-12-02T09:00:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -1244,11 +1140,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Puja Roshani",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
         "name": "Khush S Bhirakcha",
         "display_order": 0
@@ -1261,10 +1152,10 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "venue_id": "7e27b443-ecee-57d2-aca2-4ceb908e801d",
         "slot_title": null,
         "slot_date": "2026-12-02",
-        "starts_at": "2026-12-02T12:45:00+05:30",
-        "ends_at": "2026-12-02T17:30:00+05:30",
+        "starts_at": null,
+        "ends_at": null,
         "timezone": "Asia/Kolkata",
-        "status": "scheduled",
+        "status": "tbd",
         "venue": {
           "id": "7e27b443-ecee-57d2-aca2-4ceb908e801d",
           "name": "Classrooms",
@@ -1280,7 +1171,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
   },
   {
     "id": "02369e6f-8aa9-5f51-8d58-96c2e665ea23",
-    "title": "Air Crash / Ship-Wreck",
+    "title": "Air Crash/Ship-Wreck",
     "slug": "air-crash-shipwreck",
     "category_id": "cat-literature",
     "description": "Play a random character and convince the captain you deserve the last life jacket.",
@@ -1291,7 +1182,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": null,
     "max_team_size": null,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-11-14T11:00:00+05:30",
+    "registration_closes_at": "2026-11-14T12:45:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -1307,11 +1198,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "points": 7.5,
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
-      {
-        "role": "faculty_coordinator",
-        "name": "Gowtham R",
-        "display_order": 0
-      },
       {
         "role": "student_head",
         "name": "Avantika",
@@ -1330,7 +1216,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "venue_id": "b7078db2-7090-5a1c-8d23-cce685ab0db5",
         "slot_title": null,
         "slot_date": "2026-11-14",
-        "starts_at": "2026-11-14T11:00:00+05:30",
+        "starts_at": "2026-11-14T12:45:00+05:30",
         "ends_at": "2026-11-14T18:00:00+05:30",
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
@@ -1338,7 +1224,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
           "id": "b7078db2-7090-5a1c-8d23-cce685ab0db5",
           "name": "Seminar Hall",
           "campus_id": null,
-          "building": "Central Campus",
+          "building": "Block 2",
           "room": null,
           "capacity": null,
           "maps_url": null,
@@ -1377,11 +1263,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Harshita Singh",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
         "name": "Sneha",
         "display_order": 0
@@ -1407,7 +1288,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
           "id": "e0768fb8-8654-51be-89eb-e8c263c9da50",
           "name": "Assembly Hall",
           "campus_id": null,
-          "building": "Central Campus",
+          "building": "Block 2",
           "room": null,
           "capacity": null,
           "maps_url": null,
@@ -1418,7 +1299,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
   },
   {
     "id": "dc275cf5-6f0b-534e-b306-0c811a89578f",
-    "title": "Just A Minute (JAM)",
+    "title": "JAM",
     "slug": "jam",
     "category_id": "cat-literature",
     "description": "Speak for a minute on the JAM Master's topic without hesitating, repeating or deviating.",
@@ -1446,11 +1327,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Jayashree Saha",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
         "name": "Shatkhi roopa",
         "display_order": 0
@@ -1465,7 +1341,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
       {
         "id": "9a66d278-173f-5bdb-ad38-da1b2a25f7d2",
         "event_id": "dc275cf5-6f0b-534e-b306-0c811a89578f",
-        "venue_id": "97459620-1779-5ae0-ae22-29c22ad3d2c3",
+        "venue_id": "b7078db2-7090-5a1c-8d23-cce685ab0db5",
         "slot_title": null,
         "slot_date": "2026-11-26",
         "starts_at": "2026-11-26T12:45:00+05:30",
@@ -1473,10 +1349,10 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
         "venue": {
-          "id": "97459620-1779-5ae0-ae22-29c22ad3d2c3",
-          "name": "Classrooms / Seminar Hall",
+          "id": "b7078db2-7090-5a1c-8d23-cce685ab0db5",
+          "name": "Seminar Hall",
           "campus_id": null,
-          "building": "Central Campus",
+          "building": "Block 2",
           "room": null,
           "capacity": null,
           "maps_url": null,
@@ -1498,7 +1374,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": null,
     "max_team_size": null,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-12-11T12:45:00+05:30",
+    "registration_closes_at": "2026-12-11T09:00:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -1514,11 +1390,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "points": 7.5,
     "finals_rule": "First and second place from the prelims go to the finals in January 2027.",
     "contacts": [
-      {
-        "role": "faculty_coordinator",
-        "name": "Lijeesh P",
-        "display_order": 0
-      },
       {
         "role": "student_head",
         "name": "K Pratheek Padiyar",
@@ -1537,10 +1408,10 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "venue_id": "7e27b443-ecee-57d2-aca2-4ceb908e801d",
         "slot_title": null,
         "slot_date": "2026-12-11",
-        "starts_at": "2026-12-11T12:45:00+05:30",
-        "ends_at": "2026-12-11T17:30:00+05:30",
+        "starts_at": null,
+        "ends_at": null,
         "timezone": "Asia/Kolkata",
-        "status": "scheduled",
+        "status": "tbd",
         "venue": {
           "id": "7e27b443-ecee-57d2-aca2-4ceb908e801d",
           "name": "Classrooms",
@@ -1556,7 +1427,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
   },
   {
     "id": "5cdbb69e-5343-5b39-9d00-4752fe9764e0",
-    "title": "Impulse (Solo Dance)",
+    "title": "Impulse Solo Dance",
     "slug": "impulse",
     "category_id": "cat-stage",
     "description": "A prepared solo dance in any style, up to 3 minutes.",
@@ -1567,7 +1438,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": null,
     "max_team_size": null,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-11-23T14:00:00+05:30",
+    "registration_closes_at": "2026-11-23T15:45:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -1584,18 +1455,13 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "The top 3 qualify for the Inter-Deanery finals.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Dharma Vignesh",
+        "role": "student_head",
+        "name": "Saksham",
         "display_order": 0
       },
       {
         "role": "student_head",
-        "name": "Melissa",
-        "display_order": 0
-      },
-      {
-        "role": "student_head",
-        "name": "Dimple",
+        "name": "Mahek",
         "display_order": 1
       }
     ],
@@ -1606,7 +1472,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "venue_id": "cc43ba28-55cf-5fbe-a35b-f6b80c90235c",
         "slot_title": null,
         "slot_date": "2026-11-23",
-        "starts_at": "2026-11-23T14:00:00+05:30",
+        "starts_at": "2026-11-23T15:45:00+05:30",
         "ends_at": "2026-11-23T19:00:00+05:30",
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
@@ -1625,7 +1491,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
   },
   {
     "id": "c7fb51ec-9783-5738-b100-07f3f605ce09",
-    "title": "Indian Classical Dance (Group)",
+    "title": "Indian Dance Classical Group",
     "slug": "indian-dance-classical-group",
     "category_id": "cat-stage",
     "description": "Group classical dance to authentic classical music, 6 + 1 minutes on stage.",
@@ -1636,7 +1502,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": 4,
     "max_team_size": 8,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-11-30T15:30:00+05:30",
+    "registration_closes_at": "2026-11-30T15:45:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -1653,13 +1519,8 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "Deaneries with more than 5 teams send 3 finalists; 3-5 teams send 2; fewer than 3 send 1.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "K V N Lakshmi",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
-        "name": "Dhanushree",
+        "name": "Vedika",
         "display_order": 0
       },
       {
@@ -1675,7 +1536,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "venue_id": "cc43ba28-55cf-5fbe-a35b-f6b80c90235c",
         "slot_title": null,
         "slot_date": "2026-11-30",
-        "starts_at": "2026-11-30T15:30:00+05:30",
+        "starts_at": "2026-11-30T15:45:00+05:30",
         "ends_at": "2026-11-30T17:00:00+05:30",
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
@@ -1694,7 +1555,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
   },
   {
     "id": "bcbbd134-4740-51e9-b61f-60a14d03c44a",
-    "title": "Non Theme (Indian Group Dance)",
+    "title": "Non Theme",
     "slug": "non-theme",
     "category_id": "cat-stage",
     "description": "Indian film or folk group dance, 5 + 1 minutes on stage.",
@@ -1705,7 +1566,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": 8,
     "max_team_size": 15,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-12-07T16:00:00+05:30",
+    "registration_closes_at": "2026-12-07T15:45:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -1722,19 +1583,19 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "Deaneries with more than 5 teams send 3 finalists; 3-5 teams send 2; fewer than 3 send 1.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Sudheesh K",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
         "name": "Prathmesh Agarwal",
         "display_order": 0
       },
       {
         "role": "student_head",
-        "name": "Mahek",
+        "name": "Dimple",
         "display_order": 1
+      },
+      {
+        "role": "student_head",
+        "name": "Rohan Saha",
+        "display_order": 2
       }
     ],
     "schedule_slots": [
@@ -1744,7 +1605,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "venue_id": "5278bff5-9a98-5f1b-963e-af32ef3c4bf5",
         "slot_title": null,
         "slot_date": "2026-12-07",
-        "starts_at": "2026-12-07T16:00:00+05:30",
+        "starts_at": "2026-12-07T15:45:00+05:30",
         "ends_at": "2026-12-07T18:00:00+05:30",
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
@@ -1752,7 +1613,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
           "id": "5278bff5-9a98-5f1b-963e-af32ef3c4bf5",
           "name": "KE Auditorium",
           "campus_id": null,
-          "building": "Central Campus",
+          "building": "Block 4",
           "room": null,
           "capacity": null,
           "maps_url": null,
@@ -1763,7 +1624,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
   },
   {
     "id": "4fa91a9b-0b64-5d01-9c12-5fb366b338f2",
-    "title": "Battle of Bands (Western)",
+    "title": "Battle of Bands (Western Electric Group)",
     "slug": "bob-w",
     "category_id": "cat-stage",
     "description": "Western electric bands, 10 + 2 minutes including setup.",
@@ -1774,7 +1635,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": 5,
     "max_team_size": 10,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-12-09T12:00:00+05:30",
+    "registration_closes_at": "2026-12-09T15:45:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -1791,18 +1652,13 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": null,
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "John Benedict D",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
         "name": "Nihal",
         "display_order": 0
       },
       {
         "role": "student_head",
-        "name": "Vedika",
+        "name": "Dhanushree",
         "display_order": 1
       }
     ],
@@ -1813,15 +1669,15 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "venue_id": "6d4defd1-c827-5e1e-9826-ef1d5524c98d",
         "slot_title": null,
         "slot_date": "2026-12-09",
-        "starts_at": "2026-12-09T12:00:00+05:30",
-        "ends_at": "2026-12-09T17:00:00+05:30",
+        "starts_at": "2026-12-09T15:45:00+05:30",
+        "ends_at": "2026-12-09T17:45:00+05:30",
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
         "venue": {
           "id": "6d4defd1-c827-5e1e-9826-ef1d5524c98d",
           "name": "Campus View",
           "campus_id": null,
-          "building": "Central Campus",
+          "building": "Central Block",
           "room": null,
           "capacity": null,
           "maps_url": null,
@@ -1832,7 +1688,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
   },
   {
     "id": "57cfd1ca-bec8-50e6-8fec-16b73b275ab8",
-    "title": "Battle of Bands (Indian)",
+    "title": "Battle of Bands (Indian Electric Group)",
     "slug": "bob-i",
     "category_id": "cat-stage",
     "description": "Indian electric bands performing in Indian languages, 10 + 2 minutes.",
@@ -1843,7 +1699,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": 5,
     "max_team_size": 10,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-12-09T12:00:00+05:30",
+    "registration_closes_at": "2026-12-09T15:45:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -1860,18 +1716,13 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": null,
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "John Benedict D",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
         "name": "Nihal",
         "display_order": 0
       },
       {
         "role": "student_head",
-        "name": "Vedika",
+        "name": "Dhanushree",
         "display_order": 1
       }
     ],
@@ -1882,15 +1733,15 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "venue_id": "6d4defd1-c827-5e1e-9826-ef1d5524c98d",
         "slot_title": null,
         "slot_date": "2026-12-09",
-        "starts_at": "2026-12-09T12:00:00+05:30",
-        "ends_at": "2026-12-09T17:00:00+05:30",
+        "starts_at": "2026-12-09T15:45:00+05:30",
+        "ends_at": "2026-12-09T17:45:00+05:30",
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
         "venue": {
           "id": "6d4defd1-c827-5e1e-9826-ef1d5524c98d",
           "name": "Campus View",
           "campus_id": null,
-          "building": "Central Campus",
+          "building": "Central Block",
           "room": null,
           "capacity": null,
           "maps_url": null,
@@ -1901,7 +1752,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
   },
   {
     "id": "8d552e7a-2ba6-56e2-ad19-34507e688b96",
-    "title": "Western Acoustic (Group)",
+    "title": "Western Acoustic Music Group",
     "slug": "western-acoustic",
     "category_id": "cat-stage",
     "description": "Acoustic groups focused on vocal harmony, 10 + 2 minutes.",
@@ -1912,7 +1763,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": 5,
     "max_team_size": 10,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-12-09T12:00:00+05:30",
+    "registration_closes_at": "2026-12-09T15:45:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -1929,18 +1780,13 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": null,
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "John Benedict D",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
         "name": "Nihal",
         "display_order": 0
       },
       {
         "role": "student_head",
-        "name": "Vedika",
+        "name": "Dhanushree",
         "display_order": 1
       }
     ],
@@ -1951,15 +1797,15 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "venue_id": "6d4defd1-c827-5e1e-9826-ef1d5524c98d",
         "slot_title": null,
         "slot_date": "2026-12-09",
-        "starts_at": "2026-12-09T12:00:00+05:30",
-        "ends_at": "2026-12-09T17:00:00+05:30",
+        "starts_at": "2026-12-09T15:45:00+05:30",
+        "ends_at": "2026-12-09T17:45:00+05:30",
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
         "venue": {
           "id": "6d4defd1-c827-5e1e-9826-ef1d5524c98d",
           "name": "Campus View",
           "campus_id": null,
-          "building": "Central Campus",
+          "building": "Central Block",
           "room": null,
           "capacity": null,
           "maps_url": null,
@@ -1970,7 +1816,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
   },
   {
     "id": "2e880692-fc50-5a9b-b610-b96c536bf9d8",
-    "title": "Western Singing (Solo)",
+    "title": "Western Solo Singing",
     "slug": "western-singing-solo",
     "category_id": "cat-stage",
     "description": "Solo western vocals, 4 + 1 minutes.",
@@ -1981,7 +1827,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": null,
     "max_team_size": null,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-12-14T16:00:00+05:30",
+    "registration_closes_at": "2026-12-14T15:45:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -1998,13 +1844,8 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": null,
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Abin John",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
-        "name": "Saksham",
+        "name": "Suhani",
         "display_order": 0
       },
       {
@@ -2020,7 +1861,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "venue_id": "6efd6d99-f51b-54af-bec3-4d6351735083",
         "slot_title": null,
         "slot_date": "2026-12-14",
-        "starts_at": "2026-12-14T16:00:00+05:30",
+        "starts_at": "2026-12-14T15:45:00+05:30",
         "ends_at": "2026-12-14T18:30:00+05:30",
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
@@ -2039,7 +1880,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
   },
   {
     "id": "a5dbf9fb-6deb-59ac-a402-45b247d5b806",
-    "title": "Indian Folk and Film Singing (Solo)",
+    "title": "Indian Folk and film solo singing",
     "slug": "indian-folk-film-singing-solo",
     "category_id": "cat-stage",
     "description": "Solo Indian folk and film songs, 4 + 1 minutes.",
@@ -2050,7 +1891,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": null,
     "max_team_size": null,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-12-14T16:00:00+05:30",
+    "registration_closes_at": "2026-12-14T15:45:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -2067,13 +1908,8 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": null,
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Abin John",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
-        "name": "Saksham",
+        "name": "Suhani",
         "display_order": 0
       },
       {
@@ -2089,7 +1925,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "venue_id": "6efd6d99-f51b-54af-bec3-4d6351735083",
         "slot_title": null,
         "slot_date": "2026-12-14",
-        "starts_at": "2026-12-14T16:00:00+05:30",
+        "starts_at": "2026-12-14T15:45:00+05:30",
         "ends_at": "2026-12-14T18:30:00+05:30",
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
@@ -2108,7 +1944,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
   },
   {
     "id": "68a87ed2-b7a8-5d65-ad3c-94d9322e56fa",
-    "title": "Dance Duet",
+    "title": "Indian Duet Dance",
     "slug": "dance-duet",
     "category_id": "cat-stage",
     "description": "Two dancers, Indian film songs, 2 + 1 minutes.",
@@ -2119,7 +1955,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": 2,
     "max_team_size": 2,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-11-24T14:00:00+05:30",
+    "registration_closes_at": "2026-11-24T15:45:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -2136,19 +1972,19 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "First 2 from the prelims go to the finals. Deaneries with more than 5 teams send 3 finalists; 3-5 teams send 2; fewer than 3 send 1.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Reynal Lavita Fernandes",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
         "name": "Shreyas",
         "display_order": 0
       },
       {
         "role": "student_head",
-        "name": "Abhivarshini",
+        "name": "Rohan Srivatsava",
         "display_order": 1
+      },
+      {
+        "role": "student_head",
+        "name": "Sherwin johnson",
+        "display_order": 2
       }
     ],
     "schedule_slots": [
@@ -2158,7 +1994,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "venue_id": "cc43ba28-55cf-5fbe-a35b-f6b80c90235c",
         "slot_title": null,
         "slot_date": "2026-11-24",
-        "starts_at": "2026-11-24T14:00:00+05:30",
+        "starts_at": "2026-11-24T15:45:00+05:30",
         "ends_at": "2026-11-24T19:00:00+05:30",
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
@@ -2177,7 +2013,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
   },
   {
     "id": "60644374-0747-58b5-b050-a742464f286f",
-    "title": "Mono Act",
+    "title": "Mono Acting",
     "slug": "mono-act",
     "category_id": "cat-theatre",
     "description": "A self-written solo act or monologue, 3 + 1 minutes.",
@@ -2205,16 +2041,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "2 winners from the prelims go to the finals.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Jayakrishna Y",
-        "display_order": 0
-      },
-      {
-        "role": "faculty_coordinator",
-        "name": "Sanjay Sunny",
-        "display_order": 1
-      },
-      {
         "role": "student_head",
         "name": "Ruth Sarah",
         "display_order": 0
@@ -2229,7 +2055,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
       {
         "id": "71d60223-7da1-59ea-93c5-2f4bb4acde82",
         "event_id": "60644374-0747-58b5-b050-a742464f286f",
-        "venue_id": "6efd6d99-f51b-54af-bec3-4d6351735083",
+        "venue_id": "c2b71b25-3f5c-5305-9a78-01bdf067d1bf",
         "slot_title": null,
         "slot_date": "2026-11-17",
         "starts_at": "2026-11-17T12:45:00+05:30",
@@ -2237,11 +2063,11 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
         "venue": {
-          "id": "6efd6d99-f51b-54af-bec3-4d6351735083",
-          "name": "Room 911",
+          "id": "c2b71b25-3f5c-5305-9a78-01bdf067d1bf",
+          "name": "Panel Room",
           "campus_id": null,
-          "building": "Central Block",
-          "room": "9th floor",
+          "building": "Block 2",
+          "room": null,
           "capacity": null,
           "maps_url": null,
           "created_at": "2026-11-04T00:00:00+05:30"
@@ -2251,7 +2077,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
   },
   {
     "id": "94541aaf-5612-5467-8c01-70ebd58ff175",
-    "title": "Proscenium Theatre",
+    "title": "Proscenium",
     "slug": "proscenium",
     "category_id": "cat-theatre",
     "description": "Stage play in English, Hindi or Kannada, 20 + 5 minutes.",
@@ -2262,7 +2088,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": 8,
     "max_team_size": 25,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-12-01T16:00:00+05:30",
+    "registration_closes_at": "2026-12-01T15:45:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -2279,11 +2105,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "1-4 teams: 1 team qualifies; 5-7 teams: 2 qualify; 8 or more: 3 qualify. No ties.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Harmandeep Singh",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
         "name": "Rohith Odiyar",
         "display_order": 0
@@ -2295,7 +2116,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
       },
       {
         "role": "student_head",
-        "name": "Hiranmaei",
+        "name": "Shraddha",
         "display_order": 2
       }
     ],
@@ -2306,7 +2127,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "venue_id": "5278bff5-9a98-5f1b-963e-af32ef3c4bf5",
         "slot_title": null,
         "slot_date": "2026-12-01",
-        "starts_at": "2026-12-01T16:00:00+05:30",
+        "starts_at": "2026-12-01T15:45:00+05:30",
         "ends_at": "2026-12-01T18:00:00+05:30",
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
@@ -2314,7 +2135,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
           "id": "5278bff5-9a98-5f1b-963e-af32ef3c4bf5",
           "name": "KE Auditorium",
           "campus_id": null,
-          "building": "Central Campus",
+          "building": "Block 4",
           "room": null,
           "capacity": null,
           "maps_url": null,
@@ -2336,7 +2157,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": 15,
     "max_team_size": 25,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-12-03T14:30:00+05:30",
+    "registration_closes_at": "2026-12-03T15:45:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -2353,29 +2174,14 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "1-4 teams: 1 team qualifies; 5-7 teams: 2 qualify; 8 or more: 3 qualify. No ties.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Minnu Baby Maria",
-        "display_order": 0
-      },
-      {
-        "role": "faculty_coordinator",
-        "name": "Mahesh S",
-        "display_order": 1
-      },
-      {
-        "role": "student_head",
-        "name": "Ram",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
         "name": "Avika soni",
-        "display_order": 1
+        "display_order": 0
       },
       {
         "role": "student_head",
         "name": "Garima",
-        "display_order": 2
+        "display_order": 1
       }
     ],
     "schedule_slots": [
@@ -2385,7 +2191,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "venue_id": "42bde1c3-7b51-5b07-8709-b37169cef28e",
         "slot_title": null,
         "slot_date": "2026-12-03",
-        "starts_at": "2026-12-03T14:30:00+05:30",
+        "starts_at": "2026-12-03T15:45:00+05:30",
         "ends_at": "2026-12-03T18:30:00+05:30",
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
@@ -2415,7 +2221,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": 5,
     "max_team_size": 15,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-12-08T12:45:00+05:30",
+    "registration_closes_at": "2026-12-05T09:00:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -2432,18 +2238,13 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "finals_rule": "1-4 teams: 1 team qualifies; 5 or more: 2 qualify.",
     "contacts": [
       {
-        "role": "faculty_coordinator",
-        "name": "Maria Fulgen",
-        "display_order": 0
-      },
-      {
         "role": "student_head",
         "name": "Janani",
         "display_order": 0
       },
       {
         "role": "student_head",
-        "name": "Greeshmitha",
+        "name": "Erzin",
         "display_order": 1
       }
     ],
@@ -2451,19 +2252,19 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
       {
         "id": "52983581-3bf1-5b71-b406-6eaf7c5fd3fc",
         "event_id": "e4b726f3-b6e6-5978-a77b-d156c3f3c1f5",
-        "venue_id": "cc43ba28-55cf-5fbe-a35b-f6b80c90235c",
-        "slot_title": "Online & Birds Park",
-        "slot_date": "2026-12-08",
-        "starts_at": "2026-12-08T12:45:00+05:30",
-        "ends_at": "2026-12-08T19:00:00+05:30",
+        "venue_id": "b9fb265b-388c-5482-b1df-68570c9c026a",
+        "slot_title": "Online",
+        "slot_date": "2026-12-05",
+        "starts_at": null,
+        "ends_at": null,
         "timezone": "Asia/Kolkata",
-        "status": "scheduled",
+        "status": "tbd",
         "venue": {
-          "id": "cc43ba28-55cf-5fbe-a35b-f6b80c90235c",
-          "name": "Birds Park",
+          "id": "b9fb265b-388c-5482-b1df-68570c9c026a",
+          "name": "Online submission",
           "campus_id": null,
-          "building": "Central Campus",
-          "room": "Open-air stage",
+          "building": null,
+          "room": null,
           "capacity": null,
           "maps_url": null,
           "created_at": "2026-11-04T00:00:00+05:30"
@@ -2484,7 +2285,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "min_team_size": 6,
     "max_team_size": 10,
     "registration_opens_at": "2026-11-04T00:00:00+05:30",
-    "registration_closes_at": "2026-12-15T16:00:00+05:30",
+    "registration_closes_at": "2026-12-15T15:45:00+05:30",
     "capacity": null,
     "waitlist_enabled": false,
     "cancellation_allowed": true,
@@ -2500,11 +2301,6 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
     "points": 10,
     "finals_rule": "1-4 teams: 1 team qualifies; 5-7 teams: 2 qualify; 8 or more: 3 qualify. No ties.",
     "contacts": [
-      {
-        "role": "faculty_coordinator",
-        "name": "Sukanya R",
-        "display_order": 0
-      },
       {
         "role": "student_head",
         "name": "Likith k",
@@ -2528,7 +2324,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
         "venue_id": "5278bff5-9a98-5f1b-963e-af32ef3c4bf5",
         "slot_title": null,
         "slot_date": "2026-12-15",
-        "starts_at": "2026-12-15T16:00:00+05:30",
+        "starts_at": "2026-12-15T15:45:00+05:30",
         "ends_at": "2026-12-15T18:00:00+05:30",
         "timezone": "Asia/Kolkata",
         "status": "scheduled",
@@ -2536,7 +2332,7 @@ const RAW_EVENTS: Omit<Event, 'category'>[] = [
           "id": "5278bff5-9a98-5f1b-963e-af32ef3c4bf5",
           "name": "KE Auditorium",
           "campus_id": null,
-          "building": "Central Campus",
+          "building": "Block 4",
           "room": null,
           "capacity": null,
           "maps_url": null,

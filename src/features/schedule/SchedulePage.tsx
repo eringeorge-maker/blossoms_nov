@@ -5,7 +5,6 @@ import {
   MapPin,
   Clock,
   Search,
-  User,
   Table as TableIcon,
   LayoutGrid,
   Filter,
@@ -92,10 +91,9 @@ export default function SchedulePage() {
         const query = search.toLowerCase()
         const matchesName = entry.eventName.toLowerCase().includes(query)
         const matchesVenue = entry.venue.toLowerCase().includes(query)
-        const matchesTeacher = entry.teachers.toLowerCase().includes(query)
         const matchesDate = entry.dateStr.toLowerCase().includes(query)
         const matchesDay = entry.day.toLowerCase().includes(query)
-        if (!matchesName && !matchesVenue && !matchesTeacher && !matchesDate && !matchesDay) {
+        if (!matchesName && !matchesVenue && !matchesDate && !matchesDay) {
           return false
         }
       }
@@ -292,7 +290,7 @@ export default function SchedulePage() {
                   <div className="flex-1 py-3 px-3.5 flex flex-col justify-between min-w-0">
                     {isOffDay ? (
                       <div className="flex items-center justify-between gap-2 h-full py-2">
-                        <h2 className="font-display italic font-normal text-lg text-ink uppercase tracking-wide">
+                        <h2 className="font-display text-lg text-ink uppercase tracking-[0.05em] [word-spacing:0.1em] leading-tight [text-shadow:1.5px_2px_0_rgba(121,63,152,0.35)]">
                           {entry.eventName}
                         </h2>
                         <span className="shrink-0 rounded-full px-3 py-0.5 text-[10.5px] font-bold uppercase tracking-wider border-[1.5px] border-[#888888] bg-[#F2F2F2] text-[#666666]">
@@ -303,7 +301,7 @@ export default function SchedulePage() {
                       <>
                         {/* Top Row: Event Title + Division Badge */}
                         <div className="flex items-start justify-between gap-2">
-                          <h2 className="font-display italic font-normal text-[16.5px] text-ink uppercase tracking-wide line-clamp-1">
+                          <h2 className="font-display text-[16.5px] text-ink uppercase tracking-[0.05em] [word-spacing:0.1em] leading-tight [text-shadow:1.5px_2px_0_rgba(121,63,152,0.35)] line-clamp-1">
                             {entry.eventName}
                           </h2>
 
@@ -343,15 +341,6 @@ export default function SchedulePage() {
                           )}
                         </div>
 
-                        {/* Thin Divider */}
-                        <div className="border-t border-[#e8e8e8] my-2" />
-
-                        {/* Teacher in Charge */}
-                        <div className="flex items-center gap-1.5 text-[11px] text-[#444] font-normal truncate">
-                          <User className="w-3.5 h-3.5 text-[#333] shrink-0" />
-                          <span>Teacher in Charge:</span>
-                          <strong className="text-black truncate font-bold ml-0.5">{entry.teachers}</strong>
-                        </div>
                         <EventButtons isoDate={entry.isoDate} events={events} onOpen={setOpenEvent} />
                       </>
                     )}
@@ -385,7 +374,7 @@ export default function SchedulePage() {
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink/50" />
                 <input
                   type="text"
-                  placeholder="Search events, teachers, venues..."
+                  placeholder="Search events, venues, dates..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 text-xs font-semibold bg-white border-2 border-ink rounded-full shadow-comic-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
@@ -480,7 +469,7 @@ export default function SchedulePage() {
                   >
                     <div className="p-4 pb-3 border-b-2 border-ink bg-[#faf8f5] flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <div className="bg-ink text-white font-display text-xs px-2.5 py-1 rounded-md tracking-wider">
+                        <div className="bg-ink text-white font-display text-xs px-2.5 py-1 rounded-md tracking-[0.08em]">
                           {entry.dateStr}
                         </div>
                         <span className="font-bold text-xs text-ink/80">{entry.day}</span>
@@ -495,7 +484,7 @@ export default function SchedulePage() {
 
                     <div className="p-5 flex-1 flex flex-col justify-between">
                       <div>
-                        <h3 className="font-display text-xl text-ink font-bold tracking-tight mb-2">
+                        <h3 className="font-display text-xl text-ink font-normal tracking-[0.05em] [word-spacing:0.1em] leading-tight [text-shadow:1.5px_2px_0_rgba(121,63,152,0.35)] mb-2">
                           {entry.eventName}
                         </h3>
 
@@ -517,11 +506,6 @@ export default function SchedulePage() {
                         )}
                       </div>
 
-                      {!isNonEvent && entry.teachers && (
-                        <div className="mt-4 pt-3 border-t-2 border-ink/10 flex items-center justify-between text-[11px] text-ink/60">
-                          <span className="line-clamp-1">In charge: {entry.teachers}</span>
-                        </div>
-                      )}
                       {!isNonEvent && <EventButtons isoDate={entry.isoDate} events={events} onOpen={setOpenEvent} />}
                     </div>
                   </div>
@@ -540,7 +524,6 @@ export default function SchedulePage() {
                       <th className="py-3 px-4 font-display uppercase tracking-wider">Division</th>
                       <th className="py-3 px-4 font-display uppercase tracking-wider">Venue</th>
                       <th className="py-3 px-4 font-display uppercase tracking-wider">Timings</th>
-                      <th className="py-3 px-4 font-display uppercase tracking-wider">Faculty in Charge</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -554,7 +537,7 @@ export default function SchedulePage() {
                         <td className="py-3 px-4 font-bold text-ink whitespace-nowrap">
                           {entry.dateStr} ({entry.day.slice(0, 3)})
                         </td>
-                        <td className="py-3 px-4 font-display text-sm text-ink font-bold">
+                        <td className="py-3 px-4 font-display text-sm text-ink font-normal tracking-[0.05em] [word-spacing:0.1em]">
                           {entry.eventName}
                           {!(entry.isOffDay || entry.isHoliday) && <EventButtons isoDate={entry.isoDate} events={events} onOpen={setOpenEvent} />}
                         </td>
@@ -563,7 +546,6 @@ export default function SchedulePage() {
                         </td>
                         <td className="py-3 px-4">{entry.venue}</td>
                         <td className="py-3 px-4">{entry.timings}</td>
-                        <td className="py-3 px-4 text-ink/75">{entry.teachers}</td>
                       </tr>
                     ))}
                   </tbody>

@@ -85,7 +85,7 @@ export default function GalleryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf8f5] text-ink pb-20">
+    <div className="min-h-screen text-ink pb-20">
       {/* ── Comic page: slanted panels split by cream gutters ───────────── */}
       <main className="mx-auto max-w-[1240px] px-4 pt-6 md:pt-10">
         <h1 className="sr-only">Photo gallery</h1>

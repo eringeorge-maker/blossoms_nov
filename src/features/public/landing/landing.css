@@ -386,6 +386,49 @@
   transform: rotate(1deg) translateY(10px);
 }
 
+.landing-panel--wide {
+  grid-column: 1 / -1;
+  margin-top: 6px;
+}
+
+.landing-why-list {
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+  columns: 2;
+  column-gap: 28px;
+}
+
+.landing-why-list li {
+  position: relative;
+  break-inside: avoid;
+  margin: 0 0 8px;
+  padding-left: 22px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-ink);
+}
+
+.landing-why-list li::before {
+  content: '★';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--color-festival-yellow);
+  -webkit-text-stroke: 1px var(--color-ink-deep);
+}
+
+.landing-panel p.landing-why-summary {
+  font-weight: 700;
+  color: var(--color-blossoms-purple);
+}
+
+@media (max-width: 767px) {
+  .landing-why-list {
+    columns: 1;
+  }
+}
+
 .landing-panel h3 {
   margin: 0 0 8px;
   font-size: 28px;

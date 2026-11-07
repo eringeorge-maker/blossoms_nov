@@ -95,16 +95,16 @@ export function AdminShell() {
       )}
 
       <div className="flex-1 flex flex-col min-h-screen min-w-0">
-        <header className="sticky top-0 z-40 bg-paper border-b-2 border-ink px-4 h-14 flex items-center justify-between gap-3">
+        <header className="sticky top-0 z-40 bg-[#571f8b] border-b-2 border-ink px-4 h-14 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <button
-              className="md:hidden w-10 h-10 flex items-center justify-center border-2 border-ink rounded-xl"
+              className="md:hidden w-10 h-10 flex items-center justify-center border-2 border-ink rounded-xl bg-paper"
               onClick={() => setSidebarOpen(true)}
               aria-label="Open admin menu"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <span className="font-display text-xl text-ink uppercase tracking-wide truncate">Admin console</span>
+            <span className="font-display text-xl text-white uppercase tracking-wide truncate">Admin console</span>
             <span className="hidden sm:inline-block bg-ink text-blossoms-yellow text-[10px] font-bold px-2 py-0.5 rounded border border-ink uppercase">
               {ROLE_LABELS[admin.role]}
             </span>

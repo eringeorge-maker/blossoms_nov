@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
-import { MapPin, MessageCircle, Users } from 'lucide-react'
+import { AlertTriangle, MapPin, MessageCircle, Users } from 'lucide-react'
 import { DisplayText } from '@/components/comic/ComicPrimitives'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
@@ -10,9 +10,36 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { ErrorState } from '@/components/ui/States'
 import { cn } from '@/lib/utils'
 import { getStudentRegistrations, cancelRegistration, type MyRegistration } from '@/lib/api/registration'
-import { formatDateTime, slotLabel } from '@/lib/eventDisplay'
+import { formatDateTime, slotDate, slotLabel } from '@/lib/eventDisplay'
 
 type Filter = 'active' | 'cancelled'
+
+/** When the event starts, for ordering. Events with no date yet go last. */
+function startTime(reg: MyRegistration): number {
+  const slot = reg.event?.schedule_slots?.[0]
+  if (slot?.starts_at) return new Date(slot.starts_at).getTime()
+  const day = slotDate(slot)
+  return day ? new Date(`${day}T00:00:00+05:30`).getTime() : Infinity
+}
+
+/** Ids of confirmed registrations whose timed slots overlap another confirmed registration's. */
+function findClashes(registrations: MyRegistration[]): Set<string> {
+  const timed = registrations
+    .filter((r) => r.registration_status === 'confirmed')
+    .map((r) => ({ id: r.id, slot: r.event?.schedule_slots?.[0] }))
+    .filter((x) => x.slot?.starts_at && x.slot?.ends_at && x.slot.status !== 'cancelled')
+    .map((x) => ({ id: x.id, start: new Date(x.slot!.starts_at!).getTime(), end: new Date(x.slot!.ends_at!).getTime() }))
+  const clashes = new Set<string>()
+  for (let i = 0; i < timed.length; i++) {
+    for (let j = i + 1; j < timed.length; j++) {
+      if (timed[i].start < timed[j].end && timed[j].start < timed[i].end) {
+        clashes.add(timed[i].id)
+        clashes.add(timed[j].id)
+      }
+    }
+  }
+  return clashes
+}
 
 export default function MyEventsPage() {
   const [filter, setFilter] = useState<Filter>('active')
@@ -35,15 +62,16 @@ export default function MyEventsPage() {
     },
   })
 
-  const filtered = registrations.filter((r) =>
-    filter === 'active' ? r.registration_status !== 'cancelled' : r.registration_status === 'cancelled'
-  )
+  const clashes = findClashes(registrations)
+  const filtered = registrations
+    .filter((r) => (filter === 'active' ? r.registration_status !== 'cancelled' : r.registration_status === 'cancelled'))
+    .sort((a, b) => startTime(a) - startTime(b))
 
   return (
     <div className="mx-auto max-w-[800px] px-4 py-6 space-y-6">
       <div>
         <DisplayText as="h1" className="text-4xl">My events</DisplayText>
-        <p className="text-ink/60 text-sm mt-1">Everything you're registered for, including teams others added you to.</p>
+        <p className="text-ink/60 text-sm mt-1">Everything you're registered for, in the order it happens, including teams others added you to.</p>
       </div>
 
       <div role="group" aria-label="Filter registrations" className="flex gap-2">
@@ -84,7 +112,7 @@ export default function MyEventsPage() {
       ) : (
         <ul className="space-y-4" aria-label="Your registrations">
           {filtered.map((reg) => (
-            <RegistrationCard key={reg.id} reg={reg} onCancel={() => cancelMutation.mutate(reg.id)} cancelling={cancelMutation.isPending} />
+            <RegistrationCard key={reg.id} reg={reg} clash={clashes.has(reg.id)} onCancel={() => cancelMutation.mutate(reg.id)} cancelling={cancelMutation.isPending} />
           ))}
         </ul>
       )}
@@ -92,7 +120,7 @@ export default function MyEventsPage() {
   )
 }
 
-function RegistrationCard({ reg, onCancel, cancelling }: { reg: MyRegistration; onCancel: () => void; cancelling: boolean }) {
+function RegistrationCard({ reg, clash, onCancel, cancelling }: { reg: MyRegistration; clash: boolean; onCancel: () => void; cancelling: boolean }) {
   const slot = reg.event?.schedule_slots?.[0]
   const active = reg.registration_status !== 'cancelled'
   const canCancel = active && (!reg.team || reg.team.is_leader)
@@ -115,6 +143,11 @@ function RegistrationCard({ reg, onCancel, cancelling }: { reg: MyRegistration; 
           <Badge variant={reg.registration_status === 'confirmed' ? 'registered' : reg.registration_status === 'waitlisted' ? 'waitlist' : 'cancelled'}>
             {reg.registration_status === 'confirmed' ? 'Confirmed' : reg.registration_status === 'waitlisted' ? 'Waitlisted' : 'Cancelled'}
           </Badge>
+          {clash && (
+            <Badge variant="red">
+              <AlertTriangle className="w-3 h-3 mr-1" aria-hidden="true" /> Clashes with another event
+            </Badge>
+          )}
           {reg.attendance_status && (
             <Badge variant={reg.attendance_status === 'present' ? 'green' : 'red'}>
               {reg.attendance_status === 'present' ? 'Attended' : 'Marked absent'}

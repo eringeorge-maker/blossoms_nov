@@ -22,7 +22,7 @@ export default function AdminSchedulePage() {
         return (
           entry.eventName.toLowerCase().includes(q) ||
           entry.venue.toLowerCase().includes(q) ||
-          entry.teachers.toLowerCase().includes(q) ||
+          entry.timings.toLowerCase().includes(q) ||
           entry.dateStr.includes(q) ||
           entry.day.toLowerCase().includes(q)
         )
@@ -36,7 +36,7 @@ export default function AdminSchedulePage() {
     event: (e) => e.eventName,
     division: (e) => e.division,
     venue: (e) => e.venue,
-    teachers: (e) => e.teachers,
+    timings: (e) => e.timings,
   })
 
   return (
@@ -93,7 +93,7 @@ export default function AdminSchedulePage() {
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-ink/40" />
           <input
             type="text"
-            placeholder="Search by event, venue, faculty coordinator, or date…"
+            placeholder="Search by event, venue, timing, or date…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-2 bg-[#FFF8E8] border border-ink rounded-xl text-sm font-semibold text-ink placeholder:text-ink/40 focus:outline-none focus:ring-1 focus:ring-[#793f98]"
@@ -136,7 +136,7 @@ export default function AdminSchedulePage() {
                 <SortTh label="Competition Event" sortKey="event" sort={sort} onSort={toggle} className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink" />
                 <SortTh label="Division" sortKey="division" sort={sort} onSort={toggle} className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink" />
                 <SortTh label="Venue Allocation" sortKey="venue" sort={sort} onSort={toggle} className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink" />
-                <SortTh label="Faculty Coordinators" sortKey="teachers" sort={sort} onSort={toggle} className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink" />
+                <SortTh label="Timings" sortKey="timings" sort={sort} onSort={toggle} className="px-4 py-3 text-left font-display text-xs uppercase tracking-wider text-ink" />
               </tr>
             </thead>
             <tbody>
@@ -159,7 +159,7 @@ export default function AdminSchedulePage() {
                     </p>
                   </td>
                   <td className="px-4 py-3 text-xs text-ink/70">
-                    {entry.teachers || 'Festival Committee'}
+                    {entry.timings}
                   </td>
                 </tr>
               ))}

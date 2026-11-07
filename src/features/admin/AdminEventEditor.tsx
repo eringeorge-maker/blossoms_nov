@@ -164,9 +164,6 @@ export default function AdminEventEditor() {
         {event.contacts && event.contacts.length > 0 && (
           <Panel title="Contacts">
             <p className="text-sm">
-              <strong>Faculty:</strong> {event.contacts.filter((c) => c.role === 'faculty_coordinator').map((c) => c.name).join(', ') || '—'}
-            </p>
-            <p className="text-sm mt-1">
               <strong>Event heads:</strong> {event.contacts.filter((c) => c.role === 'student_head').map((c) => c.name).join(', ') || '—'}
             </p>
           </Panel>

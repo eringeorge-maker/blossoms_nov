@@ -1,7 +1,4 @@
 .notice-board {
-  background:
-    radial-gradient(rgba(121, 63, 152, 0.16) 1.4px, transparent 1.6px) 0 0 / 16px 16px,
-    var(--color-paper, #fdf6e3);
   min-height: 60vh;
 }
 

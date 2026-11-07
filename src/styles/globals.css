@@ -1,4 +1,27 @@
-@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,700;1,700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,700;1,700&display=swap');
+
+/* Anime Ace 2.0 BB by Nate Piekos / Blambot: the body font (licence in assets/fonts/font info.txt). */
+@font-face {
+  font-family: 'Anime Ace';
+  src: url('../assets/fonts/animeace2_reg.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Anime Ace';
+  src: url('../assets/fonts/animeace2_bld.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Anime Ace';
+  src: url('../assets/fonts/animeace2_ital.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
 /* ==========================================================
    Blossoms Fest — Authentic Comic Universe Design System
    Tailwind v4 @theme layer with rich Comic Anthology tokens
@@ -45,7 +68,7 @@
 
   /* ── Typography ────────────────────────────────────────── */
   --font-display:  "Bangers", "Impact", system-ui, sans-serif;
-  --font-body:     "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --font-body:     "Anime Ace", "Segoe UI", system-ui, sans-serif;
   --font-bubble:   "Comic Neue", "Comic Sans MS", cursive;
 
   /* Type scale */
@@ -471,6 +494,13 @@ body {
     4px 5px 0px #0f0f0f;
 }
 
+/* Stippled paper behind the whole page (notice board, gallery), so the dots run to the footer. */
+.page-stipple {
+  background:
+    radial-gradient(rgba(121, 63, 152, 0.16) 1.4px, transparent 1.6px) 0 0 / 16px 16px,
+    var(--color-paper, #fdf6e3);
+}
+
 /* Halftone dot overlays */
 .halftone-dots {
   background-image: radial-gradient(rgba(0, 0, 0, 0.16) 1.3px, transparent 1.4px);
@@ -708,21 +738,51 @@ body {
    EVENTS CATEGORY SHOWCASE PAGE (DESKTOP & MOBILE 4-PANEL COMIC + EXPANSION)
    ========================================================================== */
 .events-showcase-page {
-  min-height: calc(100vh - 76px);
+  min-height: calc(100vh - 66px);
   width: 100%;
   background-color: var(--color-primary);
+  /* Halftone stipple: a light and a dark dot screen, offset so they read as printed ink. */
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.2) 1.6px, transparent 1.9px),
+    radial-gradient(rgba(0, 0, 0, 0.16) 1.3px, transparent 1.6px);
+  background-size: 14px 14px, 14px 14px;
+  background-position: 0 0, 7px 7px;
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow-x: hidden;
 }
 
+/* Desktop: the comic page is the whole backdrop, so a sub-pixel gap at the bottom shows ink, not purple. */
+.events-showcase-page:has(> .comic-layout) {
+  background: #0f0f0f;
+}
+
 .comic-layout {
-  width: min(1120px, calc(100vw - 96px), calc((100vh - 95px - 48px) * (1120 / 704)));
-  aspect-ratio: 1120 / 704;
-  margin: clamp(24px, calc((100vh - 95px - 704px) / 2), 64px) auto;
+  /* Full-bleed comic page like the home screen: the four panels tile the whole area under the header,
+     separated by black ink gutters. Art is cropped to each panel (cover) rather than stretched. */
+  width: 100%;
+  flex: 1;
+  min-height: max(560px, calc(100vh - 66px));
+  margin: 0;
+  overflow: hidden;
   position: relative;
+  background: #0f0f0f;
   user-select: none;
+}
+
+.comic-layout .comic-panel-border-layer {
+  display: none;
+}
+
+.comic-layout .comic-panel-artwork {
+  object-fit: cover;
+}
+
+/* Calmer wording on the full-bleed page: smaller titles and captions so the art leads. */
+.comic-layout .comic-panel-wording {
+  --title-size: clamp(24px, 3.6cqw, 56px);
+  --tagline-size: clamp(10px, 1.15cqw, 16px);
 }
 
 .comic-layout-mobile {
@@ -867,6 +927,12 @@ body {
   margin: 0;
   padding: 0;
   user-select: none;
+  /* Halftone stipple over the category colour (set inline): light and dark dot screens, offset like printed ink. */
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.22) 1.8px, transparent 2.1px),
+    radial-gradient(rgba(0, 0, 0, 0.16) 1.5px, transparent 1.8px);
+  background-size: 16px 16px, 16px 16px;
+  background-position: 0 0, 8px 8px;
   will-change: left, top, width, height, clip-path;
   transform: translateZ(0);
   backface-visibility: hidden;

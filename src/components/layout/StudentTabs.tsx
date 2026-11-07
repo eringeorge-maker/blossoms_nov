@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { BookMarked, CalendarDays, Home, Phone, User } from 'lucide-react'
+import { BookMarked, Home, Phone, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/lib/auth/authStore'
 import { NotificationBell } from './NotificationBell'
@@ -7,7 +7,6 @@ import { NotificationBell } from './NotificationBell'
 export const STUDENT_TABS = [
   { label: 'My page', href: '/app', icon: Home },
   { label: 'My events', href: '/app/my-events', icon: BookMarked },
-  { label: 'My schedule', href: '/app/schedule', icon: CalendarDays },
   { label: 'Profile', href: '/app/profile', icon: User },
 ]
 
