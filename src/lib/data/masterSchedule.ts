@@ -54,7 +54,7 @@ export const MASTER_SCHEDULE: MasterScheduleEntry[] = [
     eventName: 'Mono Acting',
     venue: 'Panel Room, Block 2',
     timings: '3:45 PM',
-    division: 'Literature',
+    division: 'Theatre',
   },
   {
     id: 'sch-05',
