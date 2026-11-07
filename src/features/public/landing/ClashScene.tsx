@@ -12,13 +12,16 @@ const IMPACT = 420
 
 function buildClash(section: HTMLElement) {
   const size = section.querySelector<HTMLElement>('.clash-hammer')!.offsetWidth
-  const offscreen = window.innerWidth / 2 + size
+  // Phones: start with both already peeking in from the edges, so the scene never opens on an empty screen.
+  const narrow = window.innerWidth < 768
+  const offscreen = narrow ? window.innerWidth / 2 - size * 0.2 : window.innerWidth / 2 + size
+  const rise = narrow ? 0.35 : 1
   // Hammer head and shield rim meet at the centre line.
   const meet = size * 0.44
 
   scrollTimeline(section)
-    .add('.clash-hammer', { x: [-offscreen, -meet], y: [-size * 1.2, 0], rotate: [-620, 18], ease: 'inQuad', duration: IMPACT }, 0)
-    .add('.clash-shield', { x: [offscreen, meet], y: [size * 0.5, 0], rotate: [480, 0], ease: 'inQuad', duration: IMPACT }, 0)
+    .add('.clash-hammer', { x: [-offscreen, -meet], y: [-size * 1.2 * rise, 0], rotate: [-620, 18], ease: 'inQuad', duration: IMPACT }, 0)
+    .add('.clash-shield', { x: [offscreen, meet], y: [size * 0.5 * rise, 0], rotate: [480, 0], ease: 'inQuad', duration: IMPACT }, 0)
     .add('.clash-lines', { opacity: [0, 0.9, 0], duration: IMPACT }, 0)
     .add('.clash-flash', { opacity: [0, 0.85, 0], ease: 'outQuad', duration: 80 }, IMPACT)
     .add('.clash-ring', { scale: [0.2, 4.2], opacity: [1, 0], ease: 'outQuad', duration: 180 }, IMPACT)

@@ -50,6 +50,7 @@ function Batarang({ size }: { size: number }) {
  * down a thread from a web in the corner. Purely visual, so it ignores pointers and is hidden from screen readers.
  */
 export function ScrollFx() {
+  const container = useRef<HTMLDivElement>(null)
   const boomerangs = useRef<Array<HTMLDivElement | null>>([])
   const thread = useRef<HTMLDivElement>(null)
 
@@ -62,6 +63,15 @@ export function ScrollFx() {
       const vh = window.innerHeight
       const vw = window.innerWidth
       const scrolled = window.scrollY / vh
+      const narrow = vw < 768
+
+      // Phones: once the animated scenes have scrolled past, fade the decoration out so it never covers
+      // the trailer, the info cards or the footer.
+      if (container.current) {
+        const story = document.querySelector('.flip-story')
+        const pastScenes = narrow && story ? story.getBoundingClientRect().bottom < vh * 0.6 : false
+        container.current.style.opacity = pastScenes ? '0' : '1'
+      }
 
       BOOMERANGS.forEach((spec, index) => {
         const element = boomerangs.current[index]
@@ -71,17 +81,18 @@ export function ScrollFx() {
           element.style.opacity = '0'
           return
         }
+        const scale = narrow ? 0.6 : 1
         const travel = vw + spec.size * 2
         const x = spec.dir === 1 ? -spec.size + progress * travel : vw + spec.size - progress * travel
         // A curved flight path, like a thrown boomerang arcing out and back.
         const y = spec.y * vh + Math.sin(progress * Math.PI) * -vh * 0.12
         element.style.opacity = '1'
-        element.style.transform = `translate(${x}px, ${y}px) rotate(${progress * 1080 * spec.dir}deg)`
+        element.style.transform = `translate(${x}px, ${y}px) rotate(${progress * 1080 * spec.dir}deg) scale(${scale})`
       })
 
       if (thread.current) {
-        // The spider lowers as you scroll and bobs back up between sections.
-        const drop = 70 + 110 * Math.abs(Math.sin(scrolled * 0.9))
+        // The spider lowers as you scroll and bobs back up between sections; on phones it stays near the corner.
+        const drop = narrow ? 24 + 40 * Math.abs(Math.sin(scrolled * 0.9)) : 70 + 110 * Math.abs(Math.sin(scrolled * 0.9))
         thread.current.style.setProperty('--drop', `${drop}px`)
       }
     }
@@ -101,7 +112,7 @@ export function ScrollFx() {
   }, [])
 
   return (
-    <div className="scroll-fx" aria-hidden="true">
+    <div className="scroll-fx" aria-hidden="true" ref={container}>
       {BOOMERANGS.map((spec, index) => (
         <div
           key={index}

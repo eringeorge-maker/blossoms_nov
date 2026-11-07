@@ -187,6 +187,7 @@ export type EventPatch = Partial<
     | 'min_team_size'
     | 'max_team_size'
     | 'capacity'
+    | 'waitlist_enabled'
     | 'cancellation_allowed'
     | 'is_mandatory'
   >

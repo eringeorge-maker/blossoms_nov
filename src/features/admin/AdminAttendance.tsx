@@ -1,3 +1,4 @@
+import { confirmDialog } from '@/components/ui/ConfirmDialog'
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -55,7 +56,7 @@ export default function AdminAttendance() {
   function markRest(status: 'present' | 'absent') {
     const ids = roster.filter((r) => !r.attendance_status).map((r) => r.student_id)
     if (!ids.length) return
-    if (window.confirm(`Mark ${ids.length} unmarked students as ${status}?`)) mark.mutate({ ids, status })
+    void confirmDialog(`Mark ${ids.length} unmarked students as ${status}?`, { title: 'Mark the rest', confirmLabel: `Mark ${status}` }).then((ok) => ok && mark.mutate({ ids, status }))
   }
 
   return (
@@ -115,9 +116,9 @@ export default function AdminAttendance() {
             <thead>
               <tr>
                 <SortTh label="Student" sortKey="student" sort={sort} onSort={toggle} />
-                <SortTh label="Class" sortKey="class" sort={sort} onSort={toggle} />
-                <SortTh label="Team" sortKey="team" sort={sort} onSort={toggle} />
-                <SortTh label="Phone" sortKey="phone" sort={sort} onSort={toggle} />
+                <SortTh label="Class" sortKey="class" sort={sort} onSort={toggle} className="hidden sm:table-cell" />
+                <SortTh label="Team" sortKey="team" sort={sort} onSort={toggle} className="hidden sm:table-cell" />
+                <SortTh label="Phone" sortKey="phone" sort={sort} onSort={toggle} className="hidden sm:table-cell" />
                 <SortTh label="Attendance" sortKey="attendance" sort={sort} onSort={toggle} />
               </tr>
             </thead>
@@ -140,15 +141,19 @@ function AttendanceRow({ row, busy, onMark }: { row: RosterRow; busy: boolean; o
       <td>
         <p className="font-semibold">{row.full_name}</p>
         <p className="text-xs text-ink/50 tabular-nums">{row.register_number}</p>
+        {/* Phones: class, team and phone sit under the name so Present / Absent stay on screen. */}
+        <p className="sm:hidden text-xs text-ink/60 mt-0.5">
+          {[row.class_name, row.team_name && `${row.team_name}${row.is_leader ? ' (leader)' : ''}`, row.phone].filter(Boolean).join(' · ')}
+        </p>
       </td>
-      <td className="text-xs">{row.class_name}</td>
-      <td className="text-xs">
+      <td className="hidden sm:table-cell text-xs">{row.class_name}</td>
+      <td className="hidden sm:table-cell text-xs">
         {row.team_name ?? '—'}
         {row.is_leader && <span className="ml-1 font-bold text-primary">(leader)</span>}
       </td>
-      <td className="text-xs tabular-nums">{row.phone ?? '—'}</td>
+      <td className="hidden sm:table-cell text-xs tabular-nums">{row.phone ?? '—'}</td>
       <td>
-        <div className="flex gap-1.5">
+        <div className="flex flex-wrap gap-1.5">
           <button
             type="button"
             disabled={busy}

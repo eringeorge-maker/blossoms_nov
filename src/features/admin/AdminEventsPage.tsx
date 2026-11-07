@@ -70,11 +70,11 @@ export default function AdminEventsPage() {
             <thead>
               <tr>
                 <SortTh label="Event" sortKey="event" sort={sort} onSort={toggle} />
-                <SortTh label="When" sortKey="when" sort={sort} onSort={toggle} />
-                <SortTh label="Entry" sortKey="entry" sort={sort} onSort={toggle} />
+                <SortTh label="When" sortKey="when" sort={sort} onSort={toggle} className="hidden md:table-cell" />
+                <SortTh label="Entry" sortKey="entry" sort={sort} onSort={toggle} className="hidden md:table-cell" />
                 <SortTh label="Registration" sortKey="registration" sort={sort} onSort={toggle} />
-                <th>WhatsApp group</th>
-                <th />
+                <th className="hidden md:table-cell">WhatsApp group</th>
+                <th className="hidden md:table-cell" />
               </tr>
             </thead>
             <tbody>
@@ -110,14 +110,23 @@ function EventRow({ event }: { event: Event }) {
   return (
     <tr>
       <td>
-        <p className="font-semibold">{event.title}</p>
+        <Link to={`/admin/events/${event.id}`} className="font-semibold hover:text-primary hover:underline">
+          {event.title}
+        </Link>
         <p className="text-xs text-ink/50">{event.category?.name}</p>
+        {/* Phones: when and entry under the name; open the event to edit everything else. */}
+        <p className="md:hidden text-xs text-ink/60 mt-0.5">
+          {slotLabel(event.schedule_slots?.[0])} · {teamSizeLabel(event)}
+        </p>
+        <Link to={`/admin/events/${event.id}`} className="md:hidden mt-1 inline-flex items-center gap-1 text-xs font-semibold text-primary">
+          <Pencil className="w-3 h-3" /> Edit event
+        </Link>
       </td>
-      <td className="text-xs whitespace-nowrap">
+      <td className="hidden md:table-cell text-xs whitespace-nowrap">
         {slotLabel(event.schedule_slots?.[0])}
         <span className="block text-ink/50">{event.schedule_slots?.[0]?.venue?.name}</span>
       </td>
-      <td className="text-xs">{teamSizeLabel(event)}</td>
+      <td className="hidden md:table-cell text-xs">{teamSizeLabel(event)}</td>
       <td>
         {event.registration_enabled === false ? (
           <Badge variant="outline">No registration</Badge>
@@ -135,7 +144,7 @@ function EventRow({ event }: { event: Event }) {
           </div>
         )}
       </td>
-      <td className="min-w-[240px]">
+      <td className="hidden md:table-cell min-w-[240px]">
         {event.registration_enabled !== false && (
           <form
             className="flex gap-1.5"
@@ -170,7 +179,7 @@ function EventRow({ event }: { event: Event }) {
           </form>
         )}
       </td>
-      <td>
+      <td className="hidden md:table-cell">
         <Link to={`/admin/events/${event.id}`} className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
           <Pencil className="w-3 h-3" /> Edit
         </Link>

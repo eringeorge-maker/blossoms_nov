@@ -5,7 +5,8 @@ import { DisplayText, ComicPanel, ComicCaptionBox } from '@/components/comic/Com
 import { Badge } from '@/components/ui/Badge'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { supabase, isSupabaseConfigured } from '@/lib/supabase/client'
-import { getTeamLeaderboard, type TeamStanding } from '@/lib/api/admin'
+import { getFestSettings, getTeamLeaderboard, type TeamStanding } from '@/lib/api/admin'
+import { useAuth } from '@/lib/auth/authStore'
 
 interface PublicWinner {
   event_id: string
@@ -34,12 +35,27 @@ function TeamStandings() {
     queryKey: ['team-leaderboard'],
     queryFn: () => (isSupabaseConfigured ? getTeamLeaderboard() : Promise.resolve([] as TeamStanding[])),
   })
+  // Admins always get the standings back; tell them when visitors can't see them.
+  const isAdmin = Boolean(useAuth().admin)
+  const { data: settings } = useQuery({
+    queryKey: ['fest-settings'],
+    queryFn: getFestSettings,
+    enabled: isAdmin && isSupabaseConfigured,
+  })
   if (teams.length === 0) return null
   const ranked = [...teams].sort((a, b) => b.points - a.points)
   const top = Math.max(1, ...ranked.map((t) => t.points))
+  const hiddenFromPublic = isAdmin && settings?.leaderboard_public === false
   return (
     <section aria-labelledby="team-standings" className="comic-card p-5 bg-white space-y-3">
-      <h2 id="team-standings" className="font-display text-2xl text-ink">Team standings</h2>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 id="team-standings" className="font-display text-2xl text-ink">Team standings</h2>
+        {hiddenFromPublic && (
+          <Link to="/admin/points" className="rounded-full border-2 border-ink bg-[#FFD43B] px-3 py-1 text-xs font-bold text-ink hover:underline">
+            Admin preview · hidden from visitors
+          </Link>
+        )}
+      </div>
       <ol className="space-y-2">
         {ranked.map((t, i) => (
           <li key={t.team_id} className="flex items-center gap-3">

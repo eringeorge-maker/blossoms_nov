@@ -25,8 +25,8 @@ const REVEAL_AT = LAST_TURN_END - 60
 
 function buildFlipStory(section: HTMLElement) {
   const wide = window.innerWidth >= 768
-  const closedScale = wide ? 0.62 : 0.82
-  const finalScale = wide ? 0.88 : 0.5
+  const closedScale = wide ? 0.62 : 0.95
+  const finalScale = wide ? 0.88 : 0.66
   const bookWidth = section.querySelector<HTMLElement>('.flip-book')!.offsetWidth
   // Open spread sits centred; the final page then slides to the left to make room for the About panel.
   const openX = wide ? bookWidth * 0.5 : 0

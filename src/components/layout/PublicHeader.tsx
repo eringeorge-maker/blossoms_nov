@@ -100,7 +100,7 @@ export function PublicHeader() {
               className="h-[44px] px-4 rounded-full bg-[#151515] hover:bg-black active:scale-95 text-white font-semibold text-[14px] flex items-center gap-2 cursor-pointer transition-all duration-150 focus-visible:outline-[#FFD43B] shadow-xs"
             >
               <ShieldAlert className="w-[17px] h-[17px] text-[#FFD43B] stroke-[2.4]" />
-              <span>Dev Console</span>
+              <span>Admin console</span>
             </Link>
             <button
               type="button"
