@@ -8,7 +8,7 @@ import { ScrollFx } from '@/features/public/landing/ScrollFx'
 import { preloadLanding } from '@/features/public/landing/preloadLanding'
 import { scrollTimeline, useScrollScene } from '@/features/public/landing/useScrollScene'
 import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.webp'
-import heroUrl from '@/assets/brand/hero-b.jpg'
+import { ComicCover } from '@/components/comic/ComicCover'
 import './landing.css'
 
 // 720p H.264 MP4 (plays everywhere, hardware-decoded), fast-start so it begins before it has fully downloaded.
@@ -56,7 +56,6 @@ function LandingHero({ animateIn, ready, onOpenSchedule }: Omit<HomeLandingProps
         .add('.landing-hero-art', { opacity: [0, 1], scale: [0.55, 1], rotate: [-14, 2.5], ease: 'outElastic(1, .65)', duration: 1100 }, 0)
         .add('.landing-hero-logo', { opacity: [0, 1], scale: [1.35, 1], duration: 700 }, 120)
         .add('.landing-hero-copy > *', { opacity: [0, 1], y: [28, 0], delay: stagger(90), duration: 600 }, 420)
-        .add('.landing-bubble', { opacity: [0, 1], scale: [0, 1], ease: 'outBack(2)', duration: 500 }, 760)
         .add('.landing-scroll-cue', { opacity: [0, 1], duration: 500 }, 1000)
     })
     return () => scope.revert()
@@ -85,10 +84,9 @@ function LandingHero({ animateIn, ready, onOpenSchedule }: Omit<HomeLandingProps
 
       <div className="landing-hero-float">
         <div className="landing-hero-art">
-          <img src={heroUrl} alt="A student pulls open their shirt to reveal a hero suit with a yellow B" />
-          <p className="landing-bubble font-comic-display" aria-hidden="true">
-            This could be you!
-          </p>
+          <div role="img" aria-label="Blossoms comic cover: a student pulls open their shirt to reveal a hero suit with a yellow B">
+            <ComicCover />
+          </div>
         </div>
       </div>
 

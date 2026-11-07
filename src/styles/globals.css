@@ -1351,14 +1351,106 @@ button:disabled {
 }
 
 .comic-opening-page--last {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6%;
+  background: #c21fd0;
 }
 
-.comic-opening-page--last img {
+.comic-cover {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  container-type: inline-size;
+  background: #c21fd0;
+  font-family: 'Anime Ace', 'Comic Sans MS', sans-serif;
+}
+
+.comic-cover .comic-cover-hero {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+.comic-cover-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgb(15 15 15 / 0.55), transparent 32%),
+    linear-gradient(to top, rgb(15 15 15 / 0.75), transparent 24%);
+}
+
+.comic-cover .comic-cover-logo {
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  width: 90%;
   height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 0 #0f0f0f);
+}
+
+.comic-cover-issue {
+  position: absolute;
+  top: 24%;
+  left: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 10px;
+  border: 3px solid #0f0f0f;
+  background: #ffe930;
+  color: #0f0f0f;
+  font-size: 3cqw;
+  line-height: 1.1;
+  text-transform: uppercase;
+  transform: rotate(-6deg);
+}
+
+.comic-cover-issue strong {
+  font-size: 1.9em;
+}
+
+.comic-cover-burst {
+  position: absolute;
+  right: 2%;
+  bottom: 4%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 14px;
+  border: 3px solid #0f0f0f;
+  background: #ffe930;
+  color: #0f0f0f;
+  text-transform: uppercase;
+  line-height: 1.1;
+  transform: rotate(5deg);
+  clip-path: polygon(50% 0, 62% 12%, 80% 5%, 84% 24%, 100% 30%, 90% 48%, 100% 66%, 82% 72%, 80% 94%, 62% 86%, 50% 100%, 38% 86%, 20% 94%, 18% 72%, 0 66%, 10% 48%, 0 30%, 16% 24%, 20% 5%, 38% 12%);
+  min-width: 34%;
+  aspect-ratio: 1;
+  justify-content: center;
+}
+
+.comic-cover-burst span {
+  font-size: 2.75cqw;
+}
+
+.comic-cover-burst strong {
+  font-size: 4cqw;
+  text-align: center;
+}
+
+.comic-cover-footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 3%;
+  padding-left: 5%;
+  color: #fff;
+  font-size: 2.75cqw;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 0 #0f0f0f;
 }
 
 .comic-opening--running .comic-opening-page--turn {

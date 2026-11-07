@@ -1,0 +1,285 @@
+/* Results: a comic book page. Tabs pick the category, each event is a panel on the page. */
+/* the strip pops open when its tab is chosen */
+.result-pop {
+  transform-origin: top left;
+  animation: resultPopOpen 380ms cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+@keyframes resultPopOpen {
+  from { opacity: 0; transform: scale(0.9) translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ── the comic page: slanted panels of different sizes divided by gutters ── */
+.result-strip {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 26px 22px;
+  margin-top: 8px;
+  padding: 24px;
+  border: 4px solid var(--color-ink-deep);
+  background: #fffdf6;
+  box-shadow: 8px 8px 0 var(--color-ink-deep);
+}
+
+.result-cell {
+  display: flex;
+  grid-column: span 12;
+  min-height: 330px;
+  /* an ink outline that follows the slanted panel shape */
+  filter:
+    drop-shadow(3px 0 0 var(--color-ink-deep)) drop-shadow(-3px 0 0 var(--color-ink-deep))
+    drop-shadow(0 3px 0 var(--color-ink-deep)) drop-shadow(0 -3px 0 var(--color-ink-deep));
+}
+
+@media (min-width: 768px) {
+  .result-cell:nth-child(5n + 1) { grid-column: span 7; }
+  .result-cell:nth-child(5n + 2) { grid-column: span 5; }
+  .result-cell:nth-child(5n + 3),
+  .result-cell:nth-child(5n + 4),
+  .result-cell:nth-child(5n + 5) { grid-column: span 4; }
+  /* a lonely last panel fills its row */
+  .result-cell:nth-child(5n + 1):last-child,
+  .result-cell:nth-child(5n + 3):last-child { grid-column: span 12; }
+  .result-cell:nth-child(5n + 4):last-child { grid-column: span 8; }
+}
+
+.result-panel {
+  --accent: var(--color-primary);
+  --slant: 24px;
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 34px 20px;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--accent);
+  opacity: 0;
+}
+
+/* every panel is cut a different way */
+.result-cell:nth-child(4n + 1) .result-panel { clip-path: polygon(0 0, 100% 0, calc(100% - var(--slant)) 100%, 0 100%); }
+.result-cell:nth-child(4n + 2) .result-panel { clip-path: polygon(var(--slant) 0, 100% 0, 100% 100%, 0 100%); }
+.result-cell:nth-child(4n + 3) .result-panel { clip-path: polygon(0 0, calc(100% - var(--slant)) 0, 100% 100%, var(--slant) 100%); }
+.result-cell:nth-child(4n + 4) .result-panel { clip-path: polygon(0 0, 100% var(--slant), 100% 100%, 0 calc(100% - var(--slant))); }
+
+/* halftone dots and speed lines bursting from behind the winner */
+.result-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(rgb(0 0 0 / 0.2) 1.5px, transparent 1.7px) 0 0 / 7px 7px,
+    repeating-conic-gradient(from 0deg at 50% 46%, rgb(255 255 255 / 0.28) 0 4deg, transparent 4deg 14deg);
+}
+
+.result-panel--arts { --accent: var(--color-cat-arts); }
+.result-panel--literature { --accent: var(--color-cat-literature); }
+.result-panel--stage { --accent: var(--color-cat-stage); }
+.result-panel--theatre { --accent: var(--color-cat-theatre); }
+
+/* narration box: the event title */
+.result-caption {
+  align-self: flex-start;
+  max-width: calc(100% - 70px);
+  padding: 5px 12px 6px;
+  border: 3px solid var(--color-ink-deep);
+  background: var(--color-caption-yellow);
+  color: var(--color-ink-deep);
+  box-shadow: 3px 3px 0 var(--color-ink-deep);
+  transform: rotate(-1.2deg);
+}
+
+.result-title {
+  display: block;
+  margin: 0;
+  font-family: 'Anime Ace', var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.result-category {
+  display: block;
+  margin-top: 1px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.result-replay {
+  position: absolute;
+  top: 14px;
+  right: calc(var(--slant) + 8px);
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--color-ink-deep);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--color-ink-deep);
+  cursor: pointer;
+}
+
+.result-replay:hover { background: var(--color-caption-yellow); }
+
+/* first place: a lettered burst with the winner speaking beneath it */
+.result-first {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 150px;
+}
+
+.result-burst-wrap {
+  filter:
+    drop-shadow(2px 0 0 var(--color-ink-deep)) drop-shadow(-2px 0 0 var(--color-ink-deep))
+    drop-shadow(0 2px 0 var(--color-ink-deep)) drop-shadow(0 -2px 0 var(--color-ink-deep));
+  transform: rotate(-6deg);
+  opacity: 0;
+}
+
+.result-burst {
+  display: grid;
+  place-items: center;
+  width: 150px;
+  height: 120px;
+  background: var(--color-caption-cream);
+  clip-path: polygon(50% 0, 58% 16%, 76% 4%, 77% 24%, 96% 22%, 88% 40%, 100% 52%, 86% 62%, 94% 82%, 74% 78%, 68% 98%, 54% 84%, 40% 100%, 33% 80%, 12% 90%, 18% 68%, 0 58%, 16% 46%, 4% 28%, 24% 26%, 24% 6%, 40% 18%);
+  color: var(--color-comic-red);
+  font-family: var(--font-display);
+  font-size: 54px;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  text-shadow: 3px 3px 0 var(--color-ink-deep);
+}
+
+.result-bubble {
+  position: relative;
+  max-width: 100%;
+  padding: 9px 18px;
+  border: 3px solid var(--color-ink-deep);
+  border-radius: 24px;
+  background: #fff;
+  color: var(--color-ink-deep);
+  text-align: center;
+  opacity: 0;
+}
+
+/* the tail points up at the burst */
+.result-bubble::before {
+  content: '';
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  border-top: 3px solid var(--color-ink-deep);
+  border-left: 3px solid var(--color-ink-deep);
+  background: #fff;
+  transform: rotate(45deg);
+}
+
+.result-person strong {
+  display: block;
+  font-family: 'Anime Ace', var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.result-person small { display: block; margin-top: 2px; font-size: 11px; font-weight: 700; opacity: 0.65; }
+.result-person + .result-person { margin-top: 6px; padding-top: 6px; border-top: 2px dashed rgb(0 0 0 / 0.3); }
+
+/* second and third: smaller caption boxes along the bottom */
+.result-runners {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.result-runner {
+  flex: 1 1 120px;
+  max-width: 210px;
+  border: 3px solid var(--color-ink-deep);
+  background: var(--color-caption-cream);
+  color: var(--color-ink-deep);
+  box-shadow: 3px 3px 0 var(--color-ink-deep);
+  opacity: 0;
+}
+
+.result-runner--2 { order: 1; transform: rotate(-1.5deg); }
+.result-runner--3 { order: 2; transform: rotate(1.5deg); }
+
+.result-runner-tag {
+  display: block;
+  padding: 1px 8px;
+  background: var(--color-ink-deep);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.08em;
+}
+
+.result-runner .result-person { padding: 6px 8px 7px; text-align: center; }
+.result-runner .result-person strong { font-size: 13px; }
+
+/* ── reading order: panel slams onto the page, then 3rd, 2nd, and finally the burst for 1st ── */
+.result-panel--in {
+  animation: resultPanelIn 420ms cubic-bezier(0.2, 1.4, 0.4, 1) forwards;
+}
+
+.result-panel--in .result-caption { animation: resultSlide 380ms cubic-bezier(0.2, 1.4, 0.4, 1) 380ms backwards; }
+
+.result-panel--in .result-runner { animation: resultRunnerIn 380ms cubic-bezier(0.2, 1.5, 0.4, 1) forwards; }
+.result-panel--in .result-runner--3 { animation-delay: 900ms; }
+.result-panel--in .result-runner--2 { animation-delay: 1500ms; }
+
+.result-panel--in .result-burst-wrap { animation: resultBurst 700ms cubic-bezier(0.2, 1.6, 0.4, 1) 2300ms forwards; }
+.result-panel--in .result-bubble { animation: resultBubble 380ms cubic-bezier(0.2, 1.5, 0.4, 1) 2800ms forwards; }
+
+@keyframes resultPanelIn {
+  from { opacity: 0; transform: scale(0.88) rotate(-2deg); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes resultSlide {
+  from { opacity: 0; transform: translateX(-26px) rotate(-1.2deg); }
+}
+@keyframes resultRunnerIn {
+  from { opacity: 0; translate: 0 22px; scale: 0.7; }
+  to { opacity: 1; translate: 0 0; scale: 1; }
+}
+@keyframes resultBurst {
+  0% { opacity: 0; scale: 3; }
+  55% { opacity: 1; scale: 0.9; }
+  75% { scale: 1.08; }
+  100% { opacity: 1; scale: 1; }
+}
+@keyframes resultBubble {
+  from { opacity: 0; translate: 0 -10px; scale: 0.6; }
+  to { opacity: 1; translate: 0 0; scale: 1; }
+}
+
+/* Reduced motion: show the finished page, nothing flies in. */
+@media (prefers-reduced-motion: reduce) {
+  .result-panel,
+  .result-burst-wrap,
+  .result-bubble,
+  .result-runner { opacity: 1; }
+}
