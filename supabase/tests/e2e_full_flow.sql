@@ -95,7 +95,7 @@ begin
   insert into public.event_schedule_slots (event_id, starts_at, ends_at, status)
   values (e_mand, now() - interval '1 day', now() - interval '1 day' + interval '1 hour', 'scheduled'),
          (e_ind1, now() + interval '7 days', now() + interval '7 days 1 hour', 'scheduled'),
-         (e_ind2, now() + interval '7 days', now() + interval '7 days 1 hour', 'scheduled'),
+         (e_ind2, now() + interval '7 days 2 hours', now() + interval '7 days 3 hours', 'scheduled'),  -- apart from solo small: clashes are refused (013)
          (e_team, now() + interval '8 days', now() + interval '8 days 1 hour', 'scheduled');
   v_log := v_log || pg_temp.ck(true, '0  fixtures created (3 students, 2 admins, 6 events)');
 

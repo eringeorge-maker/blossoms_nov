@@ -18,6 +18,7 @@ import SchedulePage      from '@/features/schedule/SchedulePage'
 import AnnouncementsPage from '@/features/announcements/AnnouncementsPage'
 import GalleryPage       from '@/features/gallery/GalleryPage'
 import WinnersPage       from '@/features/winners/WinnersPage'
+import { SHOW_RESULTS }  from '@/lib/features'
 import TeamPage          from '@/features/public/TeamPage'
 import LoginPage         from '@/features/auth/LoginPage'
 import { getCategories } from '@/lib/api/events'
@@ -113,8 +114,9 @@ export default function App() {
               <Route path="contact" element={<Navigate to="/" replace />} />
               <Route path="about" element={<Navigate to="/" replace />} />
               <Route path="gallery" element={<GalleryPage />} />
-              <Route path="winners" element={<WinnersPage />} />
-              <Route path="results" element={<Navigate to="/winners" replace />} />
+              {/* Results is hidden on the live site while it is being built (see lib/features.ts). */}
+              <Route path="winners" element={SHOW_RESULTS ? <WinnersPage /> : <Navigate to="/" replace />} />
+              <Route path="results" element={<Navigate to={SHOW_RESULTS ? '/winners' : '/'} replace />} />
               <Route path="notice-board" element={<Navigate to="/announcements" replace />} />
               <Route path="login" element={<LoginPage />} />
               <Route path="design-system" element={<DesignSystemPage />} />

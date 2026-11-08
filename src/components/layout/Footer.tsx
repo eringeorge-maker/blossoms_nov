@@ -3,6 +3,7 @@ import blossomsLogoUrl from '@/assets/brand/blossoms-2026-27-lockup.webp'
 import christLogoUrl from '@/assets/brand/christ-university.webp'
 import docLogoUrl from '@/assets/brand/doc-mark-black.webp'
 import docAnalyticaUrl from '@/assets/brand/doc-analytica.webp'
+import { SHOW_RESULTS } from '@/lib/features'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
@@ -65,7 +66,9 @@ export function Footer() {
               ['Announcements', '/announcements'],
               ['Hall of Fame', '/winners'],
               ['Photo Gallery', '/gallery'],
-            ].map(([label, href]) => (
+            ]
+              .filter(([, href]) => SHOW_RESULTS || href !== '/winners')
+              .map(([label, href]) => (
               <li key={href}>
                 <Link to={href} className="text-white/90 hover:text-comic-yellow transition-colors">
                   {label}
